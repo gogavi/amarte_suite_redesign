@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
 import spaceBgMobile from '../../assets/home_motion/space-bg-mobile_comp.webp';
 import spaceBgDesktop from '../../assets/home_motion/space-bg-desktop_comp.jpg';
@@ -51,6 +51,19 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const [currentState, setCurrentState] = useState<MartinaState>(martinaState);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [portalZoomed, setPortalZoomed] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: rootRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const introOpacity = useTransform(scrollYProgress, [0, 0.18, 0.34], [1, 1, 0.2]);
+  const introY = useTransform(scrollYProgress, [0, 0.34], [0, -34]);
+  const introScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.92]);
+  const agentOpacity = useTransform(scrollYProgress, [0.02, 0.15, 0.3], [0, 0.56, 1]);
+  const agentY = useTransform(scrollYProgress, [0.02, 0.32], [48, 20]);
+  const agentScale = useTransform(scrollYProgress, [0.02, 0.32], [0.82, 1.08]);
+  const supportOpacity = useTransform(scrollYProgress, [0.16, 0.3, 0.42], [0, 0.7, 1]);
 
   useEffect(() => setCurrentState(martinaState), [martinaState]);
 
@@ -224,7 +237,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   return (
     <section
       ref={rootRef}
-      className={`hero-agent-v6 ${stateClass} relative min-h-screen w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8]`}
+      className={`hero-agent-v6 ${stateClass} relative min-h-[112vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[122vh]`}
       style={rootStyle}
     >
       <style>{`
@@ -580,7 +593,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
       <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-80 pointer-events-none" />
       <div className="v6-magnetic-dimple pointer-events-none absolute inset-0 z-[11]" />
 
-      <div className="relative z-20 flex min-h-screen flex-col items-center px-4 pb-8 pt-4 sm:px-6">
+      <div className="sticky top-0 z-20 flex min-h-screen flex-col items-center px-4 pb-8 pt-4 sm:px-6">
         <header className="flex w-full max-w-7xl items-center justify-between border-b border-white/8 pb-4">
           <div className="font-heading text-2xl tracking-[0.28em] text-[#FFF5F8]">
             A<span className="text-[#E6007E]">MAR</span>TE
@@ -598,21 +611,25 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           </button>
         </header>
 
-        <div className="relative flex w-full flex-1 flex-col items-center justify-center gap-3 py-3 text-center">
+        <div className="relative flex w-full flex-1 flex-col items-center justify-center gap-2 py-2 text-center">
           <motion.div
             initial={reducedMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
+            style={reducedMotion ? undefined : { opacity: introOpacity, y: introY, scale: introScale }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-3xl"
+            className="max-w-5xl"
           >
-            <div className="mb-2 font-body text-[10px] uppercase tracking-[0.34em] text-[#FFF5F8]/54">Voice Agent · Martina</div>
-            <h1 className="font-heading text-3xl uppercase leading-[0.9] tracking-tight sm:text-5xl md:text-6xl lg:text-6xl">
+            <div className="mb-3 font-body text-[10px] uppercase tracking-[0.4em] text-[#FFF5F8]/58 sm:text-xs">Voice Agent · Martina</div>
+            <h1 className="font-heading text-[clamp(4rem,19vw,7.2rem)] uppercase leading-[0.78] tracking-[-0.06em] sm:text-[clamp(5rem,14vw,8.5rem)] md:text-[clamp(6rem,10vw,9rem)]">
               Te llevo
               <span className="block bg-gradient-to-r from-[#E6007E] via-[#FFF5F8] to-[#F1E5AC] bg-clip-text text-transparent">a Marte</span>
             </h1>
           </motion.div>
 
-          <div className="v6-stage relative flex aspect-square w-[min(72vw,500px)] items-center justify-center rounded-full">
+          <motion.div
+            style={reducedMotion ? undefined : { opacity: agentOpacity, y: agentY, scale: agentScale }}
+            className="v6-stage relative flex aspect-square w-[min(92vw,560px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]"
+          >
             <div className="v6-orb absolute inset-0 flex items-center justify-center rounded-full">
               <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(230,0,126,0.12),transparent_60%)] blur-2xl" />
               <div className="v6-magnetic-shell absolute inset-[5%] rounded-full">
@@ -655,13 +672,19 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             >
               <svg aria-hidden="true" className="h-[15px] w-[15px] shrink-0 translate-y-[0.5px]" viewBox="0 0 24 24" fill="none"><path d="M12 13.75c1.66 0 3-1.34 3-3V6.25c0-1.66-1.34-3-3-3s-3 1.34-3 3v4.5c0 1.66 1.34 3 3 3Z" stroke="currentColor" strokeWidth="1.65"/><path d="M6.5 10.25c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5M12 15.75v3.5M9.25 19.25h5.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round"/><path d="M10.25 6.5h3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.7"/></svg> HABLA CON MARTINA
             </button>
-          </div>
+          </motion.div>
 
-          <p className="max-w-xl font-body text-xs leading-relaxed text-[#FFF5F8]/68 sm:text-sm">
+          <motion.p
+            style={reducedMotion ? undefined : { opacity: supportOpacity }}
+            className="max-w-xl font-body text-xs leading-relaxed text-[#FFF5F8]/68 sm:text-sm"
+          >
             Martina interpreta tu intención y te guía hacia la suite, el plan y el momento perfecto. ¿Qué plan estás buscando?
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap justify-center gap-2 pt-1">
+          <motion.div
+            style={reducedMotion ? undefined : { opacity: supportOpacity }}
+            className="flex flex-wrap justify-center gap-2 pt-1"
+          >
             {conversationStarters.map(([icon, label, prompt]) => (
               <button
                 key={label}
@@ -674,7 +697,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
                 <span className="mr-1.5">{icon}</span>{label}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
 

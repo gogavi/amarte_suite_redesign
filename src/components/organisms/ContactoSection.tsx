@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export default function ContactoSection() {
   return (
-    <section className="py-16 px-6 max-w-6xl mx-auto border-t border-white/5" aria-label="Contacto y Ubicación">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto border-t border-white/5" aria-label="Contacto y Ubicación">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left Column: Info y Mapas */}
         <div>

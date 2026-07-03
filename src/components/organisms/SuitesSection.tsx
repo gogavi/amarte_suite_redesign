@@ -20,7 +20,7 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
   }, []);
 
   return (
-    <section className="py-20 px-6 max-w-6xl mx-auto flex flex-col items-center">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto flex flex-col items-center">
       
       {/* Cabecera de la Sección */}
       <div className="text-center mb-12 max-w-xl">

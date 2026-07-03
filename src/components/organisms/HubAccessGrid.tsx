@@ -65,7 +65,7 @@ export default function HubAccessGrid({ onOpenLocation, onNavigateToView }: HubA
   };
 
   return (
-    <section className="py-12 px-6 max-w-6xl mx-auto" aria-label="Experiences Hub">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto" aria-label="Experiences Hub">
       <div className="text-center mb-8">
         <h3 className="font-heading text-xs text-[#19A6E0] uppercase tracking-widest mb-2">
           Completa tu Estadía

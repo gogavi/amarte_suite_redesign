@@ -18,7 +18,7 @@ export default function VideoExperience({ videoId = "dQw4w9WgXcQ" }: VideoExperi
   const youtubeUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
 
   return (
-    <section className="relative w-full max-w-5xl mx-auto py-16 px-6 flex flex-col items-center">
+    <section className="relative w-full max-w-5xl mx-auto py-16 md:py-20 px-6 flex flex-col items-center">
       
       {/* Encabezado de la Sección */}
       <div className="text-center mb-10 z-10 max-w-2xl">

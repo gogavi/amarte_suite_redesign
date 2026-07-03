@@ -27,23 +27,24 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
   ];
 
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative overflow-hidden">
+    <section className="py-16 md:py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative overflow-hidden">
       {/* Subtle static background glow */}
       <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[500px] h-[500px] bg-[#E6007E]/3 rounded-full blur-3xl pointer-events-none" />
 
       {/* Left Column: Image (lg:col-span-6) */}
-      <div className="lg:col-span-6 flex justify-center order-2 lg:order-1">
+      <div className="lg:col-span-6 flex justify-center lg:justify-start order-2 lg:order-1">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative w-full max-w-lg flex justify-center"
+          className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:-ml-8"
         >
+          <div className="absolute inset-x-4 bottom-0 top-8 rounded-[2rem] bg-black/40 blur-2xl pointer-events-none" />
           <img
             src={martinaSectionImg}
             alt="Interfaz interactiva de Martina Agente Virtual"
-            className="w-full h-auto object-contain block drop-shadow-[0_20px_45px_rgba(0,0,0,0.6)] drop-shadow-[0_0_30px_rgba(230,0,126,0.15)]"
+            className="relative z-[1] w-full h-auto object-contain block mix-blend-screen drop-shadow-[0_12px_40px_rgba(0,0,0,0.8)] drop-shadow-[0_0_24px_rgba(230,0,126,0.2)]"
           />
         </motion.div>
       </div>
@@ -62,7 +63,7 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
         </p>
 
         {/* Feature List */}
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 mb-8 lg:mb-8">
           {features.map((feat, idx) => (
             <div key={idx} className="flex items-start gap-3">
               <span className="text-[#E6007E] font-bold text-lg select-none">✓</span>
@@ -79,7 +80,7 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
         </div>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="order-3 hidden flex-col gap-4 sm:flex-row lg:flex">
           <button
             onClick={onSpeakToMartina}
             className="px-8 py-4 rounded-xl bg-[#E6007E] hover:bg-[#E6007E]/90 text-white font-heading text-xs uppercase tracking-widest text-center transition-all duration-200 shadow-[0_0_15px_rgba(230,0,126,0.2)]"
@@ -93,6 +94,16 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
             Explorar Suites
           </button>
         </div>
+      </div>
+
+      {/* Mobile CTA: placed after the Martina visual so the action has context */}
+      <div className="order-3 lg:hidden">
+        <button
+          onClick={onSpeakToMartina}
+          className="w-full px-8 py-4 rounded-xl bg-[#E6007E] hover:bg-[#E6007E]/90 text-white font-heading text-xs uppercase tracking-widest text-center transition-all duration-200 shadow-[0_0_15px_rgba(230,0,126,0.2)]"
+        >
+          Hablar con Martina
+        </button>
       </div>
     </section>
   );

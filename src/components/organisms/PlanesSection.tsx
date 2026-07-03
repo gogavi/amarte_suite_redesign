@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 interface Plan {
   id: string;
@@ -118,6 +118,15 @@ const planesList: Plan[] = [
 
 export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const element = e.currentTarget;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (maxScroll > 0) {
+      setScrollProgress(element.scrollLeft / maxScroll);
+    }
+  };
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -130,7 +139,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
   };
 
   return (
-    <section className="py-16 px-6 max-w-6xl mx-auto relative" aria-label="Planes Románticos">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto relative" aria-label="Planes Románticos">
       <div className="mb-10 text-center sm:text-left">
         <span className="text-xs text-[#19A6E0] uppercase tracking-widest font-heading mb-2 block">
           Personaliza tu Estadía
@@ -153,6 +162,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
         {/* Horizontal Scroll Carousel */}
         <div
           ref={scrollRef}
+          onScroll={handleScroll}
           className="flex gap-6 overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
@@ -196,6 +206,8 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
           ))}
         </div>
 
+        <div className="pointer-events-none absolute right-0 top-0 h-[calc(100%-1.5rem)] w-14 bg-gradient-to-l from-bg-dark via-bg-dark/80 to-transparent sm:hidden" />
+
         {/* Right Arrow (Magenta, sides) */}
         <button
           onClick={() => scroll('right')}
@@ -207,9 +219,15 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
       </div>
 
       {/* Swipe Notice / Progress Dots for Mobile */}
-      <div className="flex flex-col items-center gap-2 mt-4 sm:hidden">
-        <span className="text-[10px] text-[#8E8E93] uppercase tracking-widest animate-pulse">
-          ← Desliza para explorar todos los planes ({planesList.length}) →
+      <div className="flex flex-col items-center gap-3 mt-3 sm:hidden" aria-hidden="true">
+        <div className="relative h-1.5 w-28 overflow-hidden rounded-full bg-white/10">
+          <div 
+            className="absolute left-0 top-0 h-full w-12 rounded-full bg-gradient-to-r from-[#E6007E] to-[#19A6E0] shadow-[0_0_14px_rgba(230,0,126,0.35)] transition-all duration-75"
+            style={{ transform: `translateX(${scrollProgress * (112 - 48)}px)` }}
+          />
+        </div>
+        <span className="text-[10px] text-[#B7B4BC] uppercase tracking-widest">
+          Desliza para ver {planesList.length} planes →
         </span>
       </div>
     </section>
