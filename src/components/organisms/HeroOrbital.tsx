@@ -57,13 +57,13 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
     offset: ['start start', 'end start'],
   });
 
-  const introOpacity = useTransform(scrollYProgress, [0, 0.18, 0.34], [1, 1, 0.2]);
-  const introY = useTransform(scrollYProgress, [0, 0.34], [0, -34]);
-  const introScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.92]);
-  const agentOpacity = useTransform(scrollYProgress, [0.02, 0.15, 0.3], [0, 0.56, 1]);
-  const agentY = useTransform(scrollYProgress, [0.02, 0.32], [48, 20]);
-  const agentScale = useTransform(scrollYProgress, [0.02, 0.32], [0.82, 1.08]);
-  const supportOpacity = useTransform(scrollYProgress, [0.16, 0.3, 0.42], [0, 0.7, 1]);
+  const introOpacity = useTransform(scrollYProgress, [0, 0.15, 0.28], [1, 1, 0]);
+  const introY = useTransform(scrollYProgress, [0, 0.28], [0, -100]);
+  const introScale = useTransform(scrollYProgress, [0, 0.28], [1, 0.92]);
+  const agentOpacity = useTransform(scrollYProgress, [0.12, 0.28, 0.45], [0, 0.8, 1]);
+  const agentY = useTransform(scrollYProgress, [0.12, 0.38], [80, 0]);
+  const agentScale = useTransform(scrollYProgress, [0.12, 0.38], [0.85, 1]);
+  const supportOpacity = useTransform(scrollYProgress, [0.28, 0.45, 0.58], [0, 0.8, 1]);
 
   useEffect(() => setCurrentState(martinaState), [martinaState]);
 
@@ -237,7 +237,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   return (
     <section
       ref={rootRef}
-      className={`hero-agent-v6 ${stateClass} relative min-h-[112vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[122vh]`}
+      className={`hero-agent-v6 ${stateClass} relative min-h-[160vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[180vh]`}
       style={rootStyle}
     >
       <style>{`
@@ -617,7 +617,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             animate={{ opacity: 1, y: 0 }}
             style={reducedMotion ? undefined : { opacity: introOpacity, y: introY, scale: introScale }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-5xl"
+            className="absolute top-[16vh] left-0 right-0 px-4 md:relative md:top-0 md:px-0 max-w-5xl z-10"
           >
             <div className="mb-3 font-body text-[10px] uppercase tracking-[0.4em] text-[#FFF5F8]/58 sm:text-xs">Voice Agent · Martina</div>
             <h1 className="font-heading text-[clamp(4rem,19vw,7.2rem)] uppercase leading-[0.78] tracking-[-0.06em] sm:text-[clamp(5rem,14vw,8.5rem)] md:text-[clamp(6rem,10vw,9rem)]">
@@ -628,7 +628,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
           <motion.div
             style={reducedMotion ? undefined : { opacity: agentOpacity, y: agentY, scale: agentScale }}
-            className="v6-stage relative flex aspect-square w-[min(92vw,560px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]"
+            className="v6-stage relative flex aspect-square w-[min(78vw,350px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]"
           >
             <div className="v6-orb absolute inset-0 flex items-center justify-center rounded-full">
               <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(230,0,126,0.12),transparent_60%)] blur-2xl" />
