@@ -97,8 +97,8 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
           {suite.category}
         </span>
 
-        {/* Botón Play Explicito para móviles (solo si es la carta activa del mazo y no está reproduciendo) */}
-        {isMobile && isActiveDeckCard && !isPlayingMobile && (
+        {/* Botón Play Explicito para móviles (solo si hay video y es la carta activa del mazo) */}
+        {suite.videoYoutubeId && isMobile && isActiveDeckCard && !isPlayingMobile && (
           <button
             onClick={handlePlayClickMobile}
             className="absolute inset-0 m-auto z-[8] w-14 h-14 bg-bg-dark/90 text-white rounded-full flex items-center justify-center border border-white/20 shadow-2xl hover:scale-105 active:scale-95 transition-transform"

@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import HeroOrbital from '../components/organisms/HeroOrbital';
 import TrustBar from '../components/molecules/TrustBar';
 import VideoExperience from '../components/organisms/VideoExperience';
 import SuitesSection from '../components/organisms/SuitesSection';
-import MartinaWidget from '../components/organisms/MartinaWidget';
 import ReservaExpressForm from '../components/organisms/ReservaExpressForm';
 import HubAccessGrid from '../components/organisms/HubAccessGrid';
 import LocationModal from '../components/molecules/LocationModal';
@@ -17,42 +16,34 @@ import BebidasView from './BebidasView';
 import ContactoSection from '../components/organisms/ContactoSection';
 import { Suite } from '../services/ratesService';
 import { motion, AnimatePresence } from 'framer-motion';
+import { openChat, prefetchMartinaWidget } from '../services/amarteChatbot';
 
 export default function Home() {
   const [activeView, setActiveView] = useState<'home' | 'planes' | 'sexshop' | 'restaurante' | 'bebidas'>('home');
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [isPromoOpen, setIsPromoOpen] = useState(false);
-  const [chatInitialMessage, setChatInitialMessage] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    prefetchMartinaWidget();
+  }, []);
 
   const handleSelectSuite = (_suite: Suite) => {
     setIsFormOpen(true);
   };
 
   const handleActivateChat = (initialMsg?: string) => {
-    setChatInitialMessage(initialMsg);
-    setIsChatOpen(true);
+    void openChat(initialMsg);
   };
 
-  // Activación de Voz con Fallback de Accesibilidad
   const handleActivateVoice = () => {
-    const SpeechRecognition = 
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (SpeechRecognition) {
-      setIsChatOpen(true);
-      console.log("Web Speech API inicializada con éxito.");
-    } else {
-      alert("Tu navegador no soporta control por voz directo. Te redirigimos a nuestro chat de texto con Martina. 🎙️❌");
-      setIsChatOpen(true);
-    }
+    // Voz en vivo temporalmente en “Próximamente”: abre chat de texto.
+    void openChat();
   };
 
   const scrollToHero = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Activamos Martina por defecto
-    handleActivateChat("Hola Martina, quiero reservar una suite.");
+    void openChat('Hola Martina, quiero reservar una suite.');
   };
 
   const scrollToSuites = () => {
@@ -126,7 +117,7 @@ export default function Home() {
       </div>
 
       {/* 2. Video Experience (Venta Emocional Cinemática) */}
-      <VideoExperience videoId="dQw4w9WgXcQ" />
+      <VideoExperience videoId="OUDd45y2Fr8" startSeconds={3} />
 
       {/* 3. Suites Section (Híbrido: Mobile Deck / Desktop Grid con H1) */}
       <div id="suites-section">
@@ -165,16 +156,6 @@ export default function Home() {
         <p className="mb-2">© 2026 Inversiones Ogavi S.A. · Amarte Suite · El Planeta Romántico de Bogotá</p>
         <p className="text-xs text-gris-carbon">Teusaquillo · Calle 62 #14-19 · Bogotá, Colombia</p>
       </footer>
-
-      {/* Widget conversacional flotante de Martina */}
-      <MartinaWidget 
-        isOpen={isChatOpen} 
-        onClose={() => {
-          setIsChatOpen(false);
-          setChatInitialMessage(undefined);
-        }} 
-        initialUserMessage={chatInitialMessage}
-      />
 
       {/* Formulario de reserva express */}
       {isFormOpen && (

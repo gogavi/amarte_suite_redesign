@@ -3,6 +3,10 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
 import spaceBgMobile from '../../assets/home_motion/space-bg-mobile_comp.webp';
 import spaceBgDesktop from '../../assets/home_motion/space-bg-desktop_comp.jpg';
+import planetaAmarte from '../../assets/planeta-amarte.jpg';
+
+/** Kill-switch temporal del aura (anillos / plasma / glow). Volver a true para reactivar. */
+const SHOW_ORB_AURA = false;
 
 interface HeroOrbitalProps {
   onActivateChat: (initialMessage?: string) => void;
@@ -26,12 +30,19 @@ type Particle = {
   hue: 'rose' | 'gold' | 'white';
 };
 
-const conversationStarters = [
-  ['💖', 'Decoración romántica', 'Quiero reservar y agregar decoración romántica'],
-  ['💡', 'AmarTip de Hoy', 'Dame un AmarTip para vivir una experiencia romántica en Amarte'],
-  ['🎂', 'Cumpleaños sorpresa', 'Quiero preparar un cumpleaños sorpresa'],
-  ['📍', 'Cómo llegar', 'Quiero saber cómo llegar a Amarte'],
-] as const;
+const INSTAGRAM_URL = 'https://instagram.com/amarte_suite';
+const MAPS_URL = 'https://maps.app.goo.gl/zbdiMtAUpecJ2NYP9';
+
+type ConversationStarter =
+  | { icon: string; label: string; prompt: string }
+  | { icon: string; label: string; href: string; ariaLabel?: string };
+
+const conversationStarters: ConversationStarter[] = [
+  { icon: '💖', label: 'Decoración romántica', prompt: 'Quiero reservar y agregar decoración romántica' },
+  { icon: '💡', label: 'AmarTip de Hoy', href: INSTAGRAM_URL, ariaLabel: 'AmarTip de Hoy — Instagram de Amarte Suite' },
+  { icon: '🎂', label: 'Cumpleaños sorpresa', prompt: 'Quiero preparar un cumpleaños sorpresa' },
+  { icon: '📍', label: 'Cómo llegar', href: MAPS_URL, ariaLabel: 'Cómo llegar — Google Maps de Amarte Suite' },
+];
 
 const magneticNodes = Array.from({ length: 156 }, (_, index) => {
   const row = Math.floor(index / 13);
@@ -39,8 +50,9 @@ const magneticNodes = Array.from({ length: 156 }, (_, index) => {
   const rowNorm = (row - 5.5) / 5.5;
   const radius = Math.sqrt(Math.max(0.08, 1 - rowNorm * rowNorm));
   const angle = (col / 13) * Math.PI * 2 + row * 0.34;
-  const x = 50 + Math.cos(angle) * radius * 46;
-  const y = 50 + rowNorm * 41 + Math.sin(angle) * radius * 6;
+  const orbit = 44;
+  const x = 50 + Math.cos(angle) * radius * orbit;
+  const y = 50 + rowNorm * orbit;
   const depth = 0.45 + radius * 0.55;
   return { index, x, y, depth, delay: (index % 17) * 120 };
 });
@@ -300,49 +312,75 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         .v6-orb {
-          filter: drop-shadow(0 0 50px rgba(230, 0, 126, 0.22));
+          filter: drop-shadow(0 0 56px rgba(196, 74, 42, 0.34)) drop-shadow(0 0 90px rgba(230, 0, 126, 0.18));
           transform: translate3d(calc(var(--mx) * -7px), calc(var(--my) * -6px), 120px);
           transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1), filter 400ms ease;
         }
 
+        .v6-orb.v6-orb--no-aura {
+          filter: none;
+        }
+
         .v6-orb-core {
           background:
-            radial-gradient(circle at 50% 50%, rgba(255, 245, 248, 0.82) 0 3.5%, rgba(241, 229, 172, 0.66) 5% 10%, rgba(230, 0, 126, 0.44) 16% 28%, rgba(106, 14, 34, 0.34) 46%, rgba(13,13,17,0.2) 68%, transparent 76%),
-            radial-gradient(circle at 50% 50%, rgba(230, 0, 126, 0.16), transparent 68%);
+            radial-gradient(circle at 32% 28%, rgba(255, 214, 170, 0.28), transparent 30%),
+            radial-gradient(circle at 68% 68%, rgba(120, 36, 18, 0.45), transparent 42%),
+            radial-gradient(circle at 50% 50%, #c45a2c 0%, #8a2f1a 48%, #3d120c 100%);
           box-shadow:
-            inset 0 0 56px rgba(255, 245, 248, 0.06),
-            0 0 92px rgba(230, 0, 126, 0.24),
-            0 0 160px rgba(241, 229, 172, 0.08);
-          animation: v6CoreBreath 5.8s ease-in-out infinite;
+            inset -14px -16px 36px rgba(20, 6, 4, 0.5),
+            inset 12px 10px 24px rgba(255, 196, 140, 0.14),
+            0 0 48px rgba(196, 74, 42, 0.35),
+            0 0 120px rgba(230, 0, 126, 0.16);
+          transform-origin: center center;
+          animation: v6CoreBreath 7.2s ease-in-out infinite;
+        }
+
+        .v6-mars-surface {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 165%;
+          height: 165%;
+          max-width: none;
+          object-fit: cover;
+          object-position: 50% 38%;
+          border-radius: 9999px;
+          filter: saturate(1.16) contrast(1.08) brightness(1.02) hue-rotate(-6deg);
+          transform: translate(-50%, -50%);
+          transform-origin: center center;
+          animation: v6MarsSpin 64s linear infinite;
         }
 
         .v6-orb-core::before,
         .v6-orb-core::after {
           content: '';
           position: absolute;
-          inset: -6%;
+          inset: 0;
           border-radius: 9999px;
           pointer-events: none;
+          z-index: 1;
         }
 
         .v6-orb-core::before {
           background:
-            conic-gradient(from 90deg, transparent, rgba(255,245,248,0.16), transparent 22%, rgba(230,0,126,0.28), transparent 52%, rgba(241,229,172,0.2), transparent 78%);
-          filter: blur(7px);
-          mix-blend-mode: screen;
-          animation: v6PlasmaSpin 11s linear infinite;
+            radial-gradient(circle at 30% 24%, rgba(255, 230, 190, 0.28), transparent 30%),
+            radial-gradient(circle at 70% 70%, rgba(40, 10, 6, 0.4), transparent 38%),
+            linear-gradient(145deg, rgba(255, 180, 120, 0.14), transparent 45%, rgba(20, 4, 2, 0.3));
+          mix-blend-mode: soft-light;
         }
 
         .v6-orb-core::after {
-          inset: 18%;
-          background: radial-gradient(circle, rgba(241,229,172,0.9), rgba(230,0,126,0.28) 34%, transparent 70%);
-          filter: blur(14px);
-          animation: v6InnerPulse 3.2s ease-in-out infinite;
+          inset: 0;
+          background:
+            radial-gradient(circle at 50% 50%, transparent 58%, rgba(230, 0, 126, 0.16) 78%, rgba(13, 13, 17, 0.5) 100%),
+            radial-gradient(circle at 50% 18%, rgba(255, 245, 248, 0.16), transparent 32%);
+          box-shadow: inset 0 0 0 1px rgba(255, 214, 170, 0.12);
+          animation: v6InnerPulse 4.4s ease-in-out infinite;
         }
 
         .v6-magnetic-shell {
           transform-style: preserve-3d;
-          transform: translate3d(calc(var(--mx) * -5px), calc(var(--my) * -4px), 180px);
+          transform-origin: center center;
           animation: v6MagneticFloat 7.2s ease-in-out infinite;
         }
 
@@ -397,37 +435,40 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         .v6-living-ring {
+          --ring-scale: 1;
           background:
-            radial-gradient(circle at 24% 34%, rgba(255,245,248,0.72), transparent 0 12%, transparent 26%),
-            radial-gradient(circle at 78% 42%, rgba(230,0,126,0.74), transparent 0 14%, transparent 30%),
-            radial-gradient(circle at 48% 84%, rgba(241,229,172,0.58), transparent 0 12%, transparent 28%),
-            conic-gradient(from 18deg, transparent 0 7%, rgba(255,245,248,0.52) 12%, rgba(230,0,126,0.55) 22%, transparent 35%, rgba(241,229,172,0.34) 52%, transparent 70%, rgba(203,123,167,0.48) 82%, transparent 100%);
-          border-radius: 47% 53% 51% 49% / 55% 45% 52% 48%;
-          mask: radial-gradient(circle, transparent 0 37%, #000 42% 65%, transparent 70%);
-          filter: blur(14px) drop-shadow(0 0 28px rgba(230,0,126,0.26));
+            radial-gradient(circle at 24% 34%, rgba(255, 196, 140, 0.55), transparent 0 14%, transparent 28%),
+            radial-gradient(circle at 78% 42%, rgba(196, 74, 42, 0.7), transparent 0 16%, transparent 32%),
+            radial-gradient(circle at 48% 84%, rgba(230, 0, 126, 0.42), transparent 0 12%, transparent 28%),
+            conic-gradient(from 18deg, transparent 0 7%, rgba(255, 196, 140, 0.42) 12%, rgba(196, 74, 42, 0.5) 22%, transparent 35%, rgba(230, 0, 126, 0.28) 52%, transparent 70%, rgba(139, 46, 24, 0.45) 82%, transparent 100%);
+          border-radius: 9999px;
+          mask: radial-gradient(circle, transparent 0 46%, #000 52% 68%, transparent 74%);
+          filter: blur(12px) drop-shadow(0 0 28px rgba(196, 74, 42, 0.28));
           mix-blend-mode: screen;
-          opacity: 0.28;
+          opacity: 0.34;
+          transform: scale(var(--ring-scale));
+          transform-origin: center center;
           animation: v6LivingRing 7.2s cubic-bezier(0.45, 0, 0.2, 1) infinite;
         }
 
         .v6-living-ring:nth-child(2) {
+          --ring-scale: 0.92;
           animation-duration: 8.6s;
           animation-delay: 650ms;
-          opacity: 0.22;
-          transform: scale(0.88) rotate(18deg);
-          filter: blur(13px) drop-shadow(0 0 26px rgba(241,229,172,0.2));
+          opacity: 0.26;
+          filter: blur(11px) drop-shadow(0 0 26px rgba(255, 170, 110, 0.22));
         }
 
         .v6-living-ring:nth-child(3) {
+          --ring-scale: 1.08;
           animation-duration: 10s;
           animation-delay: 1200ms;
-          opacity: 0.18;
-          transform: scale(1.12) rotate(-12deg);
-          filter: blur(18px) drop-shadow(0 0 38px rgba(230,0,126,0.22));
+          opacity: 0.2;
+          filter: blur(16px) drop-shadow(0 0 38px rgba(230, 0, 126, 0.2));
         }
 
         .v6-plasma-cloud {
-          background: radial-gradient(circle, rgba(255,245,248,0.46), rgba(230,0,126,0.2) 34%, transparent 68%);
+          background: radial-gradient(circle, rgba(255, 196, 140, 0.28), rgba(196, 74, 42, 0.16) 34%, transparent 68%);
           border-radius: 9999px;
           filter: blur(22px);
           mix-blend-mode: screen;
@@ -435,14 +476,18 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         .v6-plasma-cloud:nth-of-type(2n) {
-          background: radial-gradient(circle, rgba(241,229,172,0.34), rgba(230,0,126,0.16) 38%, transparent 70%);
+          background: radial-gradient(circle, rgba(230, 0, 126, 0.22), rgba(139, 46, 24, 0.14) 38%, transparent 70%);
           animation-duration: 8.2s;
           animation-direction: reverse;
         }
 
         .v6-orbit {
+          left: 50%;
+          top: 50%;
           border: 1px solid rgba(255,245,248,0.08);
           box-shadow: 0 0 32px rgba(230,0,126,0.12), inset 0 0 28px rgba(241,229,172,0.06);
+          transform: translate(-50%, -50%);
+          transform-origin: center center;
           animation: v6Wave 4.8s cubic-bezier(0.25, 1, 0.5, 1) infinite;
         }
 
@@ -496,8 +541,13 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         @keyframes v6CoreBreath {
-          0%, 100% { transform: scale(0.94); filter: brightness(1.04) saturate(1.04); opacity: 0.9; }
-          50% { transform: scale(1.07); filter: brightness(1.2) saturate(1.16); opacity: 1; }
+          0%, 100% { scale: 0.99; filter: brightness(1.02) saturate(1.06); opacity: 0.98; }
+          50% { scale: 1.015; filter: brightness(1.08) saturate(1.1); opacity: 1; }
+        }
+
+        @keyframes v6MarsSpin {
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         @keyframes v6MagneticFloat {
@@ -515,18 +565,14 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           50% { transform: scale(1.08); opacity: 0.34; }
         }
 
-        @keyframes v6PlasmaSpin { to { rotate: 360deg; } }
-
         @keyframes v6InnerPulse {
           0%, 100% { opacity: 0.48; transform: scale(0.82); }
           50% { opacity: 0.95; transform: scale(1.08); }
         }
 
         @keyframes v6LivingRing {
-          0%, 100% { border-radius: 47% 53% 51% 49% / 55% 45% 52% 48%; scale: 1; }
-          25% { border-radius: 56% 44% 45% 55% / 48% 58% 42% 52%; }
-          50% { border-radius: 43% 57% 58% 42% / 60% 40% 56% 44%; scale: 1.035; }
-          75% { border-radius: 54% 46% 47% 53% / 45% 55% 48% 52%; }
+          0%, 100% { transform: scale(var(--ring-scale)); opacity: 0.3; }
+          50% { transform: scale(calc(var(--ring-scale) * 1.03)); opacity: 0.4; }
         }
 
         @keyframes v6CloudBreath {
@@ -535,9 +581,9 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         @keyframes v6Wave {
-          0% { transform: scale(0.42); opacity: 0; }
+          0% { transform: translate(-50%, -50%) scale(0.42); opacity: 0; }
           28% { opacity: 0.3; }
-          100% { transform: scale(1.18); opacity: 0; }
+          100% { transform: translate(-50%, -50%) scale(1.18); opacity: 0; }
         }
 
         @media (min-width: 768px) {
@@ -571,6 +617,10 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           }
           .v6-bg, .v6-motion-video, .v6-stage, .v6-orb, .v6-cta { transform: none !important; }
           .v6-motion-video { display: none; }
+          .v6-mars-surface {
+            animation: none !important;
+            transform: translate(-50%, -50%) !important;
+          }
         }
       `}</style>
 
@@ -630,39 +680,59 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             style={reducedMotion ? undefined : { opacity: agentOpacity, y: agentY, scale: agentScale }}
             className="v6-stage relative flex aspect-square w-[min(92vw,560px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]"
           >
-            <div className="v6-orb absolute inset-0 flex items-center justify-center rounded-full">
-              <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(230,0,126,0.12),transparent_60%)] blur-2xl" />
+            <div className={`v6-orb absolute inset-0 flex items-center justify-center rounded-full${SHOW_ORB_AURA ? '' : ' v6-orb--no-aura'}`}>
+              {SHOW_ORB_AURA && (
+                <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(230,0,126,0.12),transparent_60%)] blur-2xl" />
+              )}
               <div className="v6-magnetic-shell absolute inset-[5%] rounded-full">
-                <span className="v6-field-line absolute inset-[9%] rounded-full" />
-                <span className="v6-field-line absolute inset-[20%] rounded-full [animation-delay:600ms]" />
-                <span className="v6-field-line absolute inset-[31%] rounded-full [animation-delay:1200ms]" />
-                {magneticNodes.map((node) => (
-                  <span
-                    key={node.index}
-                    className="v6-node absolute rounded-full"
-                    style={{
-                      '--node-x': node.x,
-                      '--node-y': node.y,
-                      '--node-depth': node.depth,
-                      '--node-delay': node.delay,
-                    } as CSSProperties}
+                {SHOW_ORB_AURA && (
+                  <>
+                    <span className="v6-field-line absolute inset-[9%] rounded-full" />
+                    <span className="v6-field-line absolute inset-[20%] rounded-full [animation-delay:600ms]" />
+                    <span className="v6-field-line absolute inset-[31%] rounded-full [animation-delay:1200ms]" />
+                    {magneticNodes.map((node) => (
+                      <span
+                        key={node.index}
+                        className="v6-node absolute rounded-full"
+                        style={{
+                          '--node-x': node.x,
+                          '--node-y': node.y,
+                          '--node-depth': node.depth,
+                          '--node-delay': node.delay,
+                        } as CSSProperties}
+                      />
+                    ))}
+                  </>
+                )}
+                <div
+                  className="v6-orb-core absolute left-[8%] right-[8%] top-[9.5%] bottom-[6.5%] overflow-hidden rounded-full"
+                  aria-hidden="true"
+                >
+                  <img
+                    src={planetaAmarte}
+                    alt=""
+                    className="v6-mars-surface"
+                    draggable={false}
                   />
-                ))}
+                </div>
               </div>
-              <div className="v6-orb-core absolute inset-[34%] overflow-hidden rounded-full" />
-              <div className="v6-plasma-cloud absolute left-[18%] top-[18%] h-[34%] w-[42%]" />
-              <div className="v6-plasma-cloud absolute right-[16%] top-[28%] h-[36%] w-[34%]" />
-              <div className="v6-plasma-cloud absolute bottom-[13%] left-[32%] h-[30%] w-[44%]" />
-              <div className="v6-living-ring absolute inset-[9%]" />
-              <div className="v6-living-ring absolute inset-[13%]" />
-              <div className="v6-living-ring absolute inset-[7%]" />
-              {[0, 1, 2, 3].map((index) => (
-                <span
-                  key={index}
-                  className="v6-orbit absolute h-[46%] w-[46%] rounded-full"
-                  style={{ animationDelay: `${index * 520}ms` }}
-                />
-              ))}
+              {SHOW_ORB_AURA && (
+                <>
+                  <div className="v6-plasma-cloud absolute left-[22%] top-[22%] h-[30%] w-[30%]" />
+                  <div className="v6-plasma-cloud absolute right-[22%] top-[26%] h-[28%] w-[28%]" />
+                  <div className="v6-plasma-cloud absolute bottom-[20%] left-[35%] h-[26%] w-[30%]" />
+                  <div className="v6-living-ring absolute inset-[8%]" />
+                  <div className="v6-living-ring absolute inset-[12%]" />
+                  <div className="v6-living-ring absolute inset-[5%]" />
+                  {[0, 1, 2, 3].map((index) => (
+                    <span
+                      key={index}
+                      className="v6-orbit absolute h-[46%] w-[46%] rounded-full"
+                      style={{ animationDelay: `${index * 520}ms` }}
+                    />
+                  ))}
+                </>
+              )}
             </div>
 
             <button
@@ -670,7 +740,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
               onClick={activateVoice}
               className="v6-cta absolute z-30 inline-flex items-center justify-center gap-2 rounded-full border border-[#FFF5F8]/18 bg-[#E6007E] px-7 py-3.5 font-heading text-sm uppercase leading-none tracking-widest text-white shadow-[0_0_42px_rgba(230,0,126,0.5),0_20px_80px_rgba(0,0,0,0.55)] transition hover:scale-105 hover:bg-[#ff0a90] active:scale-95 sm:px-9 sm:py-4"
             >
-              <svg aria-hidden="true" className="h-[15px] w-[15px] shrink-0 translate-y-[0.5px]" viewBox="0 0 24 24" fill="none"><path d="M12 13.75c1.66 0 3-1.34 3-3V6.25c0-1.66-1.34-3-3-3s-3 1.34-3 3v4.5c0 1.66 1.34 3 3 3Z" stroke="currentColor" strokeWidth="1.65"/><path d="M6.5 10.25c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5M12 15.75v3.5M9.25 19.25h5.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round"/><path d="M10.25 6.5h3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.7"/></svg> HABLA CON MARTINA
+              <svg aria-hidden="true" className="h-[15px] w-[15px] shrink-0 translate-y-[0.5px]" viewBox="0 0 24 24" fill="none"><path d="M12 13.75c1.66 0 3-1.34 3-3V6.25c0-1.66-1.34-3-3-3s-3 1.34-3 3v4.5c0 1.66 1.34 3 3 3Z" stroke="currentColor" strokeWidth="1.65"/><path d="M6.5 10.25c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5M12 15.75v3.5M9.25 19.25h5.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round"/><path d="M10.25 6.5h3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.7"/></svg> PREGÚNTALE A MARTINA
             </button>
           </motion.div>
 
@@ -685,18 +755,39 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             style={reducedMotion ? undefined : { opacity: supportOpacity }}
             className="flex flex-wrap justify-center gap-2 pt-1"
           >
-            {conversationStarters.map(([icon, label, prompt]) => (
-              <button
-                key={label}
-                onClick={() => {
-                  setCurrentState('thinking');
-                  onActivateChat(prompt);
-                }}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[#FFF5F8]/78 backdrop-blur-md transition hover:scale-105 hover:border-[#E6007E]/55 hover:bg-white/10 hover:text-white"
-              >
-                <span className="mr-1.5">{icon}</span>{label}
-              </button>
-            ))}
+            {conversationStarters.map((starter) => {
+              const className =
+                'rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[#FFF5F8]/78 backdrop-blur-md transition hover:scale-105 hover:border-[#E6007E]/55 hover:bg-white/10 hover:text-white';
+
+              if ('href' in starter) {
+                return (
+                  <a
+                    key={starter.label}
+                    href={starter.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={className}
+                    aria-label={starter.ariaLabel ?? starter.label}
+                  >
+                    <span className="mr-1.5">{starter.icon}</span>{starter.label}
+                  </a>
+                );
+              }
+
+              return (
+                <button
+                  key={starter.label}
+                  type="button"
+                  onClick={() => {
+                    setCurrentState('thinking');
+                    onActivateChat(starter.prompt);
+                  }}
+                  className={className}
+                >
+                  <span className="mr-1.5">{starter.icon}</span>{starter.label}
+                </button>
+              );
+            })}
           </motion.div>
         </div>
       </div>

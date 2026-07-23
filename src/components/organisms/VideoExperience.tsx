@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 
 interface VideoExperienceProps {
   videoId?: string;
+  /** Segundo de inicio (equivalente a `t=` en YouTube). */
+  startSeconds?: number;
 }
 
-export default function VideoExperience({ videoId = "dQw4w9WgXcQ" }: VideoExperienceProps) {
+export default function VideoExperience({ videoId = "OUDd45y2Fr8", startSeconds = 0 }: VideoExperienceProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   // Parámetros de YouTube optimizados bajo el dominio youtube-nocookie para mayor privacidad:
@@ -15,7 +17,8 @@ export default function VideoExperience({ videoId = "dQw4w9WgXcQ" }: VideoExperi
   // - playlist=videoId: necesario para que loop funcione
   // - controls=0: oculta controles de reproducción para una experiencia limpia
   // - modestbranding=1: oculta marcas de agua
-  const youtubeUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3`;
+  const startParam = startSeconds > 0 ? `&start=${startSeconds}` : '';
+  const youtubeUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3${startParam}`;
 
   return (
     <section className="relative w-full max-w-5xl mx-auto py-16 md:py-20 px-6 flex flex-col items-center">
