@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 
-export type PaymentMethod = 'epayco' | 'whatsapp';
+export type PaymentMethod = 'wompi' | 'whatsapp';
 
 export type CreateWebReservationInput = {
   name: string;
@@ -51,7 +51,7 @@ export async function createWebReservation(
 ): Promise<CreateWebReservationResult> {
   const tipo = input.tipo.trim();
   const packTiempo = input.packTiempo.trim();
-  const formaPago = input.method === 'epayco' ? 'ePayco' : 'WhatsApp';
+  const formaPago = input.method === 'wompi' ? 'Wompi' : 'WhatsApp';
 
   if (!tipo || !packTiempo) {
     throw new Error('Faltan tipo de suite o pack de tiempo.');

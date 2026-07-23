@@ -65,18 +65,18 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
               <div className="p-3 rounded-lg border border-white/5 bg-white/2">
                 <span className="text-[10px] text-[#929095] uppercase block">WhatsApp</span>
                 <a
-                  href="https://wa.me/573235726252"
+                  href="https://wa.me/573007416683"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-heading text-sm text-[#FFF5F8] hover:text-[#E6007E] transition-colors"
                 >
-                  +57 323 572 6252
+                  +573007416683
                 </a>
               </div>
               <div className="p-3 rounded-lg border border-white/5 bg-white/2">
                 <span className="text-[10px] text-[#929095] uppercase block">Teléfono Fijo</span>
                 <span className="font-heading text-sm text-[#FFF5F8]">
-                  (601) 345-6789
+                  (601) 255-8420
                 </span>
               </div>
             </div>

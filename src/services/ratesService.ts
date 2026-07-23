@@ -47,8 +47,8 @@ export const suitesData: Suite[] = [
     description: "Nuestra suite insignia. Lujo absoluto, jacuzzi de hidromasaje, acabados premium y atmósfera con iluminación digital programable para una noche inolvidable.",
     features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgDiamante,
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
@@ -60,8 +60,8 @@ export const suitesData: Suite[] = [
     description: "Atmósfera dorada de lujo y seducción. Diseñada con detalles en chapa de oro y espejos panorámicos para una velada llena de sofisticación.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgGold,
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
@@ -73,8 +73,8 @@ export const suitesData: Suite[] = [
     description: "Elegancia y pasión en tonalidades carmesí. Cuenta con tina de hidromasajes, acabados de mármol y un ambiente diseñado para encender los sentidos.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgRubi,
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
@@ -86,8 +86,8 @@ export const suitesData: Suite[] = [
     description: "Atmósfera azul zafiro que evoca calma y exclusividad. Equipada con jacuzzi, luces inteligentes graduables y cama king size premium.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgZafiro,
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
@@ -99,8 +99,8 @@ export const suitesData: Suite[] = [
     description: "Fantasía oscura y misterio. Iluminación de acento tenue, decoración gótica evocando la baticueva, tina de hidromasaje y detalles temáticos únicos.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: false },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgBaticueva,
     whatsappLink: "https://wa.me/p/4019349191434593/573235726252"  },
@@ -112,8 +112,8 @@ export const suitesData: Suite[] = [
     description: "Transpórtate a las mil y una noches. Cúpulas orientales, cojines de seda, jacuzzi con iluminación cálida y cama redonda de ensueño rodeada de velos.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgArabe,
     whatsappLink: "https://wa.me/p/4019862324758030/573235726252"  },
@@ -125,8 +125,8 @@ export const suitesData: Suite[] = [
     description: "Decoración inspirada en el arte pop y el dinamismo urbano. Colores vibrantes, jacuzzi de hidromasaje y ambiente lúdico y divertido.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 200000, "8h": 230000, "12h": 280000, day_hotelero: 350000 },
-      weekend: { "4h": 250000, "8h": 290000, "12h": 350000, day_hotelero: 390000 }
+      weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
+      weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgHarleyQueen,
     whatsappLink: "https://wa.me/p/4019862324758030/573235726252"  },
@@ -138,8 +138,8 @@ export const suitesData: Suite[] = [
     description: "Máxima relajación y escape de la rutina. Jacuzzi gigante climatizado con cromoterapia para una desconexión total en Teusaquillo.",
     features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: false },
     rates: {
-      weekday: { "4h": 175000, "8h": 200000, "12h": 250000, day_hotelero: 320000 },
-      weekend: { "4h": 200000, "8h": 240000, "12h": 300000, day_hotelero: 350000 }
+      weekday: { "4h": 200000, "8h": 240000, "12h": 300000, day_hotelero: 380000 },
+      weekend: { "4h": 240000, "8h": 290000, "12h": 360000, day_hotelero: 420000 }
     },
     image: imgJacuzziVip,
     whatsappLink: "https://wa.me/p/4566077396739183/573235726252"  },
@@ -151,8 +151,8 @@ export const suitesData: Suite[] = [
     description: "Estilo rústico, íntimo y acogedor. Chimenea artificial, paredes de madera y cama de gran tamaño para simular un escape en la montaña.",
     features: { jacuzzi: false, sauna: false, cama_movimiento: true, aire_acondicionado: false },
     rates: {
-      weekday: { "4h": 100000, "8h": 130000, "12h": 160000, day_hotelero: 200000 },
-      weekend: { "4h": 120000, "8h": 150000, "12h": 220000, day_hotelero: 270000 }
+      weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
+      weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
     image: imgCabana,
     whatsappLink: "https://wa.me/p/3980047085436054/573235726252"  },
@@ -164,8 +164,8 @@ export const suitesData: Suite[] = [
     description: "Nuestra suite homónima. Decoración romántica insuperable, jacuzzi privado y detalles florales y de luces listos para sorprender.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 180000, "8h": 210000, "12h": 260000, day_hotelero: 330000 },
-      weekend: { "4h": 210000, "8h": 250000, "12h": 310000, day_hotelero: 360000 }
+      weekday: { "4h": 90000, "8h": 120000, "12h": 160000, day_hotelero: 200000 },
+      weekend: { "4h": 120000, "8h": 160000, "12h": 220000, day_hotelero: 260000 }
     },
     image: imgAmarte,
     whatsappLink: "https://wa.me/p/4566077396739183/573235726252"  },
@@ -177,8 +177,8 @@ export const suitesData: Suite[] = [
     description: "Lleva tu fantasía a otro plano. Suite equipada con nuestra famosa cama con movimiento rítmico automatizado y sonido de alta fidelidad.",
     features: { jacuzzi: false, sauna: false, cama_movimiento: true, aire_acondicionado: true },
     rates: {
-      weekday: { "4h": 120000, "8h": 150000, "12h": 180000, day_hotelero: 220000 },
-      weekend: { "4h": 140000, "8h": 170000, "12h": 240000, day_hotelero: 290000 }
+      weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
+      weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
     image: imgMovimiento,
     whatsappLink: "https://wa.me/p/3980047085436054/573235726252"  }

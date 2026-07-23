@@ -7,6 +7,8 @@ import planetaAmarte from '../../assets/planeta-amarte.jpg';
 
 /** Kill-switch temporal del aura (anillos / plasma / glow). Volver a true para reactivar. */
 const SHOW_ORB_AURA = false;
+/** Kill-switch de la sombra/gradiente que sigue al mouse. Volver a true para reactivar. */
+const SHOW_CURSOR_DIMPLE = false;
 
 interface HeroOrbitalProps {
   onActivateChat: (initialMessage?: string) => void;
@@ -143,16 +145,20 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         const y = Math.max(-1, Math.min(1, (event.clientY - rect.top - rect.height / 2) / (rect.height / 2)));
         root.style.setProperty('--mx', x.toFixed(4));
         root.style.setProperty('--my', y.toFixed(4));
-        root.style.setProperty('--cursor-x', `${((event.clientX - rect.left) / rect.width) * 100}%`);
-        root.style.setProperty('--cursor-y', `${((event.clientY - rect.top) / rect.height) * 100}%`);
+        if (SHOW_CURSOR_DIMPLE) {
+          root.style.setProperty('--cursor-x', `${((event.clientX - rect.left) / rect.width) * 100}%`);
+          root.style.setProperty('--cursor-y', `${((event.clientY - rect.top) / rect.height) * 100}%`);
+        }
         ticking = false;
       });
     };
     const reset = () => {
       root.style.setProperty('--mx', '0');
       root.style.setProperty('--my', '0');
-      root.style.setProperty('--cursor-x', '50%');
-      root.style.setProperty('--cursor-y', '50%');
+      if (SHOW_CURSOR_DIMPLE) {
+        root.style.setProperty('--cursor-x', '50%');
+        root.style.setProperty('--cursor-y', '50%');
+      }
     };
 
     window.addEventListener('mousemove', onMove, { passive: true });
@@ -683,7 +689,9 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         <div className="v6-space-grade absolute inset-0" />
       </div>
       <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-80 pointer-events-none" />
-      <div className="v6-magnetic-dimple pointer-events-none absolute inset-0 z-[11]" />
+      {SHOW_CURSOR_DIMPLE && (
+        <div className="v6-magnetic-dimple pointer-events-none absolute inset-0 z-[11]" />
+      )}
 
       <div className="sticky top-0 z-20 flex min-h-screen flex-col items-center px-4 pb-8 pt-4 sm:px-6">
         <header className="flex w-full max-w-7xl items-center justify-between border-b border-white/8 pb-4">

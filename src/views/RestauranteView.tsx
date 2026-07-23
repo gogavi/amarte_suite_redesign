@@ -9,17 +9,18 @@ interface Dish {
   imageEmoji: string;
 }
 
+const RESTAURANTE_STORE_URL = 'https://hotelamartesuite.store/collections/restaurante';
+
 interface RestauranteViewProps {
   onBack: () => void;
-  onSelectDish: (dishName: string) => void;
 }
 
 const dishes: Dish[] = [
   {
     id: 'lomo_orbital',
-    name: 'Lomo al Vino Espacial',
+    name: 'Tbone Steak',
     category: 'Platos Fuertes',
-    price: '$65.000',
+    price: '$45.000',
     description: 'Medallón de lomo fino bañado en salsa de vino tinto con puré trufado.',
     imageEmoji: '🥩',
   },
@@ -49,7 +50,7 @@ const dishes: Dish[] = [
   },
 ];
 
-export default function RestauranteView({ onBack, onSelectDish }: RestauranteViewProps) {
+export default function RestauranteView({ onBack }: RestauranteViewProps) {
   return (
     <div className="min-h-screen bg-[#0D0D11] text-[#FFF5F8] py-16 px-6 relative">
       {/* Lights background */}
@@ -101,12 +102,14 @@ export default function RestauranteView({ onBack, onSelectDish }: RestauranteVie
 
               <div>
                 <div className="text-lg font-heading text-white mb-4">{dish.price}</div>
-                <button
-                  onClick={() => onSelectDish(dish.name)}
-                  className="w-full py-2.5 rounded-lg border border-[#19A6E0]/25 hover:bg-[#19A6E0] hover:text-black hover:border-transparent text-[#19A6E0] font-heading text-xs uppercase tracking-widest transition-all duration-200"
+                <a
+                  href={RESTAURANTE_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-lg border border-[#19A6E0]/25 hover:bg-[#19A6E0] hover:text-black hover:border-transparent text-[#19A6E0] font-heading text-xs uppercase tracking-widest transition-all duration-200 text-center block"
                 >
                   Ordenar a la Suite
-                </button>
+                </a>
               </div>
             </motion.div>
           ))}

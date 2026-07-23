@@ -9,9 +9,10 @@ interface Product {
   imageEmoji: string;
 }
 
+const SEXSHOP_STORE_URL = 'https://hotelamartesuite.store/collections/sex-shop';
+
 interface SexShopViewProps {
   onBack: () => void;
-  onSelectProduct: (productName: string) => void;
 }
 
 const products: Product[] = [
@@ -49,7 +50,7 @@ const products: Product[] = [
   },
 ];
 
-export default function SexShopView({ onBack, onSelectProduct }: SexShopViewProps) {
+export default function SexShopView({ onBack }: SexShopViewProps) {
   return (
     <div className="min-h-screen bg-[#0D0D11] text-[#FFF5F8] py-16 px-6 relative">
       {/* Lights background */}
@@ -101,12 +102,14 @@ export default function SexShopView({ onBack, onSelectProduct }: SexShopViewProp
 
               <div>
                 <div className="text-lg font-heading text-white mb-4">{product.price}</div>
-                <button
-                  onClick={() => onSelectProduct(product.name)}
-                  className="w-full py-2.5 rounded-lg border border-[#F1E5AC]/25 hover:bg-[#F1E5AC] hover:text-black hover:border-transparent text-[#F1E5AC] font-heading text-xs uppercase tracking-widest transition-all duration-200"
+                <a
+                  href={SEXSHOP_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-lg border border-[#F1E5AC]/25 hover:bg-[#F1E5AC] hover:text-black hover:border-transparent text-[#F1E5AC] font-heading text-xs uppercase tracking-widest transition-all duration-200 text-center block"
                 >
                   Añadir Discretamente
-                </button>
+                </a>
               </div>
             </motion.div>
           ))}

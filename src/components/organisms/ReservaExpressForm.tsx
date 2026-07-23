@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
 import { createWebReservation, type PaymentMethod } from '../../services/reservationService';
+import { buildWhatsappReservasUrl, buildWhatsappReservationMessage, getWompiCheckoutUrl } from '../../services/paymentLinks';
 import {
   fetchSuiteCatalog,
   getPackPrice,
@@ -34,6 +35,9 @@ function packLabel(pack: SuitePack): string {
 
 export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps) {
   const { state, dispatch } = useReservation();
+  const lockedLocalSuiteName = state.selectedSuite?.name ?? null;
+  const lockedCatalogName = resolveCatalogSuiteName(lockedLocalSuiteName);
+
   const [catalog, setCatalog] = useState<CatalogSuite[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogError, setCatalogError] = useState<string | null>(null);
@@ -67,7 +71,9 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     [availablePacks, formData.packId]
   );
 
-  const price = selectedPack ? getPackPrice(selectedPack, formData.date) : 0;
+  const canShowPrice = Boolean(selectedSuite && selectedPack && formData.date);
+  const price = canShowPrice && selectedPack ? getPackPrice(selectedPack, formData.date) : 0;
+  const suiteLocked = Boolean(lockedCatalogName);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,9 +92,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
         setCatalog(suites);
 
-        const preferredName = resolveCatalogSuiteName(state.selectedSuite?.name);
         const preferred =
-          suites.find((suite) => suite.name === preferredName) ?? suites[0];
+          suites.find((suite) => suite.name === lockedCatalogName) ?? suites[0];
         const preferredPack = preferred.packs[0];
 
         setFormData((prev) => ({
@@ -111,7 +116,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     return () => {
       cancelled = true;
     };
-  }, [state.selectedSuite?.name]);
+  }, [lockedCatalogName]);
 
   useEffect(() => {
     if (!selectedSuite) return;
@@ -155,6 +160,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   };
 
   const handleSuiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (suiteLocked) return;
     const suiteId = e.target.value;
     const suite = catalog.find((item) => item.id === suiteId);
     setFormData((prev) => ({
@@ -238,12 +244,21 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       dispatch({ type: 'SET_TIME', payload: time });
       dispatch({ type: 'CALCULATE_PRICE', payload: price });
 
-      if (method === 'epayco') {
-        window.open('https://secure.payco.co/checkoutopen/66308', '_blank');
+      if (method === 'wompi') {
+        window.open(getWompiCheckoutUrl(), '_blank');
       } else {
-        const message = `¡Hola! Quiero reservar en el Planeta Romántico:\n\n*Huésped:* ${formData.name.trim()}\n*Suite:* ${selectedSuite.name}\n*Fecha:* ${formData.date}\n*Hora:* ${time}\n*Estadía:* ${selectedPack.name}\n*Valor Estimado:* $${price.toLocaleString('es-CO')} COP\n\nQuedo pendiente para confirmar el pago. 🪐`;
-        const encodedMsg = encodeURIComponent(message);
-        window.open(`https://wa.me/573235726252?text=${encodedMsg}`, '_blank');
+        const message = buildWhatsappReservationMessage({
+          name: formData.name.trim(),
+          document: formData.document,
+          clientWhatsapp: formData.whatsapp,
+          email,
+          suiteName: selectedSuite.name,
+          packName: selectedPack.name,
+          dateIso: formData.date,
+          timeLabel: time,
+          price,
+        });
+        window.open(buildWhatsappReservasUrl(message), '_blank');
       }
     } catch (error) {
       const message = error instanceof Error
@@ -349,7 +364,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="suiteId"
                 value={formData.suiteId}
                 onChange={handleSuiteChange}
-                disabled={isSubmitting || catalogLoading || !!catalogError}
+                disabled={isSubmitting || catalogLoading || !!catalogError || suiteLocked}
                 className={selectClass}
               >
                 {catalogLoading && <option value="">Cargando suites…</option>}
@@ -357,6 +372,11 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                   <option key={suite.id} value={suite.id}>{suite.name}</option>
                 ))}
               </select>
+              {suiteLocked && selectedSuite && (
+                <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
+                  Suite fijada desde la ficha seleccionada
+                </p>
+              )}
             </div>
             <div>
               <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Pack de tiempo *</label>
@@ -435,12 +455,21 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             </div>
           </div>
 
-          <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6">
+          <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6 gap-4">
             <span className="text-sm text-rosa-cuarzo font-light uppercase tracking-widest">Valor de la reserva:</span>
-            <span className="text-2xl font-heading text-cyan-orbital font-bold">
-              {catalogLoading ? '…' : `$${price.toLocaleString('es-CO')} COP`}
+            <span className="text-2xl font-heading text-cyan-orbital font-bold text-right">
+              {catalogLoading
+                ? '…'
+                : canShowPrice
+                  ? `$${price.toLocaleString('es-CO')} COP`
+                  : '—'}
             </span>
           </div>
+          {!catalogLoading && !canShowPrice && (
+            <p className="text-[11px] text-gris-medio -mt-2">
+              Elige suite, pack de tiempo y fecha para calcular el valor.
+            </p>
+          )}
 
           {(submitError || catalogError) && (
             <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-brand px-3 py-2" role="alert">
@@ -451,16 +480,16 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <button
               type="button"
-              onClick={(e) => handleSubmit(e, 'epayco')}
-              disabled={isSubmitting || catalogLoading || !!catalogError}
+              onClick={(e) => handleSubmit(e, 'wompi')}
+              disabled={isSubmitting || catalogLoading || !!catalogError || !canShowPrice}
               className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              {isSubmitting ? 'Guardando…' : '💳 Pagar Online (ePayco)'}
+              {isSubmitting ? 'Guardando…' : '💳 Pagar Online (Wompi)'}
             </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'whatsapp')}
-              disabled={isSubmitting || catalogLoading || !!catalogError}
+              disabled={isSubmitting || catalogLoading || !!catalogError || !canShowPrice}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
               {isSubmitting ? 'Guardando…' : '💬 Reservar por WhatsApp'}

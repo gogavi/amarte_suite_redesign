@@ -9,18 +9,19 @@ interface Drink {
   imageEmoji: string;
 }
 
+const BEBIDAS_STORE_URL = 'https://hotelamartesuite.store/collections/bebidas-y-licores';
+
 interface BebidasViewProps {
   onBack: () => void;
-  onSelectDrink: (drinkName: string) => void;
 }
 
 const drinks: Drink[] = [
   {
     id: 'champaña_moet',
-    name: 'Champaña Moët & Chandon',
+  name: 'Vino Tinto Casillero del Diablo',
     category: 'Vinos & Burbujas',
-    price: '$280.000',
-    description: 'El clásico espumante francés para brindar en las ocasiones más especiales.',
+    price: '$100.000',
+    description: 'Vino tinto de la casa para brindar en las ocasiones más especiales.',
     imageEmoji: '🍾',
   },
   {
@@ -49,7 +50,7 @@ const drinks: Drink[] = [
   },
 ];
 
-export default function BebidasView({ onBack, onSelectDrink }: BebidasViewProps) {
+export default function BebidasView({ onBack }: BebidasViewProps) {
   return (
     <div className="min-h-screen bg-[#0D0D11] text-[#FFF5F8] py-16 px-6 relative">
       {/* Lights background */}
@@ -101,12 +102,14 @@ export default function BebidasView({ onBack, onSelectDrink }: BebidasViewProps)
 
               <div>
                 <div className="text-lg font-heading text-white mb-4">{drink.price}</div>
-                <button
-                  onClick={() => onSelectDrink(drink.name)}
-                  className="w-full py-2.5 rounded-lg border border-[#E6007E]/25 hover:bg-[#E6007E] hover:text-white hover:border-transparent text-[#E6007E] font-heading text-xs uppercase tracking-widest transition-all duration-200"
+                <a
+                  href={BEBIDAS_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-lg border border-[#E6007E]/25 hover:bg-[#E6007E] hover:text-white hover:border-transparent text-[#E6007E] font-heading text-xs uppercase tracking-widest transition-all duration-200 text-center block"
                 >
                   Ordenar a la Suite
-                </button>
+                </a>
               </div>
             </motion.div>
           ))}

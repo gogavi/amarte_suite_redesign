@@ -17,8 +17,10 @@ import ContactoSection from '../components/organisms/ContactoSection';
 import { Suite } from '../services/ratesService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { openChat, prefetchMartinaWidget } from '../services/amarteChatbot';
+import { useReservation } from '../context/ReservationContext';
 
 export default function Home() {
+  const { dispatch } = useReservation();
   const [activeView, setActiveView] = useState<'home' | 'planes' | 'sexshop' | 'restaurante' | 'bebidas'>('home');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
@@ -28,7 +30,10 @@ export default function Home() {
     prefetchMartinaWidget();
   }, []);
 
-  const handleSelectSuite = (_suite: Suite) => {
+  const handleSelectSuite = (suite: Suite) => {
+    // SuiteCard ya hace SET_SUITE; el formulario reutiliza ese contexto
+    // para fijar la habitación y aplicar tarifas/enlaces del mismo flujo.
+    void suite;
     setIsFormOpen(true);
   };
 
@@ -68,9 +73,6 @@ export default function Home() {
     return (
       <SexShopView
         onBack={() => setActiveView('home')}
-        onSelectProduct={(productName) => {
-          handleActivateChat(`Hola Martina, me gustaría incluir un producto de la Boutique en mi estadía: ${productName}`);
-        }}
       />
     );
   }
@@ -79,9 +81,6 @@ export default function Home() {
     return (
       <RestauranteView
         onBack={() => setActiveView('home')}
-        onSelectDish={(dishName) => {
-          handleActivateChat(`Hola Martina, quiero agregar a mi servicio de restaurante en suite: ${dishName}`);
-        }}
       />
     );
   }
@@ -90,9 +89,6 @@ export default function Home() {
     return (
       <BebidasView
         onBack={() => setActiveView('home')}
-        onSelectDrink={(drinkName) => {
-          handleActivateChat(`Hola Martina, deseo ordenar las siguientes bebidas a mi suite: ${drinkName}`);
-        }}
       />
     );
   }
@@ -159,8 +155,11 @@ export default function Home() {
 
       {/* Formulario de reserva express */}
       {isFormOpen && (
-        <ReservaExpressForm 
-          onClose={() => setIsFormOpen(false)} 
+        <ReservaExpressForm
+          onClose={() => {
+            setIsFormOpen(false);
+            dispatch({ type: 'RESET' });
+          }}
         />
       )}
 

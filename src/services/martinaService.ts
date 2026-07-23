@@ -16,7 +16,7 @@ export const getMartinaResponse = (userInput: string): string => {
 
   // Caso: Precios
   if (text.includes("precio") || text.includes("costo") || text.includes("cuánto cuesta") || text.includes("valor")) {
-    return "¡Claro! En el Planeta Romántico tenemos tarifas adaptadas a su tiempo de viaje. 🪐 Por ejemplo, la Suite Amarte va desde $78.000 (4 horas en semana) hasta $165.000 (Día Hotelero de 12 horas en semana). Las Suites Deluxe y Temáticas tienen un valor de $200.000 las 4 horas (en semana). ¿Les gustaría que les recomiende una suite de lujo, una temática o una con jacuzzi? 🛀✨";
+    return "¡Claro! En el Planeta Romántico tenemos tarifas adaptadas a su tiempo de viaje. 🪐 Por ejemplo, la Suite Amarte va desde $90.000 (4 horas en semana) hasta $200.000 (Día Hotelero en semana). Las Suites Deluxe y Temáticas tienen un valor de $240.000 las 4 horas (en semana). ¿Les gustaría que les recomiende una suite de lujo, una temática o una con jacuzzi? 🛀✨";
   }
 
   // Caso: Lujo
@@ -31,7 +31,7 @@ export const getMartinaResponse = (userInput: string): string => {
 
   // Caso: Jacuzzi o relajarse
   if (text.includes("jacuzzi") || text.includes("tina") || text.includes("relajar")) {
-    return "Para una desconexión y relajación total, la **Suite VIP Jacuzzi** 🫧 es la ideal. Cuenta con un jacuzzi gigante con cromoterapia y sauna ilimitada para que se olviden de la rutina diaria. El valor por 4 horas de Domingo a Jueves es de $175.000. ¿Les gustaría agendar este viaje?";
+    return "Para una desconexión y relajación total, la **Suite VIP Jacuzzi** 🫧 es la ideal. Cuenta con un jacuzzi gigante con cromoterapia y sauna ilimitada para que se olviden de la rutina diaria. El valor por 4 horas de Domingo a Jueves es de $200.000. ¿Les gustaría agendar este viaje?";
   }
 
   // Caso: Ubicación
