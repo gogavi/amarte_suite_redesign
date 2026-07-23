@@ -21,11 +21,17 @@ function getBackendUrl(): string {
   return 'https://chatbotamarte-production.up.railway.app';
 }
 
+function isBridgeReady(value: unknown): value is AmarteChatbotBridge {
+  if (!value || typeof value !== 'object') return false;
+  const bridge = value as AmarteChatbotBridge;
+  return typeof bridge.openLive === 'function' && typeof bridge.openChat === 'function';
+}
+
 function waitForBridge(timeoutMs = 8000): Promise<AmarteChatbotBridge> {
   return new Promise((resolve, reject) => {
     const started = Date.now();
     const tick = () => {
-      if (window.AmarteChatbot?.openLive && window.AmarteChatbot?.openChat) {
+      if (isBridgeReady(window.AmarteChatbot)) {
         resolve(window.AmarteChatbot);
         return;
       }
@@ -44,7 +50,7 @@ function waitForBridge(timeoutMs = 8000): Promise<AmarteChatbotBridge> {
  * Prefetch en mount; openLive debe invocarse en el mismo gesto de clic.
  */
 export function ensureWidgetLoaded(): Promise<AmarteChatbotBridge> {
-  if (window.AmarteChatbot?.openLive && window.AmarteChatbot?.openChat) {
+  if (isBridgeReady(window.AmarteChatbot)) {
     return Promise.resolve(window.AmarteChatbot);
   }
 
@@ -101,7 +107,7 @@ export async function openChat(initialMessage?: string): Promise<void> {
  * en el onClick para no romper el gesto de micrófono.
  */
 export function openLiveSync(): void {
-  if (window.AmarteChatbot?.openLive) {
+  if (isBridgeReady(window.AmarteChatbot)) {
     window.AmarteChatbot.openLive();
     return;
   }
@@ -114,7 +120,7 @@ export function openLiveSync(): void {
 }
 
 export async function closeMartina(): Promise<void> {
-  if (window.AmarteChatbot?.close) {
+  if (isBridgeReady(window.AmarteChatbot) && typeof window.AmarteChatbot.close === 'function') {
     window.AmarteChatbot.close();
     return;
   }

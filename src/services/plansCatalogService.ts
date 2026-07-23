@@ -63,7 +63,7 @@ export async function fetchPlanWeekday6hPrices(): Promise<Record<string, number>
     throw new Error(error.message || 'No se pudieron cargar las tarifas de planes.');
   }
 
-  const rows = (data ?? []) as RoomRateRow[];
+  const rows = (data ?? []) as unknown as RoomRateRow[];
   const prices: Record<string, number> = {};
 
   for (const row of rows) {

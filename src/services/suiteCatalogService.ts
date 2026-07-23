@@ -104,7 +104,7 @@ export async function fetchSuiteCatalog(): Promise<CatalogSuite[]> {
     throw new Error(error.message || 'No se pudo cargar el catálogo de suites.');
   }
 
-  const rows = (data ?? []) as RoomRateRow[];
+  const rows = (data ?? []) as unknown as RoomRateRow[];
   const bySuite = new Map<string, CatalogSuite & { sortOrder: number }>();
 
   for (const row of rows) {
