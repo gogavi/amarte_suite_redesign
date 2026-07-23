@@ -32,17 +32,44 @@ type Particle = {
 
 const INSTAGRAM_URL = 'https://instagram.com/amarte_suite';
 const MAPS_URL = 'https://maps.app.goo.gl/zbdiMtAUpecJ2NYP9';
+const PLAN_ROMANTICO_VIDEO = '/videos/PlanRomantico.mp4';
+const PLAN_CUMPLE_VIDEO = '/videos/PlanCumple.mp4';
 
 type ConversationStarter =
   | { icon: string; label: string; prompt: string }
-  | { icon: string; label: string; href: string; ariaLabel?: string };
+  | { icon: string; label: string; href: string; ariaLabel?: string }
+  | {
+      icon: string;
+      label: string;
+      videoSrc: string;
+      videoEyebrow: string;
+      ariaLabel?: string;
+    };
 
 const conversationStarters: ConversationStarter[] = [
-  { icon: '💖', label: 'Decoración romántica', prompt: 'Quiero reservar y agregar decoración romántica' },
+  {
+    icon: '💖',
+    label: 'Decoración romántica',
+    videoSrc: PLAN_ROMANTICO_VIDEO,
+    videoEyebrow: 'Plan romántico',
+    ariaLabel: 'Decoración romántica — ver video del plan',
+  },
   { icon: '💡', label: 'AmarTip de Hoy', href: INSTAGRAM_URL, ariaLabel: 'AmarTip de Hoy — Instagram de Amarte Suite' },
-  { icon: '🎂', label: 'Cumpleaños sorpresa', prompt: 'Quiero preparar un cumpleaños sorpresa' },
+  {
+    icon: '🎂',
+    label: 'Cumpleaños sorpresa',
+    videoSrc: PLAN_CUMPLE_VIDEO,
+    videoEyebrow: 'Plan cumpleaños',
+    ariaLabel: 'Cumpleaños sorpresa — ver video del plan',
+  },
   { icon: '📍', label: 'Cómo llegar', href: MAPS_URL, ariaLabel: 'Cómo llegar — Google Maps de Amarte Suite' },
 ];
+
+type VideoModalContent = {
+  src: string;
+  title: string;
+  eyebrow: string;
+};
 
 const magneticNodes = Array.from({ length: 156 }, (_, index) => {
   const row = Math.floor(index / 13);
@@ -63,6 +90,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const [currentState, setCurrentState] = useState<MartinaState>(martinaState);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [portalZoomed, setPortalZoomed] = useState(false);
+  const [videoModal, setVideoModal] = useState<VideoModalContent | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: rootRef,
@@ -78,6 +106,20 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const supportOpacity = useTransform(scrollYProgress, [0.16, 0.3, 0.42], [0, 0.7, 1]);
 
   useEffect(() => setCurrentState(martinaState), [martinaState]);
+
+  useEffect(() => {
+    if (!videoModal) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setVideoModal(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [videoModal]);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -774,6 +816,26 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
                 );
               }
 
+              if ('videoSrc' in starter) {
+                return (
+                  <button
+                    key={starter.label}
+                    type="button"
+                    onClick={() =>
+                      setVideoModal({
+                        src: starter.videoSrc,
+                        title: starter.label,
+                        eyebrow: starter.videoEyebrow,
+                      })
+                    }
+                    className={className}
+                    aria-label={starter.ariaLabel ?? starter.label}
+                  >
+                    <span className="mr-1.5">{starter.icon}</span>{starter.label}
+                  </button>
+                );
+              }
+
               return (
                 <button
                   key={starter.label}
@@ -791,6 +853,64 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           </motion.div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {videoModal && (
+          <div
+            className="fixed inset-0 z-[1300] flex items-center justify-center p-4 sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Video de ${videoModal.title}`}
+          >
+            <motion.button
+              type="button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: reducedMotion ? 0.1 : 0.25 }}
+              className="absolute inset-0 bg-black/82 backdrop-blur-sm"
+              aria-label="Cerrar video"
+              onClick={() => setVideoModal(null)}
+            />
+
+            <motion.div
+              initial={reducedMotion ? false : { opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={reducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: reducedMotion ? 0.1 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D11] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+            >
+              <div className="flex items-center justify-between border-b border-white/8 px-4 py-3 sm:px-5">
+                <div className="text-left">
+                  <p className="font-heading text-[10px] uppercase tracking-[0.28em] text-[#E6007E]">{videoModal.eyebrow}</p>
+                  <h3 className="font-heading text-sm uppercase tracking-wide text-[#FFF5F8] sm:text-base">
+                    {videoModal.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setVideoModal(null)}
+                  className="rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-sm text-[#FFF5F8]/75 transition hover:border-[#E6007E]/45 hover:bg-white/10 hover:text-white"
+                  aria-label="Cerrar"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="aspect-video w-full bg-black">
+                <video
+                  key={videoModal.src}
+                  src={videoModal.src}
+                  className="h-full w-full object-contain"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {portalZoomed && (

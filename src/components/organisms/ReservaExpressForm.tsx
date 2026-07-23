@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
 import { calculateRate, suitesData } from '../../services/ratesService';
+import {
+  createWebReservation,
+  type PaymentMethod,
+  type StayHours,
+} from '../../services/reservationService';
 
 interface ReservaExpressFormProps {
   onClose: () => void;
@@ -15,13 +20,16 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     email: '',
     date: '',
     time: '',
-    hours: '4h' as "4h" | "8h" | "12h" | "day_hotelero",
+    hours: '4h' as StayHours,
     suiteId: state.selectedSuite?.id || suitesData[0].id
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (submitError) setSubmitError(null);
   };
 
   const calculateFinalPrice = () => {
@@ -40,38 +48,61 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
   const price = calculateFinalPrice();
 
-  const handleSubmit = (e: React.FormEvent, method: 'epayco' | 'whatsapp') => {
+  const handleSubmit = async (e: React.FormEvent, method: PaymentMethod) => {
     e.preventDefault();
     if (!formData.name || !formData.whatsapp || !formData.date || !formData.time) {
-      alert('Por favor completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.');
+      setSubmitError('Completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.');
       return;
     }
 
     const selectedSuite = suitesData.find((s) => s.id === formData.suiteId);
     if (!selectedSuite) return;
 
-    dispatch({
-      type: 'SET_USER_DATA',
-      payload: {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      await createWebReservation({
         name: formData.name,
         document: formData.document,
         whatsapp: formData.whatsapp,
-        email: formData.email
-      }
-    });
-    dispatch({ type: 'SET_DATE', payload: formData.date });
-    dispatch({ type: 'SET_TIME', payload: formData.time });
-    dispatch({ type: 'SET_HOURS', payload: formData.hours });
-    dispatch({ type: 'CALCULATE_PRICE', payload: price });
+        email: formData.email,
+        suiteId: formData.suiteId,
+        hours: formData.hours,
+        date: formData.date,
+        time: formData.time,
+        price,
+        method,
+      });
 
-    if (method === 'epayco') {
-      // Redirección al checkout ePayco
-      window.open('https://secure.payco.co/checkoutopen/66308', '_blank');
-    } else {
-      // Redirección WhatsApp con datos formateados
-      const message = `¡Hola! Quiero reservar en el Planeta Romántico:\n\n*Huésped:* ${formData.name}\n*Suite:* ${selectedSuite.name}\n*Fecha:* ${formData.date}\n*Hora:* ${formData.time}\n*Estadía:* ${formData.hours}\n*Valor Estimado:* $${price.toLocaleString('es-CO')} COP\n\nQuedo pendiente para confirmar el pago. 🪐`;
-      const encodedMsg = encodeURIComponent(message);
-      window.open(`https://wa.me/573235726252?text=${encodedMsg}`, '_blank');
+      dispatch({
+        type: 'SET_USER_DATA',
+        payload: {
+          name: formData.name,
+          document: formData.document,
+          whatsapp: formData.whatsapp,
+          email: formData.email
+        }
+      });
+      dispatch({ type: 'SET_DATE', payload: formData.date });
+      dispatch({ type: 'SET_TIME', payload: formData.time });
+      dispatch({ type: 'SET_HOURS', payload: formData.hours });
+      dispatch({ type: 'CALCULATE_PRICE', payload: price });
+
+      if (method === 'epayco') {
+        window.open('https://secure.payco.co/checkoutopen/66308', '_blank');
+      } else {
+        const message = `¡Hola! Quiero reservar en el Planeta Romántico:\n\n*Huésped:* ${formData.name}\n*Suite:* ${selectedSuite.name}\n*Fecha:* ${formData.date}\n*Hora:* ${formData.time}\n*Estadía:* ${formData.hours}\n*Valor Estimado:* $${price.toLocaleString('es-CO')} COP\n\nQuedo pendiente para confirmar el pago. 🪐`;
+        const encodedMsg = encodeURIComponent(message);
+        window.open(`https://wa.me/573235726252?text=${encodedMsg}`, '_blank');
+      }
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : 'No se pudo guardar la pre-reserva. Intenta de nuevo.';
+      setSubmitError(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -81,6 +112,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gris-medio hover:text-white transition-colors"
+          disabled={isSubmitting}
         >
           ✕
         </button>
@@ -102,7 +134,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
             <div>
@@ -112,7 +145,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="document"
                 value={formData.document}
                 onChange={handleInputChange}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
           </div>
@@ -126,7 +160,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 value={formData.whatsapp}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
             <div>
@@ -136,7 +171,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
           </div>
@@ -150,7 +186,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="suiteId"
                 value={formData.suiteId}
                 onChange={handleInputChange}
-                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               >
                 {suitesData.map((s) => (
                   <option key={s.id} value={s.id}>{s.name}</option>
@@ -163,7 +200,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="hours"
                 value={formData.hours}
                 onChange={handleInputChange}
-                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               >
                 <option value="4h">4 Horas</option>
                 <option value="8h">8 Horas</option>
@@ -182,7 +220,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 value={formData.date}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
             <div>
@@ -193,7 +232,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 value={formData.time}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital"
+                disabled={isSubmitting}
+                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
               />
             </div>
           </div>
@@ -206,21 +246,29 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             </span>
           </div>
 
+          {submitError && (
+            <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-brand px-3 py-2" role="alert">
+              {submitError}
+            </p>
+          )}
+
           {/* Botones de acción */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'epayco')}
-              className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102"
+              disabled={isSubmitting}
+              className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              💳 Pagar Online (ePayco)
+              {isSubmitting ? 'Guardando…' : '💳 Pagar Online (ePayco)'}
             </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'whatsapp')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102"
+              disabled={isSubmitting}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              💬 Reservar por WhatsApp
+              {isSubmitting ? 'Guardando…' : '💬 Reservar por WhatsApp'}
             </button>
           </div>
         </form>
