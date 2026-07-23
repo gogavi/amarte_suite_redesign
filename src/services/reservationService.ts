@@ -1,36 +1,16 @@
 import { supabase } from '../lib/supabaseClient';
 
-export type StayHours = '4h' | '8h' | '12h' | 'day_hotelero';
 export type PaymentMethod = 'epayco' | 'whatsapp';
-
-const SUITE_ID_TO_TIPO: Record<string, string> = {
-  'suite-diamante': 'Suite Diamante',
-  'suite-gold': 'Suite Gold',
-  'suite-rubi': 'Suite Rubí',
-  'suite-zafiro': 'Suite Zafiro',
-  'suite-gotica': 'Suite Gótica',
-  'suite-arabe': 'Suite Árabe',
-  'suite-harleyqueen': 'Suite Queen',
-  'suite-vip-jacuzzi': 'Suite Jacuzzi',
-  'suite-cabaña': 'Suite Cabaña',
-  'suite-amarte': 'Suite Amarte',
-  'suite-movimiento': 'Suite Movimiento',
-};
-
-const HOURS_TO_PACK: Record<StayHours, string> = {
-  '4h': 'Pack 4 horas',
-  '8h': 'Pack 8 horas',
-  '12h': 'Pack 12 horas',
-  day_hotelero: 'Día Hotelero',
-};
 
 export type CreateWebReservationInput = {
   name: string;
   document?: string;
   whatsapp: string;
   email?: string;
-  suiteId: string;
-  hours: StayHours;
+  /** Nombre de suite en BD (`tipo`), ej. Suite Diamante */
+  tipo: string;
+  /** Pack en BD (`pack_tiempo`), ej. Pack 4 horas */
+  packTiempo: string;
   date: string;
   time: string;
   price: number;
@@ -66,24 +46,16 @@ type ReservationInsertRow = {
   hotel_observations: string;
 };
 
-export function mapSuiteIdToTipo(suiteId: string): string {
-  const tipo = SUITE_ID_TO_TIPO[suiteId];
-  if (!tipo) {
-    throw new Error(`Suite no reconocida para la base de datos: ${suiteId}`);
-  }
-  return tipo;
-}
-
-export function mapHoursToPackTiempo(hours: StayHours): string {
-  return HOURS_TO_PACK[hours];
-}
-
 export async function createWebReservation(
   input: CreateWebReservationInput
 ): Promise<CreateWebReservationResult> {
-  const tipo = mapSuiteIdToTipo(input.suiteId);
-  const packTiempo = mapHoursToPackTiempo(input.hours);
+  const tipo = input.tipo.trim();
+  const packTiempo = input.packTiempo.trim();
   const formaPago = input.method === 'epayco' ? 'ePayco' : 'WhatsApp';
+
+  if (!tipo || !packTiempo) {
+    throw new Error('Faltan tipo de suite o pack de tiempo.');
+  }
 
   const row: ReservationInsertRow = {
     nombre: input.name.trim(),

@@ -1,76 +1,226 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
-import { calculateRate, suitesData } from '../../services/ratesService';
+import { createWebReservation, type PaymentMethod } from '../../services/reservationService';
 import {
-  createWebReservation,
-  type PaymentMethod,
-  type StayHours,
-} from '../../services/reservationService';
+  fetchSuiteCatalog,
+  getPackPrice,
+  resolveCatalogSuiteName,
+  type CatalogSuite,
+  type SuitePack,
+} from '../../services/suiteCatalogService';
 
 interface ReservaExpressFormProps {
   onClose: () => void;
 }
 
+type TimePeriod = 'AM' | 'PM';
+
+const HOUR_OPTIONS = Array.from({ length: 12 }, (_, i) => String(i + 1));
+const MINUTE_OPTIONS = ['00', '15', '30', '45'];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, '');
+}
+
+function formatAmPmTime(hour: string, minute: string, period: TimePeriod): string {
+  return `${hour}:${minute} ${period}`;
+}
+
+function packLabel(pack: SuitePack): string {
+  if (pack.name === 'Día Hotelero') return 'Día Hotelero (2pm - 12m)';
+  return pack.name.replace('Pack ', '');
+}
+
 export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps) {
   const { state, dispatch } = useReservation();
+  const [catalog, setCatalog] = useState<CatalogSuite[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     document: '',
     whatsapp: '',
     email: '',
     date: '',
-    time: '',
-    hours: '4h' as StayHours,
-    suiteId: state.selectedSuite?.id || suitesData[0].id
+    timeHour: '2',
+    timeMinute: '00',
+    timePeriod: 'PM' as TimePeriod,
+    suiteId: '',
+    packId: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
+
+  const selectedSuite = useMemo(
+    () => catalog.find((suite) => suite.id === formData.suiteId) ?? null,
+    [catalog, formData.suiteId]
+  );
+
+  const availablePacks = selectedSuite?.packs ?? [];
+
+  const selectedPack = useMemo(
+    () => availablePacks.find((pack) => pack.rateTypeId === formData.packId) ?? null,
+    [availablePacks, formData.packId]
+  );
+
+  const price = selectedPack ? getPackPrice(selectedPack, formData.date) : 0;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCatalog = async () => {
+      setCatalogLoading(true);
+      setCatalogError(null);
+      try {
+        const suites = await fetchSuiteCatalog();
+        if (cancelled) return;
+        if (!suites.length) {
+          setCatalogError('No hay suites disponibles en la base de datos.');
+          setCatalog([]);
+          return;
+        }
+
+        setCatalog(suites);
+
+        const preferredName = resolveCatalogSuiteName(state.selectedSuite?.name);
+        const preferred =
+          suites.find((suite) => suite.name === preferredName) ?? suites[0];
+        const preferredPack = preferred.packs[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          suiteId: preferred.id,
+          packId: preferredPack?.rateTypeId ?? '',
+        }));
+      } catch (error) {
+        if (cancelled) return;
+        const message = error instanceof Error
+          ? error.message
+          : 'No se pudo cargar suites y tarifas.';
+        setCatalogError(message);
+      } finally {
+        if (!cancelled) setCatalogLoading(false);
+      }
+    };
+
+    void loadCatalog();
+    return () => {
+      cancelled = true;
+    };
+  }, [state.selectedSuite?.name]);
+
+  useEffect(() => {
+    if (!selectedSuite) return;
+    const packStillValid = selectedSuite.packs.some((pack) => pack.rateTypeId === formData.packId);
+    if (!packStillValid) {
+      setFormData((prev) => ({
+        ...prev,
+        packId: selectedSuite.packs[0]?.rateTypeId ?? '',
+      }));
+    }
+  }, [selectedSuite, formData.packId]);
+
+  const clearError = () => {
     if (submitError) setSubmitError(null);
   };
 
-  const calculateFinalPrice = () => {
-    const selectedSuite = suitesData.find((s) => s.id === formData.suiteId);
-    if (!selectedSuite) return 0;
-
-    // Detectar si la fecha es viernes o sábado
-    let isWeekend = false;
-    if (formData.date) {
-      const day = new Date(formData.date).getDay();
-      isWeekend = day === 4 || day === 5; // 4 = Viernes, 5 = Sábado en Javascript Date si se parsea local
-    }
-
-    return calculateRate(formData.suiteId, formData.hours, isWeekend);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, name: e.target.value.toUpperCase() }));
+    clearError();
   };
 
-  const price = calculateFinalPrice();
+  const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, document: digitsOnly(e.target.value).slice(0, 12) }));
+    clearError();
+  };
+
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, whatsapp: digitsOnly(e.target.value).slice(0, 15) }));
+    clearError();
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, email: e.target.value.trimStart() }));
+    clearError();
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    clearError();
+  };
+
+  const handleSuiteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const suiteId = e.target.value;
+    const suite = catalog.find((item) => item.id === suiteId);
+    setFormData((prev) => ({
+      ...prev,
+      suiteId,
+      packId: suite?.packs[0]?.rateTypeId ?? '',
+    }));
+    clearError();
+  };
+
+  const validateForm = (): string | null => {
+    if (!formData.name.trim() || !formData.whatsapp || !formData.date) {
+      return 'Completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.';
+    }
+
+    if (formData.whatsapp.length < 10) {
+      return 'El WhatsApp debe tener al menos 10 dígitos.';
+    }
+
+    if (formData.document && formData.document.length < 5) {
+      return 'La cédula debe tener al menos 5 dígitos.';
+    }
+
+    const email = formData.email.trim();
+    if (email && !EMAIL_REGEX.test(email)) {
+      return 'Ingresa un correo válido (ejemplo: nombre@correo.com).';
+    }
+
+    if (!selectedSuite || !selectedPack) {
+      return 'Selecciona una suite y un pack de tiempo.';
+    }
+
+    if (price <= 0) {
+      return 'No hay tarifa disponible para esa combinación de suite y fecha.';
+    }
+
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent, method: PaymentMethod) => {
     e.preventDefault();
-    if (!formData.name || !formData.whatsapp || !formData.date || !formData.time) {
-      setSubmitError('Completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.');
+
+    const validationError = validateForm();
+    if (validationError) {
+      setSubmitError(validationError);
       return;
     }
 
-    const selectedSuite = suitesData.find((s) => s.id === formData.suiteId);
-    if (!selectedSuite) return;
+    if (!selectedSuite || !selectedPack) return;
+
+    const time = timeLabel;
+    const email = formData.email.trim();
 
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
       await createWebReservation({
-        name: formData.name,
+        name: formData.name.trim(),
         document: formData.document,
         whatsapp: formData.whatsapp,
-        email: formData.email,
-        suiteId: formData.suiteId,
-        hours: formData.hours,
+        email,
+        tipo: selectedSuite.name,
+        packTiempo: selectedPack.name,
         date: formData.date,
-        time: formData.time,
+        time,
         price,
         method,
       });
@@ -78,21 +228,20 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       dispatch({
         type: 'SET_USER_DATA',
         payload: {
-          name: formData.name,
+          name: formData.name.trim(),
           document: formData.document,
           whatsapp: formData.whatsapp,
-          email: formData.email
-        }
+          email,
+        },
       });
       dispatch({ type: 'SET_DATE', payload: formData.date });
-      dispatch({ type: 'SET_TIME', payload: formData.time });
-      dispatch({ type: 'SET_HOURS', payload: formData.hours });
+      dispatch({ type: 'SET_TIME', payload: time });
       dispatch({ type: 'CALCULATE_PRICE', payload: price });
 
       if (method === 'epayco') {
         window.open('https://secure.payco.co/checkoutopen/66308', '_blank');
       } else {
-        const message = `¡Hola! Quiero reservar en el Planeta Romántico:\n\n*Huésped:* ${formData.name}\n*Suite:* ${selectedSuite.name}\n*Fecha:* ${formData.date}\n*Hora:* ${formData.time}\n*Estadía:* ${formData.hours}\n*Valor Estimado:* $${price.toLocaleString('es-CO')} COP\n\nQuedo pendiente para confirmar el pago. 🪐`;
+        const message = `¡Hola! Quiero reservar en el Planeta Romántico:\n\n*Huésped:* ${formData.name.trim()}\n*Suite:* ${selectedSuite.name}\n*Fecha:* ${formData.date}\n*Hora:* ${time}\n*Estadía:* ${selectedPack.name}\n*Valor Estimado:* $${price.toLocaleString('es-CO')} COP\n\nQuedo pendiente para confirmar el pago. 🪐`;
         const encodedMsg = encodeURIComponent(message);
         window.open(`https://wa.me/573235726252?text=${encodedMsg}`, '_blank');
       }
@@ -105,6 +254,11 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       setIsSubmitting(false);
     }
   };
+
+  const inputClass =
+    'w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60';
+  const selectClass =
+    'w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60';
 
   return (
     <div className="fixed inset-0 bg-bg-dark/80 backdrop-blur-md flex items-center justify-center p-4 z-modal overflow-y-auto">
@@ -124,7 +278,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           Pre-reserva en menos de 2 minutos. Cierre digital o asesoría directa.
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Nombre *</label>
@@ -132,10 +286,12 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 type="text"
                 name="name"
                 value={formData.name}
-                onChange={handleInputChange}
+                onChange={handleNameChange}
+                autoCapitalize="characters"
                 required
                 disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                className={`${inputClass} uppercase`}
+                placeholder="NOMBRE COMPLETO"
               />
             </div>
             <div>
@@ -143,10 +299,13 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               <input
                 type="text"
                 name="document"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={formData.document}
-                onChange={handleInputChange}
+                onChange={handleDocumentChange}
                 disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                className={inputClass}
+                placeholder="Solo números"
               />
             </div>
           </div>
@@ -157,11 +316,14 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               <input
                 type="tel"
                 name="whatsapp"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={formData.whatsapp}
-                onChange={handleInputChange}
+                onChange={handleWhatsappChange}
                 required
                 disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                className={inputClass}
+                placeholder="3001234567"
               />
             </div>
             <div>
@@ -170,9 +332,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={handleInputChange}
+                onChange={handleEmailChange}
                 disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                className={inputClass}
+                placeholder="nombre@correo.com"
               />
             </div>
           </div>
@@ -185,28 +348,31 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               <select
                 name="suiteId"
                 value={formData.suiteId}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                onChange={handleSuiteChange}
+                disabled={isSubmitting || catalogLoading || !!catalogError}
+                className={selectClass}
               >
-                {suitesData.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                {catalogLoading && <option value="">Cargando suites…</option>}
+                {!catalogLoading && catalog.map((suite) => (
+                  <option key={suite.id} value={suite.id}>{suite.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Tiempo de estadía *</label>
+              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Pack de tiempo *</label>
               <select
-                name="hours"
-                value={formData.hours}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className="w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                name="packId"
+                value={formData.packId}
+                onChange={handleSelectChange}
+                disabled={isSubmitting || catalogLoading || !availablePacks.length}
+                className={selectClass}
               >
-                <option value="4h">4 Horas</option>
-                <option value="8h">8 Horas</option>
-                <option value="12h">12 Horas</option>
-                <option value="day_hotelero">Día Hotelero (2pm - 12m)</option>
+                {!availablePacks.length && <option value="">Sin packs</option>}
+                {availablePacks.map((pack) => (
+                  <option key={pack.rateTypeId} value={pack.rateTypeId}>
+                    {packLabel(pack)}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -218,46 +384,75 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 type="date"
                 name="date"
                 value={formData.date}
-                onChange={handleInputChange}
+                onChange={handleSelectChange}
                 required
                 disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
+                className={inputClass}
               />
             </div>
             <div>
               <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Hora aproximada *</label>
-              <input
-                type="time"
-                name="time"
-                value={formData.time}
-                onChange={handleInputChange}
-                required
-                disabled={isSubmitting}
-                className="w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60"
-              />
+              <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                <select
+                  name="timeHour"
+                  value={formData.timeHour}
+                  onChange={handleSelectChange}
+                  disabled={isSubmitting}
+                  className={selectClass}
+                  aria-label="Hora"
+                >
+                  {HOUR_OPTIONS.map((hour) => (
+                    <option key={hour} value={hour}>{hour}</option>
+                  ))}
+                </select>
+                <select
+                  name="timeMinute"
+                  value={formData.timeMinute}
+                  onChange={handleSelectChange}
+                  disabled={isSubmitting}
+                  className={selectClass}
+                  aria-label="Minutos"
+                >
+                  {MINUTE_OPTIONS.map((minute) => (
+                    <option key={minute} value={minute}>{minute}</option>
+                  ))}
+                </select>
+                <select
+                  name="timePeriod"
+                  value={formData.timePeriod}
+                  onChange={handleSelectChange}
+                  disabled={isSubmitting}
+                  className={selectClass}
+                  aria-label="AM o PM"
+                >
+                  <option value="AM">AM</option>
+                  <option value="PM">PM</option>
+                </select>
+              </div>
+              <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
+                Seleccionada: {timeLabel}
+              </p>
             </div>
           </div>
 
-          {/* Precio Final */}
           <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6">
             <span className="text-sm text-rosa-cuarzo font-light uppercase tracking-widest">Valor de la reserva:</span>
             <span className="text-2xl font-heading text-cyan-orbital font-bold">
-              ${price.toLocaleString('es-CO')} COP
+              {catalogLoading ? '…' : `$${price.toLocaleString('es-CO')} COP`}
             </span>
           </div>
 
-          {submitError && (
+          {(submitError || catalogError) && (
             <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-brand px-3 py-2" role="alert">
-              {submitError}
+              {submitError || catalogError}
             </p>
           )}
 
-          {/* Botones de acción */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'epayco')}
-              disabled={isSubmitting}
+              disabled={isSubmitting || catalogLoading || !!catalogError}
               className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
               {isSubmitting ? 'Guardando…' : '💳 Pagar Online (ePayco)'}
@@ -265,7 +460,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'whatsapp')}
-              disabled={isSubmitting}
+              disabled={isSubmitting || catalogLoading || !!catalogError}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
               {isSubmitting ? 'Guardando…' : '💬 Reservar por WhatsApp'}
