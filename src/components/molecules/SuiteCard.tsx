@@ -54,12 +54,12 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
     : (isHovered && suite.videoYoutubeId);
 
   return (
-    <motion.div
+    <div
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
-      whileHover={!isActiveDeckCard ? { y: -6 } : undefined}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className="relative reflective-glass glow-magenta-hover rounded-brand overflow-hidden flex flex-col h-full group border border-white/10 shadow-lg select-none"
+      className={`relative reflective-glass glow-magenta-hover rounded-brand overflow-hidden flex flex-col h-full group border border-white/10 shadow-lg select-none transition-transform duration-200 ${
+        !isActiveDeckCard ? 'hover:-translate-y-1.5' : ''
+      }`}
     >
       {/* Contenedor de la Imagen / Video */}
       <div className="relative h-52 md:h-56 overflow-hidden bg-[#0D0D11]">
@@ -93,7 +93,7 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11] via-transparent to-transparent z-[5]"></div>
 
         {/* Etiqueta de Categoría */}
-        <span className="absolute top-4 right-4 bg-bg-dark/85 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-cyan-orbital border border-cyan-orbital/25 uppercase tracking-widest font-heading z-[5]">
+        <span className="absolute top-4 right-4 bg-bg-dark/90 px-3 py-1 rounded-full text-[10px] text-cyan-orbital border border-cyan-orbital/25 uppercase tracking-widest font-heading z-[5]">
           {suite.category}
         </span>
 
@@ -144,6 +144,6 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

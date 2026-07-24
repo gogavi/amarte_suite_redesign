@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Jost:wght@300;400;500;600;700&family=Fjalla+One&family=Courgette&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +8,12 @@
   }
 }
 
+@layer utilities {
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+  }
+}
 
 /* Animación de degradados de texto lenta estilo Apple */
 @keyframes gradient-shift {
@@ -21,9 +25,9 @@
 .animate-gradient-slow {
   background: linear-gradient(
     270deg,
-    #E6007E, /* Magenta Digital */
-    #CB7BA7, /* Rosa Cuarzo */
-    #19A6E0, /* Cian Orbital */
+    #E6007E,
+    #CB7BA7,
+    #19A6E0,
     #E6007E
   );
   background-size: 300% 300%;
@@ -32,21 +36,24 @@
   animation: gradient-shift 20s ease infinite;
 }
 
-/* Efecto Fake Liquid Glass (Vidrio templado reflectivo de alto rendimiento) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-slow {
+    animation: none;
+  }
+}
+
+/* Vidrio ligero: sin backdrop-filter (evita repaints caros en INP) */
 .reflective-glass {
-  background: rgba(23, 23, 30, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(23, 23, 30, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     inset 0 1.5px 1px rgba(255, 255, 255, 0.12),
     0 12px 36px rgba(0, 0, 0, 0.45);
   position: relative;
   overflow: hidden;
-  transition: border-color 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: border-color 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Destello reflectivo al hacer hover */
 .reflective-glass::before {
   content: '';
   position: absolute;
@@ -61,15 +68,18 @@
     transparent
   );
   transition: left 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
 }
 
-.reflective-glass:hover::before {
-  left: 150%;
+@media (hover: hover) and (pointer: fine) {
+  .reflective-glass:hover::before {
+    left: 150%;
+  }
 }
 
 .glow-magenta-hover:hover {
   border-color: rgba(230, 0, 126, 0.35);
-  box-shadow: 
+  box-shadow:
     inset 0 1.5px 1px rgba(255, 255, 255, 0.15),
     0 0 25px rgba(230, 0, 126, 0.25),
     0 12px 36px rgba(0, 0, 0, 0.5);
@@ -77,15 +87,12 @@
 
 .glow-cyan-hover:hover {
   border-color: rgba(25, 166, 224, 0.35);
-  box-shadow: 
+  box-shadow:
     inset 0 1.5px 1px rgba(255, 255, 255, 0.15),
     0 0 25px rgba(25, 166, 224, 0.25),
     0 12px 36px rgba(0, 0, 0, 0.5);
 }
 
-/* Redondeado de marca */
 .rounded-brand {
   border-radius: 12px;
 }
-
-

@@ -27,9 +27,11 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
   ];
 
   return (
-    <section className="py-16 md:py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative overflow-hidden">
-      {/* Subtle static background glow */}
-      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[500px] h-[500px] bg-[#E6007E]/3 rounded-full blur-3xl pointer-events-none" />
+    <section className="py-16 md:py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative overflow-hidden content-visibility-auto">
+      <div
+        className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[420px] h-[420px] bg-[#E6007E]/8 rounded-full pointer-events-none"
+        aria-hidden="true"
+      />
 
       {/* Left Column: Image (lg:col-span-6) */}
       <div className="lg:col-span-6 flex justify-center lg:justify-start order-2 lg:order-1">
@@ -40,11 +42,13 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:-ml-8"
         >
-          <div className="absolute inset-x-4 bottom-0 top-8 rounded-[2rem] bg-black/40 blur-2xl pointer-events-none" />
+          <div className="absolute inset-x-4 bottom-0 top-8 rounded-[2rem] bg-black/35 pointer-events-none" />
           <img
             src={martinaSectionImg}
             alt="Interfaz interactiva de Martina Agente Virtual"
-            className="relative z-[1] w-full h-auto object-contain block mix-blend-screen drop-shadow-[0_12px_40px_rgba(0,0,0,0.8)] drop-shadow-[0_0_24px_rgba(230,0,126,0.2)]"
+            className="relative z-[1] w-full h-auto object-contain block mix-blend-screen"
+            loading="lazy"
+            decoding="async"
           />
         </motion.div>
       </div>
@@ -56,7 +60,7 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
         </span>
         <h2 className="font-heading text-4xl md:text-5xl text-white uppercase leading-none mb-6">
           Diseña tu noche ideal <br />
-          con nuestra <span className="text-[#E6007E] filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">Agente Virtual</span>
+          con nuestra <span className="text-[#E6007E]">Agente Virtual</span>
         </h2>
         <p className="font-body text-sm text-[#929095] leading-relaxed mb-8 max-w-xl">
           Martina es tu guía interactiva inteligente. Te ayuda a organizar cada detalle de tu estadía por chat o voz de manera inmediata antes de hablar con nuestro equipo humano.

@@ -20,7 +20,7 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
   }, []);
 
   return (
-    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto flex flex-col items-center">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto flex flex-col items-center content-visibility-auto">
       
       {/* Cabecera de la Sección */}
       <div className="text-center mb-12 max-w-xl">
@@ -28,7 +28,7 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
           Nuestras Suites
         </span>
         <h1 className="font-heading text-4xl md:text-5xl text-white mb-4 uppercase">
-          CONOCE TU PRÓXIMO <span className="text-magenta-digital filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">DESTINO</span>
+          CONOCE TU PRÓXIMO <span className="text-magenta-digital">DESTINO</span>
         </h1>
         <p className="font-body text-rosa-cuarzo text-base font-light leading-relaxed">
           {isMobile 

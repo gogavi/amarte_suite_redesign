@@ -56,8 +56,8 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
 
   return (
     <div className="min-h-screen bg-[#0D0D11] text-[#FFF5F8] py-16 px-6 relative">
-      <div className="absolute top-10 left-10 w-72 h-72 bg-[#E6007E]/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#19A6E0]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-10 w-72 h-72 bg-[#E6007E]/10 rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#19A6E0]/10 rounded-full pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
         <button
@@ -72,7 +72,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
             Experiencias de Decoración
           </span>
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
-            NUESTROS <span className="text-[#E6007E] filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">PLANES ({planes.length})</span>
+            NUESTROS <span className="text-[#E6007E] ">PLANES ({planes.length})</span>
           </h1>
           <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
             Precios desde pack 6 horas · Domingo a Jueves. Todo listo antes de tu llegada.
@@ -86,7 +86,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="rounded-2xl bg-[#17171E] border border-white/5 p-6 flex flex-col justify-between hover:border-[#E6007E]/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(230,0,126,0.15)]"
+              className="rounded-2xl bg-[#17171E] border border-white/5 p-6 flex flex-col justify-between hover:border-[#E6007E]/30 transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_20px_rgba(230,0,126,0.15)]"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
@@ -116,7 +116,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
 
               <button
                 onClick={() => onSelectPlan(plan.name)}
-                className="w-full py-3 rounded-xl bg-[#E6007E] hover:bg-[#E6007E]/90 text-white font-heading text-xs uppercase tracking-widest transition-all duration-200"
+                className="w-full py-3 rounded-xl bg-[#E6007E] hover:bg-[#E6007E]/90 text-white font-heading text-xs uppercase tracking-widest transition-colors duration-200"
               >
                 Añadir con Martina
               </button>

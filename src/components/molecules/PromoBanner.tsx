@@ -59,9 +59,9 @@ export default function PromoBanner({ onPromoClick }: PromoBannerProps) {
 
   return (
     <div className="py-6 px-6 max-w-6xl mx-auto w-full overflow-hidden">
-      <div className="relative rounded-2xl bg-gradient-to-r from-[#17171E] via-[#221220] to-[#17171E] border border-[#E6007E]/30 p-6 sm:p-8 shadow-[0_0_25px_rgba(230,0,126,0.15)] hover:shadow-[0_0_35px_rgba(230,0,126,0.25)] transition-all duration-300 min-h-[160px] flex items-center">
+      <div className="relative rounded-2xl bg-gradient-to-r from-[#17171E] via-[#221220] to-[#17171E] border border-[#E6007E]/30 p-6 sm:p-8 shadow-[0_0_25px_rgba(230,0,126,0.15)] hover:shadow-[0_0_35px_rgba(230,0,126,0.25)] transition-[box-shadow] duration-300 min-h-[160px] flex items-center">
         {/* Glow effect */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-[#E6007E]/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#E6007E]/15 rounded-full pointer-events-none" />
 
         <AnimatePresence mode="wait">
           <motion.div

@@ -16,7 +16,7 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/85"
           />
 
           {/* Modal Content */}
@@ -28,7 +28,7 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
             className="relative w-full max-w-lg rounded-2xl bg-[#17171E] border border-white/8 p-8 overflow-hidden"
           >
             {/* Ambient light glow */}
-            <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#19A6E0]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#19A6E0]/15 rounded-full pointer-events-none" />
 
             <div className="flex justify-between items-start mb-6">
               <div>

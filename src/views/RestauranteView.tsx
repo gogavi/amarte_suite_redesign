@@ -54,8 +54,8 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
   return (
     <div className="min-h-screen bg-[#0D0D11] text-[#FFF5F8] py-16 px-6 relative">
       {/* Lights background */}
-      <div className="absolute top-10 right-10 w-72 h-72 bg-[#19A6E0]/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#E6007E]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 right-10 w-72 h-72 bg-[#19A6E0]/10 rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[#E6007E]/10 rounded-full pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Back Button */}
@@ -72,7 +72,7 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
             Gastronomía en Suite
           </span>
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
-            RESTAURANTE <span className="text-[#E6007E] filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">GOURMET</span>
+            RESTAURANTE <span className="text-[#E6007E] ">GOURMET</span>
           </h1>
           <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
             Deleítate con nuestra carta gastronómica sin salir de la comodidad de tu suite. Platos preparados al instante por nuestros chefs colaboradores.
@@ -87,7 +87,7 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: index * 0.08 }}
-              className="rounded-xl bg-[#17171E] border border-white/5 p-5 flex flex-col justify-between hover:border-[#19A6E0]/30 transition-all duration-300"
+              className="rounded-xl bg-[#17171E] border border-white/5 p-5 flex flex-col justify-between hover:border-[#19A6E0]/30 transition-[border-color] duration-200"
             >
               <div>
                 <span className="text-[10px] text-[#19A6E0] uppercase tracking-wider font-heading block mb-3">
@@ -106,7 +106,7 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
                   href={RESTAURANTE_STORE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 rounded-lg border border-[#19A6E0]/25 hover:bg-[#19A6E0] hover:text-black hover:border-transparent text-[#19A6E0] font-heading text-xs uppercase tracking-widest transition-all duration-200 text-center block"
+                  className="w-full py-2.5 rounded-lg border border-[#19A6E0]/25 hover:bg-[#19A6E0] hover:text-black hover:border-transparent text-[#19A6E0] font-heading text-xs uppercase tracking-widest transition-[background-color,color,border-color] duration-200 text-center block"
                 >
                   Ordenar a la Suite
                 </a>

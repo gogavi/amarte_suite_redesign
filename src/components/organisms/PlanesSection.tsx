@@ -78,13 +78,13 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
   };
 
   return (
-    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto relative" aria-label="Planes Románticos">
+    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto relative content-visibility-auto" aria-label="Planes Románticos">
       <div className="mb-10 text-center sm:text-left">
         <span className="text-xs text-[#19A6E0] uppercase tracking-widest font-heading mb-2 block">
           Personaliza tu Estadía
         </span>
         <h2 className="font-heading text-3xl md:text-4xl text-white uppercase">
-          PLANES DE <span className="text-[#E6007E] filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">DECORACIÓN</span>
+          PLANES DE <span className="text-[#E6007E]">DECORACIÓN</span>
         </h2>
         <p className="font-body text-xs text-[#B7B4BC] mt-2">
           Precio desde pack 6 horas · Domingo a Jueves
@@ -95,7 +95,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
       <div className="relative w-full group/carousel px-2">
         <button
           onClick={() => scroll('left')}
-          className="absolute left-[-24px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-[#17171E]/95 backdrop-blur-md border border-[#E6007E] text-[#E6007E] flex items-center justify-center hover:bg-[#E6007E] hover:text-white transition-all duration-200 opacity-60 hover:opacity-100 hidden sm:flex shadow-[0_0_15px_rgba(230,0,126,0.3)] text-xl font-bold"
+          className="absolute left-[-24px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-[#17171E] border border-[#E6007E] text-[#E6007E] flex items-center justify-center hover:bg-[#E6007E] hover:text-white transition-[background-color,color,opacity] duration-200 opacity-60 hover:opacity-100 hidden sm:flex shadow-[0_0_15px_rgba(230,0,126,0.3)] text-xl font-bold"
           aria-label="Anterior"
         >
           ←
@@ -114,7 +114,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="flex-shrink-0 w-[290px] sm:w-[320px] snap-start rounded-2xl bg-[#17171E]/50 backdrop-blur-md border border-white/5 p-6 flex flex-col justify-between hover:border-[#E6007E]/30 transition-all duration-300 hover:shadow-[0_0_20px_rgba(230,0,126,0.12)]"
+              className="flex-shrink-0 w-[290px] sm:w-[320px] snap-start rounded-2xl bg-[#17171E] border border-white/5 p-6 flex flex-col justify-between hover:border-[#E6007E]/30 transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_20px_rgba(230,0,126,0.12)]"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">
@@ -144,7 +144,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
 
               <button
                 onClick={() => onSelectPlan(plan.name)}
-                className="w-full py-3 rounded-xl bg-white/5 hover:bg-[#E6007E] hover:text-white border border-white/10 hover:border-transparent text-white font-heading text-xs uppercase tracking-widest transition-all duration-200"
+                className="w-full py-3 rounded-xl bg-white/5 hover:bg-[#E6007E] hover:text-white border border-white/10 hover:border-transparent text-white font-heading text-xs uppercase tracking-widest transition-[background-color,color,border-color] duration-200"
               >
                 Agregar con Martina
               </button>
@@ -156,7 +156,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
 
         <button
           onClick={() => scroll('right')}
-          className="absolute right-[-24px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-[#17171E]/95 backdrop-blur-md border border-[#E6007E] text-[#E6007E] flex items-center justify-center hover:bg-[#E6007E] hover:text-white transition-all duration-200 opacity-60 hover:opacity-100 hidden sm:flex shadow-[0_0_15px_rgba(230,0,126,0.3)] text-xl font-bold"
+          className="absolute right-[-24px] top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-[#17171E] border border-[#E6007E] text-[#E6007E] flex items-center justify-center hover:bg-[#E6007E] hover:text-white transition-[background-color,color,opacity] duration-200 opacity-60 hover:opacity-100 hidden sm:flex shadow-[0_0_15px_rgba(230,0,126,0.3)] text-xl font-bold"
           aria-label="Siguiente"
         >
           →

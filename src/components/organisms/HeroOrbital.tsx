@@ -89,10 +89,17 @@ const magneticNodes = Array.from({ length: 156 }, (_, index) => {
 export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaState = 'idle' }: HeroOrbitalProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [currentState, setCurrentState] = useState<MartinaState>(martinaState);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isInView, setIsInView] = useState(true);
   const [portalZoomed, setPortalZoomed] = useState(false);
   const [videoModal, setVideoModal] = useState<VideoModalContent | null>(null);
+
+  const effectsActive = isInView && !reducedMotion;
+  const enableParallax = effectsActive && !isMobile;
+  const enableMotionVideo = effectsActive && !isMobile;
 
   const { scrollYProgress } = useScroll({
     target: rootRef,
@@ -124,16 +131,48 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   }, [videoModal]);
 
   useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(query.matches);
-    const onChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
-    query.addEventListener('change', onChange);
-    return () => query.removeEventListener('change', onChange);
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+    setReducedMotion(motionQuery.matches);
+    setIsMobile(mobileQuery.matches);
+    const onMotion = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
+    const onMobile = (event: MediaQueryListEvent) => setIsMobile(event.matches);
+    motionQuery.addEventListener('change', onMotion);
+    mobileQuery.addEventListener('change', onMobile);
+    return () => {
+      motionQuery.removeEventListener('change', onMotion);
+      mobileQuery.removeEventListener('change', onMobile);
+    };
   }, []);
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || reducedMotion) return;
+    if (!root || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: '80px 0px', threshold: 0.05 }
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (enableMotionVideo) {
+      void video.play().catch(() => undefined);
+    } else {
+      video.pause();
+    }
+  }, [enableMotionVideo]);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !enableParallax) {
+      root?.style.setProperty('--mx', '0');
+      root?.style.setProperty('--my', '0');
+      return;
+    }
 
     let ticking = false;
     const onMove = (event: MouseEvent) => {
@@ -167,19 +206,23 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseleave', reset);
     };
-  }, [reducedMotion]);
+  }, [enableParallax]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
+    const ctx = canvas?.getContext('2d', { alpha: true });
+    if (!canvas || !ctx || !effectsActive) {
+      if (canvas && ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.25 : 1.75);
     const particles: Particle[] = [];
     const pointer = { x: 0.5, y: 0.5, active: false };
     let width = 0;
     let height = 0;
     let frame = 0;
+    let running = true;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -190,7 +233,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       particles.length = 0;
-      const count = window.innerWidth < 768 ? 48 : 88;
+      const count = isMobile ? 18 : 36;
       for (let i = 0; i < count; i++) {
         const depth = Math.random();
         const hue = Math.random() > 0.78 ? 'gold' : Math.random() > 0.54 ? 'rose' : 'white';
@@ -199,69 +242,68 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           y: Math.random() * height,
           baseX: Math.random() * width,
           baseY: Math.random() * height,
-          vx: reducedMotion ? 0 : (Math.random() - 0.5) * (0.08 + depth * 0.2),
-          vy: reducedMotion ? 0 : (Math.random() - 0.5) * (0.04 + depth * 0.12),
-          size: 0.3 + Math.pow(depth, 1.8) * 3.4,
-          alpha: 0.05 + depth * 0.36,
-          blur: depth > 0.78 ? 2 + Math.random() * 3.5 : Math.random() * 0.9,
-          magnetic: 0.22 + depth * 0.9,
+          vx: (Math.random() - 0.5) * (0.06 + depth * 0.14),
+          vy: (Math.random() - 0.5) * (0.03 + depth * 0.08),
+          size: 0.35 + Math.pow(depth, 1.8) * 2.6,
+          alpha: 0.08 + depth * 0.32,
+          blur: 0,
+          magnetic: 0.18 + depth * 0.7,
           hue,
         });
       }
     };
 
     const draw = () => {
+      if (!running) return;
       ctx.clearRect(0, 0, width, height);
-      particles.forEach((particle) => {
-        if (!reducedMotion) {
-          particle.x += particle.vx;
-          particle.y += particle.vy;
-          if (particle.x < -16) particle.x = width + 16;
-          if (particle.x > width + 16) particle.x = -16;
-          if (particle.y < -16) particle.y = height + 16;
-          if (particle.y > height + 16) particle.y = -16;
-        }
+      for (let i = 0; i < particles.length; i++) {
+        const particle = particles[i];
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        if (particle.x < -16) particle.x = width + 16;
+        if (particle.x > width + 16) particle.x = -16;
+        if (particle.y < -16) particle.y = height + 16;
+        if (particle.y > height + 16) particle.y = -16;
 
-        const color = particle.hue === 'gold'
-          ? '241, 229, 172'
-          : particle.hue === 'rose'
-            ? '230, 0, 126'
-            : '255, 245, 248';
+        const color =
+          particle.hue === 'gold'
+            ? '241, 229, 172'
+            : particle.hue === 'rose'
+              ? '230, 0, 126'
+              : '255, 245, 248';
 
         let renderX = particle.x;
         let renderY = particle.y;
         let renderAlpha = particle.alpha;
         let renderSize = particle.size;
 
-        if (pointer.active) {
+        if (pointer.active && !isMobile) {
           const targetX = pointer.x * width;
           const targetY = pointer.y * height;
           const dx = particle.x - targetX;
           const dy = particle.y - targetY;
           const distance = Math.max(1, Math.sqrt(dx * dx + dy * dy));
-          const radius = Math.min(width, height) * 0.24;
+          const radius = Math.min(width, height) * 0.22;
           const influence = Math.max(0, 1 - distance / radius);
           const pressure = influence * influence * particle.magnetic;
 
-          renderX += (dx / distance) * pressure * 76;
-          renderY += (dy / distance) * pressure * 56;
-          renderAlpha *= 1 - pressure * 0.54;
-          renderSize *= 1 + pressure * 0.62;
+          renderX += (dx / distance) * pressure * 60;
+          renderY += (dy / distance) * pressure * 44;
+          renderAlpha *= 1 - pressure * 0.45;
+          renderSize *= 1 + pressure * 0.45;
         }
 
-        ctx.save();
-        ctx.filter = particle.blur > 1.2 ? `blur(${particle.blur}px)` : 'none';
         ctx.fillStyle = `rgba(${color}, ${renderAlpha})`;
         ctx.beginPath();
         ctx.arc(renderX, renderY, renderSize, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
-      });
+      }
 
-      if (!reducedMotion) frame = window.requestAnimationFrame(draw);
+      frame = window.requestAnimationFrame(draw);
     };
 
     const onPointerMove = (event: MouseEvent) => {
+      if (isMobile) return;
       const rect = canvas.getBoundingClientRect();
       pointer.x = (event.clientX - rect.left) / rect.width;
       pointer.y = (event.clientY - rect.top) / rect.height;
@@ -274,15 +316,19 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
     resize();
     draw();
     window.addEventListener('resize', resize);
-    window.addEventListener('mousemove', onPointerMove, { passive: true });
-    window.addEventListener('mouseleave', onPointerLeave);
+    if (!isMobile) {
+      window.addEventListener('mousemove', onPointerMove, { passive: true });
+      window.addEventListener('mouseleave', onPointerLeave);
+    }
     return () => {
+      running = false;
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('mouseleave', onPointerLeave);
       window.cancelAnimationFrame(frame);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [reducedMotion]);
+  }, [effectsActive, isMobile]);
 
   const activateVoice = () => {
     setCurrentState('listening');
@@ -293,11 +339,12 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
   const rootStyle = { '--mx': '0', '--my': '0', '--cursor-x': '50%', '--cursor-y': '50%' } as CSSProperties;
   const stateClass = `hero-agent--${currentState}`;
+  const pauseClass = effectsActive ? '' : ' hero-agent--paused';
 
   return (
     <section
       ref={rootRef}
-      className={`hero-agent-v6 ${stateClass} relative min-h-[112vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[122vh]`}
+      className={`hero-agent-v6 ${stateClass}${pauseClass} relative min-h-[112vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[122vh]`}
       style={rootStyle}
     >
       <style>{`
@@ -309,15 +356,30 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
         .hero-agent-v6 * { backface-visibility: hidden; }
 
-        .v6-bg,
-        .v6-planet-layer,
-        .v6-stage,
-        .v6-orb,
-        .v6-orb-core,
-        .v6-living-ring,
-        .v6-orbit,
-        .v6-cta {
-          will-change: transform, opacity, filter;
+        .hero-agent-v6:not(.hero-agent--paused) .v6-bg,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-planet-layer,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-stage,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-orb,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-orb-core,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-living-ring,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-orbit,
+        .hero-agent-v6:not(.hero-agent--paused) .v6-cta {
+          will-change: transform, opacity;
+        }
+
+        .hero-agent--paused .v6-bg,
+        .hero-agent--paused .v6-planet-layer,
+        .hero-agent--paused .v6-stage,
+        .hero-agent--paused .v6-orb,
+        .hero-agent--paused .v6-orb-core,
+        .hero-agent--paused .v6-mars-surface,
+        .hero-agent--paused .v6-magnetic-shell,
+        .hero-agent--paused .v6-living-ring,
+        .hero-agent--paused .v6-orbit,
+        .hero-agent--paused .v6-node,
+        .hero-agent--paused .v6-field-line,
+        .hero-agent--paused .v6-plasma-cloud {
+          animation-play-state: paused !important;
         }
 
         .v6-bg {
@@ -335,7 +397,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           width: 100%;
           object-fit: cover;
           opacity: 0.42;
-          filter: brightness(0.62) contrast(1.1) saturate(0.9) blur(0.2px);
+          filter: brightness(0.62) contrast(1.1) saturate(0.9);
           transform: translate3d(calc(var(--mx) * -7px), calc(var(--my) * -5px), -180px) scale(1.18);
           animation: v6VideoEnter 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
         }
@@ -589,8 +651,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         @keyframes v6CoreBreath {
-          0%, 100% { scale: 0.99; filter: brightness(1.02) saturate(1.06); opacity: 0.98; }
-          50% { scale: 1.015; filter: brightness(1.08) saturate(1.1); opacity: 1; }
+          0%, 100% { scale: 0.99; opacity: 0.98; }
+          50% { scale: 1.015; opacity: 1; }
         }
 
         @keyframes v6MarsSpin {
@@ -599,8 +661,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         @keyframes v6MagneticFloat {
-          0%, 100% { scale: 0.98; filter: blur(0); }
-          50% { scale: 1.045; filter: blur(0.2px); }
+          0%, 100% { scale: 0.98; }
+          50% { scale: 1.03; }
         }
 
         @keyframes v6NodePulse {
@@ -642,19 +704,23 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           }
           .v6-motion-video {
             opacity: 0.46;
-            filter: brightness(0.64) contrast(1.1) saturate(0.9) blur(0.2px);
+            filter: brightness(0.64) contrast(1.1) saturate(0.9);
             transform: translate3d(calc(var(--mx) * -10px), calc(var(--my) * -7px), -180px) scale(1.16);
           }
         }
 
         @media (max-width: 767px) {
           .v6-planet-layer {
-          transform: translate3d(calc(-50% + var(--mx) * 3px), calc(-50% + var(--my) * 3px), -180px) scale(1);
-          transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 400ms ease;
-        }
-
-        .v6-stage { transform: none; }
+            transform: translate3d(-50%, -50%, -180px) scale(1);
+            transition: opacity 400ms ease;
+          }
+          .v6-stage { transform: none; animation: none; }
           .v6-orb { transform: translate3d(0, 0, 120px); }
+          .v6-bg { transform: translate3d(0, 0, -220px) scale(1.12); }
+          .v6-motion-video { display: none; }
+          .v6-mars-surface { animation-duration: 120s; }
+          .v6-magnetic-shell { animation: none; }
+          .v6-orb-core { animation: none; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -674,21 +740,24 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="v6-bg absolute inset-[-10%]" />
-        {!reducedMotion && (
+        {enableMotionVideo && (
           <video
+            ref={videoRef}
             className="v6-motion-video absolute inset-0"
             src={videoHomeNubes}
             autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             aria-hidden="true"
           />
         )}
         <div className="v6-space-grade absolute inset-0" />
       </div>
-      <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-80 pointer-events-none" />
+      {effectsActive && (
+        <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-80 pointer-events-none" />
+      )}
       {SHOW_CURSOR_DIMPLE && (
         <div className="v6-magnetic-dimple pointer-events-none absolute inset-0 z-[11]" />
       )}
@@ -807,7 +876,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           >
             {conversationStarters.map((starter) => {
               const className =
-                'rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[#FFF5F8]/78 backdrop-blur-md transition hover:scale-105 hover:border-[#E6007E]/55 hover:bg-white/10 hover:text-white';
+                'rounded-full border border-white/10 bg-white/8 px-4 py-2 text-xs text-[#FFF5F8]/78 transition-[transform,border-color,background-color,color] duration-200 hover:scale-105 hover:border-[#E6007E]/55 hover:bg-white/10 hover:text-white';
 
               if ('href' in starter) {
                 return (
@@ -876,7 +945,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: reducedMotion ? 0.1 : 0.25 }}
-              className="absolute inset-0 bg-black/82 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/85"
               aria-label="Cerrar video"
               onClick={() => setVideoModal(null)}
             />

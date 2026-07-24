@@ -276,7 +276,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     'w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60';
 
   return (
-    <div className="fixed inset-0 bg-bg-dark/80 backdrop-blur-md flex items-center justify-center p-4 z-modal overflow-y-auto">
+    <div className="fixed inset-0 bg-bg-dark/90 flex items-center justify-center p-4 z-modal overflow-y-auto">
       <div className="glass-panel w-full max-w-xl rounded-brand p-6 md:p-8 relative shadow-2xl my-8">
         <button
           onClick={onClose}

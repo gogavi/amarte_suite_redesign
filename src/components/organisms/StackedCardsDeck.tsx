@@ -40,7 +40,7 @@ export default function StackedCardsDeck({ suites, onSelectSuite }: StackedCards
         <motion.div
           key={`previous-${previousSuite.id}`}
           aria-hidden="true"
-          className="absolute left-[-48px] top-14 w-[78%] h-[450px] rounded-brand overflow-hidden opacity-50 blur-[0.25px] pointer-events-none"
+          className="absolute left-[-48px] top-14 w-[78%] h-[450px] rounded-brand overflow-hidden opacity-50 pointer-events-none"
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 0.5, rotate: -6, scale: 0.9 }}
           transition={{ duration: 0.24, ease: [0.25, 1, 0.5, 1] }}
@@ -51,7 +51,7 @@ export default function StackedCardsDeck({ suites, onSelectSuite }: StackedCards
         <motion.div
           key={`next-${nextSuite.id}`}
           aria-hidden="true"
-          className="absolute right-[-48px] top-14 w-[78%] h-[450px] rounded-brand overflow-hidden opacity-50 blur-[0.25px] pointer-events-none"
+          className="absolute right-[-48px] top-14 w-[78%] h-[450px] rounded-brand overflow-hidden opacity-50 pointer-events-none"
           initial={{ x: 20, opacity: 0 }}
           animate={{ x: 0, opacity: 0.5, rotate: 6, scale: 0.9 }}
           transition={{ duration: 0.24, ease: [0.25, 1, 0.5, 1] }}
@@ -76,7 +76,7 @@ export default function StackedCardsDeck({ suites, onSelectSuite }: StackedCards
       <button
         type="button"
         onClick={goToPrevious}
-        className="absolute left-[-6px] top-[150px] z-30 h-11 w-11 rounded-full border border-magenta-digital/40 bg-magenta-digital text-white shadow-[0_0_28px_rgba(230,0,126,0.35)] backdrop-blur-md transition hover:scale-105 hover:bg-[#ff0a90] active:scale-95"
+        className="absolute left-[-6px] top-[150px] z-30 h-11 w-11 rounded-full border border-magenta-digital/40 bg-magenta-digital text-white shadow-[0_0_28px_rgba(230,0,126,0.35)] transition-transform hover:scale-105 hover:bg-[#ff0a90] active:scale-95"
         aria-label="Ver suite anterior"
       >
         ←
@@ -85,7 +85,7 @@ export default function StackedCardsDeck({ suites, onSelectSuite }: StackedCards
       <button
         type="button"
         onClick={goToNext}
-        className="absolute right-[-6px] top-[150px] z-30 h-11 w-11 rounded-full border border-magenta-digital/40 bg-magenta-digital text-white shadow-[0_0_28px_rgba(230,0,126,0.35)] backdrop-blur-md transition hover:scale-105 hover:bg-[#ff0a90] active:scale-95"
+        className="absolute right-[-6px] top-[150px] z-30 h-11 w-11 rounded-full border border-magenta-digital/40 bg-magenta-digital text-white shadow-[0_0_28px_rgba(230,0,126,0.35)] transition-transform hover:scale-105 hover:bg-[#ff0a90] active:scale-95"
         aria-label="Ver siguiente suite"
       >
         →
