@@ -271,9 +271,11 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   };
 
   const inputClass =
-    'w-full bg-bg-dark/60 border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60';
+    'w-full bg-bg-dark/60 border border-magenta-digital rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-magenta-digital focus:ring-1 focus:ring-magenta-digital/40 disabled:opacity-60';
   const selectClass =
-    'w-full bg-bg-dark border border-white/10 rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-orbital disabled:opacity-60';
+    'w-full bg-bg-dark border border-magenta-digital rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-magenta-digital focus:ring-1 focus:ring-magenta-digital/40 disabled:opacity-60';
+  const labelClass =
+    'text-xs text-magenta-digital uppercase tracking-widest block mb-1 font-medium';
 
   return (
     <div className="fixed inset-0 bg-bg-dark/90 flex items-center justify-center p-4 z-modal overflow-y-auto">
@@ -296,7 +298,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         <form className="space-y-4" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Nombre *</label>
+              <label className={labelClass}>Nombre *</label>
               <input
                 type="text"
                 name="name"
@@ -310,7 +312,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Cédula (Opcional)</label>
+              <label className={labelClass}>Cédula (Opcional)</label>
               <input
                 type="text"
                 name="document"
@@ -327,7 +329,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">WhatsApp/Teléfono *</label>
+              <label className={labelClass}>WhatsApp/Teléfono *</label>
               <input
                 type="tel"
                 name="whatsapp"
@@ -342,7 +344,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Correo (Opcional)</label>
+              <label className={labelClass}>Correo (Opcional)</label>
               <input
                 type="email"
                 name="email"
@@ -359,7 +361,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Selecciona Suite *</label>
+              <label className={labelClass}>Selecciona Suite *</label>
               <select
                 name="suiteId"
                 value={formData.suiteId}
@@ -379,7 +381,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               )}
             </div>
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Pack de tiempo *</label>
+              <label className={labelClass}>Pack de tiempo *</label>
               <select
                 name="packId"
                 value={formData.packId}
@@ -399,7 +401,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Fecha de visita *</label>
+              <label className={labelClass}>Fecha de visita *</label>
               <input
                 type="date"
                 name="date"
@@ -411,7 +413,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className="text-xs text-gris-medio uppercase tracking-widest block mb-1">Hora aproximada *</label>
+              <label className={labelClass}>Hora aproximada *</label>
               <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
                 <select
                   name="timeHour"
