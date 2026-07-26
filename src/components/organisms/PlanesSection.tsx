@@ -16,6 +16,7 @@ interface PlanesSectionProps {
 
 export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRaf = useRef<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [planes, setPlanes] = useState<PlanCard[]>(() =>
     PLANES_CONTENT.map((plan) => ({ ...plan, priceLabel: '…' }))
@@ -55,15 +56,17 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
     void loadPrices();
     return () => {
       cancelled = true;
+      if (scrollRaf.current) cancelAnimationFrame(scrollRaf.current);
     };
   }, []);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const element = e.currentTarget;
     const maxScroll = element.scrollWidth - element.clientWidth;
-    if (maxScroll > 0) {
-      setScrollProgress(element.scrollLeft / maxScroll);
-    }
+    if (maxScroll <= 0) return;
+    const next = element.scrollLeft / maxScroll;
+    if (scrollRaf.current) cancelAnimationFrame(scrollRaf.current);
+    scrollRaf.current = requestAnimationFrame(() => setScrollProgress(next));
   };
 
   const scroll = (direction: 'left' | 'right') => {

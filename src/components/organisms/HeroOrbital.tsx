@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
 import spaceBgMobile from '../../assets/home_motion/space-bg-mobile_comp.webp';
 import spaceBgDesktop from '../../assets/home_motion/space-bg-desktop_comp.jpg';
@@ -101,19 +101,6 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const enableParallax = effectsActive && !isMobile;
   const enableMotionVideo = effectsActive && !isMobile;
 
-  const { scrollYProgress } = useScroll({
-    target: rootRef,
-    offset: ['start start', 'end start'],
-  });
-
-  const introOpacity = useTransform(scrollYProgress, [0, 0.18, 0.34], [1, 1, 0.2]);
-  const introY = useTransform(scrollYProgress, [0, 0.34], [0, -34]);
-  const introScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.92]);
-  const agentOpacity = useTransform(scrollYProgress, [0.02, 0.15, 0.3], [0, 0.56, 1]);
-  const agentY = useTransform(scrollYProgress, [0.02, 0.32], [48, 20]);
-  const agentScale = useTransform(scrollYProgress, [0.02, 0.32], [0.82, 1.08]);
-  const supportOpacity = useTransform(scrollYProgress, [0.16, 0.3, 0.42], [0, 0.7, 1]);
-
   useEffect(() => setCurrentState(martinaState), [martinaState]);
 
   useEffect(() => {
@@ -149,8 +136,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
     const root = rootRef.current;
     if (!root || typeof IntersectionObserver === 'undefined') return;
     const observer = new IntersectionObserver(
-      ([entry]) => setIsInView(entry.isIntersecting),
-      { rootMargin: '80px 0px', threshold: 0.05 }
+      ([entry]) => setIsInView(entry.isIntersecting && entry.intersectionRatio > 0.08),
+      { rootMargin: '0px', threshold: [0, 0.08, 0.2, 0.5] }
     );
     observer.observe(root);
     return () => observer.disconnect();
@@ -326,7 +313,10 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
       window.removeEventListener('mousemove', onPointerMove);
       window.removeEventListener('mouseleave', onPointerLeave);
       window.cancelAnimationFrame(frame);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Canvas may already be unmounted when effectsActive flips to false.
+      if (canvas.isConnected) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     };
   }, [effectsActive, isMobile]);
 
@@ -339,32 +329,35 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
   const rootStyle = { '--mx': '0', '--my': '0', '--cursor-x': '50%', '--cursor-y': '50%' } as CSSProperties;
   const stateClass = `hero-agent--${currentState}`;
-  const pauseClass = effectsActive ? '' : ' hero-agent--paused';
+  const pauseClass = isInView ? '' : ' hero-agent--paused';
 
   return (
     <section
       ref={rootRef}
-      className={`hero-agent-v6 ${stateClass}${pauseClass} relative min-h-[112vh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8] md:min-h-[122vh]`}
+      className={`hero-agent-v6 ${stateClass}${pauseClass} relative min-h-[100svh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8]`}
       style={rootStyle}
     >
       <style>{`
         .hero-agent-v6 {
           isolation: isolate;
-          perspective: 1600px;
-          transform-style: preserve-3d;
+          contain: layout paint style;
         }
 
-        .hero-agent-v6 * { backface-visibility: hidden; }
+        .hero-agent-v6.hero-agent--paused {
+          content-visibility: auto;
+          contain-intrinsic-size: 100svh;
+        }
+
+        .hero-agent-v6.hero-agent--paused .hero-agent-layers,
+        .hero-agent-v6.hero-agent--paused canvas {
+          visibility: hidden;
+          pointer-events: none;
+        }
 
         .hero-agent-v6:not(.hero-agent--paused) .v6-bg,
-        .hero-agent-v6:not(.hero-agent--paused) .v6-planet-layer,
-        .hero-agent-v6:not(.hero-agent--paused) .v6-stage,
-        .hero-agent-v6:not(.hero-agent--paused) .v6-orb,
         .hero-agent-v6:not(.hero-agent--paused) .v6-orb-core,
-        .hero-agent-v6:not(.hero-agent--paused) .v6-living-ring,
-        .hero-agent-v6:not(.hero-agent--paused) .v6-orbit,
         .hero-agent-v6:not(.hero-agent--paused) .v6-cta {
-          will-change: transform, opacity;
+          will-change: transform;
         }
 
         .hero-agent--paused .v6-bg,
@@ -379,7 +372,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         .hero-agent--paused .v6-node,
         .hero-agent--paused .v6-field-line,
         .hero-agent--paused .v6-plasma-cloud {
-          animation-play-state: paused !important;
+          animation: none !important;
         }
 
         .v6-bg {
@@ -388,8 +381,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             image-set(url(${spaceBgMobile}) 1x);
           background-position: center;
           background-size: cover;
-          transform: translate3d(calc(var(--mx) * -8px), calc(var(--my) * -6px), -220px) scale(1.18);
-          transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1);
+          transform: translate3d(0, 0, 0) scale(1.08);
         }
 
         .v6-motion-video {
@@ -398,8 +390,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           object-fit: cover;
           opacity: 0.42;
           filter: brightness(0.62) contrast(1.1) saturate(0.9);
-          transform: translate3d(calc(var(--mx) * -7px), calc(var(--my) * -5px), -180px) scale(1.18);
-          animation: v6VideoEnter 1200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+          transform: translate3d(0, 0, 0) scale(1.08);
         }
 
         .v6-space-grade {
@@ -410,21 +401,16 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             linear-gradient(180deg, rgba(5,5,8,0.48), rgba(5,5,8,0.04) 38%, rgba(5,5,8,0.76));
         }
         .v6-planet-layer {
-          transform: translate3d(calc(-50% + var(--mx) * 3px), calc(-50% + var(--my) * 3px), -180px) scale(1);
-          transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1), opacity 400ms ease;
+          transform: translate3d(-50%, -50%, 0) scale(1);
         }
 
         .v6-stage {
-          transform-style: preserve-3d;
-          transform: rotateX(calc(var(--my) * -4deg)) rotateY(calc(var(--mx) * 5deg));
-          transition: transform 520ms cubic-bezier(0.25, 1, 0.5, 1);
-          animation: v6CameraBreath 12s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+          transform: none;
         }
 
         .v6-orb {
           filter: drop-shadow(0 0 56px rgba(196, 74, 42, 0.34)) drop-shadow(0 0 90px rgba(230, 0, 126, 0.18));
-          transform: translate3d(calc(var(--mx) * -7px), calc(var(--my) * -6px), 120px);
-          transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1), filter 400ms ease;
+          transform: none;
         }
 
         .v6-orb.v6-orb--no-aura {
@@ -458,7 +444,6 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           filter: saturate(1.16) contrast(1.08) brightness(1.02) hue-rotate(-6deg);
           transform: translate(-50%, -50%);
           transform-origin: center center;
-          animation: v6MarsSpin 64s linear infinite;
         }
 
         .v6-orb-core::before,
@@ -702,23 +687,19 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
               linear-gradient(180deg, rgba(5,5,8,0.04), rgba(5,5,8,0.2) 58%, #050508 100%),
               image-set(url(${spaceBgDesktop}) 1x);
           }
+          .hero-agent-v6:not(.hero-agent--paused) .v6-bg {
+            transform: translate3d(calc(var(--mx) * -6px), calc(var(--my) * -4px), 0) scale(1.1);
+            transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1);
+          }
           .v6-motion-video {
             opacity: 0.46;
             filter: brightness(0.64) contrast(1.1) saturate(0.9);
-            transform: translate3d(calc(var(--mx) * -10px), calc(var(--my) * -7px), -180px) scale(1.16);
           }
         }
 
         @media (max-width: 767px) {
-          .v6-planet-layer {
-            transform: translate3d(-50%, -50%, -180px) scale(1);
-            transition: opacity 400ms ease;
-          }
-          .v6-stage { transform: none; animation: none; }
-          .v6-orb { transform: translate3d(0, 0, 120px); }
-          .v6-bg { transform: translate3d(0, 0, -220px) scale(1.12); }
           .v6-motion-video { display: none; }
-          .v6-mars-surface { animation-duration: 120s; }
+          .v6-mars-surface { animation: none; }
           .v6-magnetic-shell { animation: none; }
           .v6-orb-core { animation: none; }
         }
@@ -738,8 +719,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
       `}</style>
 
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="v6-bg absolute inset-[-10%]" />
+      <div className="hero-agent-layers absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden={!effectsActive}>
+        <div className="v6-bg absolute inset-[-6%]" />
         {enableMotionVideo && (
           <video
             ref={videoRef}
@@ -756,13 +737,13 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         <div className="v6-space-grade absolute inset-0" />
       </div>
       {effectsActive && (
-        <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-80 pointer-events-none" />
+        <canvas ref={canvasRef} className="absolute inset-0 z-10 h-full w-full opacity-70 pointer-events-none" />
       )}
       {SHOW_CURSOR_DIMPLE && (
         <div className="v6-magnetic-dimple pointer-events-none absolute inset-0 z-[11]" />
       )}
 
-      <div className="sticky top-0 z-20 flex min-h-screen flex-col items-center px-4 pb-8 pt-4 sm:px-6">
+      <div className="relative z-20 flex min-h-[100svh] flex-col items-center px-4 pb-8 pt-4 sm:px-6">
         <header className="flex w-full max-w-7xl items-center justify-between border-b border-white/8 pb-4">
           <div className="font-heading text-2xl tracking-[0.28em] text-[#FFF5F8]">
             A<span className="text-[#E6007E]">MAR</span>TE
@@ -784,8 +765,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           <motion.div
             initial={reducedMotion ? false : { opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            style={reducedMotion ? undefined : { opacity: introOpacity, y: introY, scale: introScale }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-5xl"
           >
             <div className="mb-3 font-body text-[10px] uppercase tracking-[0.4em] text-[#FFF5F8]/58 sm:text-xs">Voice Agent · Martina</div>
@@ -795,10 +775,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             </h1>
           </motion.div>
 
-          <motion.div
-            style={reducedMotion ? undefined : { opacity: agentOpacity, y: agentY, scale: agentScale }}
-            className="v6-stage relative flex aspect-square w-[min(92vw,560px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]"
-          >
+          <div className="v6-stage relative flex aspect-square w-[min(92vw,560px)] items-center justify-center rounded-full md:w-[min(58vw,560px)]">
             <div className={`v6-orb absolute inset-0 flex items-center justify-center rounded-full${SHOW_ORB_AURA ? '' : ' v6-orb--no-aura'}`}>
               {SHOW_ORB_AURA && (
                 <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgba(230,0,126,0.12),transparent_60%)] blur-2xl" />
@@ -832,6 +809,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
                     alt=""
                     className="v6-mars-surface"
                     draggable={false}
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -861,17 +839,21 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             >
               <svg aria-hidden="true" className="h-[15px] w-[15px] shrink-0 translate-y-[0.5px]" viewBox="0 0 24 24" fill="none"><path d="M12 13.75c1.66 0 3-1.34 3-3V6.25c0-1.66-1.34-3-3-3s-3 1.34-3 3v4.5c0 1.66 1.34 3 3 3Z" stroke="currentColor" strokeWidth="1.65"/><path d="M6.5 10.25c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5M12 15.75v3.5M9.25 19.25h5.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round"/><path d="M10.25 6.5h3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.7"/></svg> PREGÚNTALE A MARTINA
             </button>
-          </motion.div>
+          </div>
 
           <motion.p
-            style={reducedMotion ? undefined : { opacity: supportOpacity }}
+            initial={reducedMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
             className="max-w-xl font-body text-xs leading-relaxed text-[#FFF5F8]/68 sm:text-sm"
           >
             Martina interpreta tu intención y te guía hacia la suite, el plan y el momento perfecto. ¿Qué plan estás buscando?
           </motion.p>
 
           <motion.div
-            style={reducedMotion ? undefined : { opacity: supportOpacity }}
+            initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.22 }}
             className="flex flex-wrap justify-center gap-2 pt-1"
           >
             {conversationStarters.map((starter) => {

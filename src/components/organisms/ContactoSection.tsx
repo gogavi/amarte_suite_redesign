@@ -1,5 +1,5 @@
 const socialLinkClass =
-  'w-14 h-14 rounded-full bg-[#17171E] flex items-center justify-center text-white transition-[transform,border-color,box-shadow] duration-200 will-change-transform hover:scale-110 hover:-translate-y-1 active:scale-95';
+  'w-14 h-14 rounded-full bg-[#17171E] flex items-center justify-center text-white transition-[transform,border-color,box-shadow] duration-200 hover:scale-110 hover:-translate-y-1 active:scale-95';
 
 export default function ContactoSection() {
   return (
