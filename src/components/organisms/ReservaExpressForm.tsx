@@ -271,11 +271,12 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   };
 
   const inputClass =
-    'w-full bg-bg-dark/60 border border-magenta-digital rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-magenta-digital focus:ring-1 focus:ring-magenta-digital/40 disabled:opacity-60';
+    'w-full bg-bg-dark/60 border border-[#E6007E] rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-[#E6007E] focus:ring-1 focus:ring-[#E6007E]/40 disabled:opacity-60';
   const selectClass =
-    'w-full bg-bg-dark border border-magenta-digital rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-magenta-digital focus:ring-1 focus:ring-magenta-digital/40 disabled:opacity-60';
+    'w-full bg-bg-dark border border-[#E6007E] rounded-brand px-4 py-2 text-sm text-white focus:outline-none focus:border-[#E6007E] focus:ring-1 focus:ring-[#E6007E]/40 disabled:opacity-60';
   const labelClass =
-    'text-xs text-magenta-digital uppercase tracking-widest block mb-1 font-medium';
+    'amarte-reserva-label text-xs uppercase tracking-widest block mb-1 font-medium text-[#E6007E]';
+  const labelStyle = { color: '#E6007E' } as const;
 
   return (
     <div className="fixed inset-0 bg-bg-dark/90 flex items-center justify-center p-4 z-modal overflow-y-auto">
@@ -298,7 +299,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         <form className="space-y-4" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Nombre *</label>
+              <label className={labelClass} style={labelStyle}>Nombre *</label>
               <input
                 type="text"
                 name="name"
@@ -312,7 +313,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className={labelClass}>Cédula (Opcional)</label>
+              <label className={labelClass} style={labelStyle}>Cédula (Opcional)</label>
               <input
                 type="text"
                 name="document"
@@ -329,7 +330,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>WhatsApp/Teléfono *</label>
+              <label className={labelClass} style={labelStyle}>WhatsApp/Teléfono *</label>
               <input
                 type="tel"
                 name="whatsapp"
@@ -344,7 +345,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className={labelClass}>Correo (Opcional)</label>
+              <label className={labelClass} style={labelStyle}>Correo (Opcional)</label>
               <input
                 type="email"
                 name="email"
@@ -361,7 +362,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Selecciona Suite *</label>
+              <label className={labelClass} style={labelStyle}>Selecciona Suite *</label>
               <select
                 name="suiteId"
                 value={formData.suiteId}
@@ -381,7 +382,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               )}
             </div>
             <div>
-              <label className={labelClass}>Pack de tiempo *</label>
+              <label className={labelClass} style={labelStyle}>Pack de tiempo *</label>
               <select
                 name="packId"
                 value={formData.packId}
@@ -401,7 +402,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Fecha de visita *</label>
+              <label className={labelClass} style={labelStyle}>Fecha de visita *</label>
               <input
                 type="date"
                 name="date"
@@ -413,7 +414,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               />
             </div>
             <div>
-              <label className={labelClass}>Hora aproximada *</label>
+              <label className={labelClass} style={labelStyle}>Hora aproximada *</label>
               <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
                 <select
                   name="timeHour"
@@ -458,7 +459,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           </div>
 
           <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6 gap-4">
-            <span className="text-sm text-rosa-cuarzo font-light uppercase tracking-widest">Valor de la reserva:</span>
+            <span className="text-sm font-medium uppercase tracking-widest text-[#E6007E]" style={{ color: '#E6007E' }}>Valor de la reserva:</span>
             <span className="text-2xl font-heading text-cyan-orbital font-bold text-right">
               {catalogLoading
                 ? '…'

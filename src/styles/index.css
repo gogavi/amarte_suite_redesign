@@ -96,3 +96,15 @@
 .rounded-brand {
   border-radius: 12px;
 }
+
+/* Formulario PREPARA TU VIAJE: títulos de campo en magenta (legibles sobre glass) */
+.glass-panel form.space-y-4 > .grid > div > label,
+.glass-panel form.space-y-4 label.amarte-reserva-label {
+  color: #E6007E !important;
+  -webkit-text-fill-color: #E6007E;
+}
+
+.glass-panel form.space-y-4 input,
+.glass-panel form.space-y-4 select {
+  border-color: #E6007E !important;
+}
