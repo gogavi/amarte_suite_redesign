@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
 import { createWebReservation, type PaymentMethod } from '../../services/reservationService';
 import { buildWhatsappReservasUrl, buildWhatsappReservationMessage, getWompiCheckoutUrl } from '../../services/paymentLinks';
@@ -15,6 +15,13 @@ interface ReservaExpressFormProps {
 }
 
 type TimePeriod = 'AM' | 'PM';
+
+type ReservaHistoryState = {
+  amarteReservaOpen?: boolean;
+};
+
+/** Evita pushState duplicado en Strict Mode (mount → unmount → remount). */
+let ownedReservaHistoryEntry = false;
 
 const HOUR_OPTIONS = Array.from({ length: 12 }, (_, i) => String(i + 1));
 const MINUTE_OPTIONS = ['00', '15', '30', '45'];
@@ -37,6 +44,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const { state, dispatch } = useReservation();
   const lockedLocalSuiteName = state.selectedSuite?.name ?? null;
   const lockedCatalogName = resolveCatalogSuiteName(lockedLocalSuiteName);
+  const onCloseRef = useRef(onClose);
 
   const [catalog, setCatalog] = useState<CatalogSuite[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -58,6 +66,63 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  const isSubmittingRef = useRef(isSubmitting);
+  useEffect(() => {
+    isSubmittingRef.current = isSubmitting;
+  }, [isSubmitting]);
+
+  const requestClose = useCallback(() => {
+    if (isSubmittingRef.current) return;
+
+    const historyState = window.history.state as ReservaHistoryState | null;
+    if (ownedReservaHistoryEntry || historyState?.amarteReservaOpen) {
+      window.history.back();
+      return;
+    }
+
+    onCloseRef.current();
+  }, []);
+
+  // Back del móvil/navegador cierra el modal en lugar de salir del sitio.
+  // No hacemos history.back() en cleanup: en Strict Mode provoca popstate y cierra al instante.
+  useEffect(() => {
+    if (!ownedReservaHistoryEntry) {
+      window.history.pushState({ amarteReservaOpen: true } satisfies ReservaHistoryState, '');
+      ownedReservaHistoryEntry = true;
+    }
+
+    const onPopState = () => {
+      ownedReservaHistoryEntry = false;
+      onCloseRef.current();
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (isSubmittingRef.current) return;
+      const historyState = window.history.state as ReservaHistoryState | null;
+      if (ownedReservaHistoryEntry || historyState?.amarteReservaOpen) {
+        window.history.back();
+        return;
+      }
+      onCloseRef.current();
+    };
+
+    window.addEventListener('popstate', onPopState);
+    window.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('popstate', onPopState);
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
 
   const selectedSuite = useMemo(
     () => catalog.find((suite) => suite.id === formData.suiteId) ?? null,
@@ -279,17 +344,42 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const labelStyle = { color: '#E6007E' } as const;
 
   return (
-    <div className="fixed inset-0 bg-bg-dark/90 flex items-center justify-center p-4 z-modal overflow-y-auto">
-      <div className="glass-panel w-full max-w-xl rounded-brand p-6 md:p-8 relative shadow-2xl my-8">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gris-medio hover:text-white transition-colors"
-          disabled={isSubmitting}
-        >
-          ✕
-        </button>
+    <div
+      className="fixed inset-0 bg-bg-dark/90 flex items-center justify-center p-4 z-modal overflow-y-auto"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulario de pre-reserva"
+    >
+      <button
+        type="button"
+        className="absolute inset-0 cursor-default"
+        aria-label="Cerrar formulario"
+        onClick={requestClose}
+        disabled={isSubmitting}
+      />
 
-        <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center">
+      <div className="glass-panel w-full max-w-xl rounded-brand p-6 md:p-8 relative shadow-2xl my-8 z-10">
+        <div className="absolute top-3 right-3 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={requestClose}
+            disabled={isSubmitting}
+            className="rounded-brand border border-white/20 bg-white/5 px-3 py-2 font-heading text-[10px] uppercase tracking-widest text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white disabled:opacity-50"
+          >
+            Cerrar
+          </button>
+          <button
+            type="button"
+            onClick={requestClose}
+            disabled={isSubmitting}
+            aria-label="Cerrar"
+            className="flex min-h-10 min-w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-base text-gris-medio transition hover:border-white/30 hover:bg-white/10 hover:text-white disabled:opacity-50"
+          >
+            ✕
+          </button>
+        </div>
+
+        <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center pr-28">
           PREPARA TU VIAJE
         </h2>
         <p className="font-body text-rosa-cuarzo text-body text-center mb-6">

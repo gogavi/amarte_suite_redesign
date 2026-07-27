@@ -858,7 +858,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
           >
             {conversationStarters.map((starter) => {
               const className =
-                'rounded-full border border-white/10 bg-white/8 px-4 py-2 text-xs text-[#FFF5F8]/78 transition-[transform,border-color,background-color,color] duration-200 hover:scale-105 hover:border-[#E6007E]/55 hover:bg-white/10 hover:text-white';
+                'rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-medium text-[#FFF5F8]/90 shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-[transform,border-color,background-color,color,box-shadow] duration-200 hover:scale-105 hover:border-[#E6007E]/60 hover:bg-white/14 hover:text-white hover:shadow-[0_0_0_1px_rgba(230,0,126,0.25)]';
 
               if ('href' in starter) {
                 return (
