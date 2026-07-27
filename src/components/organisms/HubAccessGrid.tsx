@@ -10,10 +10,21 @@ interface HubAccessItem {
 
 interface HubAccessGridProps {
   onOpenLocation: () => void;
-  onNavigateToView: (view: string) => void;
+  /** Reservado: vistas internas deshabilitadas temporalmente a favor de la tienda. */
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function HubAccessGrid({ onOpenLocation, onNavigateToView }: HubAccessGridProps) {
+const STORE_URLS = {
+  sexshop: 'https://hotelamartesuite.store/collections/lenceria',
+  restaurante: 'https://hotelamartesuite.store/collections/restaurante',
+  bebidas: 'https://hotelamartesuite.store/collections/bebidas-y-licores?sort_by=most-relevant',
+} as const;
+
+function openStoreCollection(url: string) {
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+export default function HubAccessGrid({ onOpenLocation }: HubAccessGridProps) {
   const items: HubAccessItem[] = [
     {
       id: 'sexshop',
@@ -22,15 +33,15 @@ export default function HubAccessGrid({ onOpenLocation, onNavigateToView }: HubA
       icon: '🖤',
       tag: 'Premium',
       glowColor: 'gold',
-      action: () => onNavigateToView('sexshop'),
+      action: () => openStoreCollection(STORE_URLS.sexshop),
     },
     {
       id: 'restaurante',
-      title: 'Restaurante Gourmet',
+      title: 'Restaurante a la Habitación',
       description: 'Platos exclusivos y cenas románticas servidas en la suite.',
       icon: '🍽️',
       glowColor: 'cyan',
-      action: () => onNavigateToView('restaurante'),
+      action: () => openStoreCollection(STORE_URLS.restaurante),
     },
     {
       id: 'bebidas',
@@ -38,7 +49,7 @@ export default function HubAccessGrid({ onOpenLocation, onNavigateToView }: HubA
       description: 'Licores premium, champaña y cócteles de autor.',
       icon: '🥂',
       glowColor: 'magenta',
-      action: () => onNavigateToView('bebidas'),
+      action: () => openStoreCollection(STORE_URLS.bebidas),
     },
     {
       id: 'ubicacion',

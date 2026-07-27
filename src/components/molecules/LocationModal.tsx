@@ -100,6 +100,14 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
                 🗺️ GOOGLE MAPS
               </a>
             </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 w-full py-3 rounded-xl border border-white/15 bg-transparent hover:bg-white/5 text-[#929095] hover:text-white font-heading text-xs uppercase tracking-widest transition-all duration-200"
+            >
+              Cerrar
+            </button>
           </motion.div>
         </div>
       )}
