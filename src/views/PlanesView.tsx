@@ -74,7 +74,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
             NUESTROS <span className="text-[#E6007E] ">PLANES ({planes.length})</span>
           </h1>
-          <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
+          <p className="font-body text-[#929095] text-body mt-3 leading-relaxed max-w-xl">
             Precios desde pack 6 horas · Domingo a Jueves. Todo listo antes de tu llegada.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
                   </span>
                 </div>
                 <h3 className="font-heading text-xl text-white uppercase mb-2">{plan.name}</h3>
-                <p className="font-body text-xs text-[#929095] leading-relaxed mb-4">{plan.description}</p>
+                <p className="font-body text-body text-[#929095] leading-relaxed mb-4">{plan.description}</p>
                 <div className="mb-6">
                   <span className="text-[10px] text-[#929095] block uppercase tracking-widest font-heading mb-1">
                     Desde (6h)
@@ -106,7 +106,7 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
 
                 <ul className="space-y-2 border-t border-white/5 pt-4 mb-8">
                   {plan.features.map((feature, fIdx) => (
-                    <li key={fIdx} className="font-body text-xs text-[#929095] flex items-start">
+                    <li key={fIdx} className="font-body text-body text-[#929095] flex items-start">
                       <span className="text-[#19A6E0] mr-2">✦</span>
                       <span>{feature}</span>
                     </li>

@@ -96,7 +96,7 @@ export default function HubAccessGrid({ onOpenLocation, onNavigateToView }: HubA
               <h4 className="font-heading text-lg text-white mb-2 group-hover:text-[#E6007E] transition-colors duration-200 uppercase">
                 {item.title}
               </h4>
-              <p className="font-body text-xs text-[#929095] font-light leading-relaxed">{item.description}</p>
+              <p className="font-body text-body text-[#929095] font-light leading-relaxed">{item.description}</p>
             </div>
 
             <div className="mt-6 flex items-center text-[10px] uppercase tracking-widest font-heading text-[#E6007E] opacity-0 group-hover:opacity-100 transition-opacity duration-200">

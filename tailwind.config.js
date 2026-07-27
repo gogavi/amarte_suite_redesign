@@ -20,6 +20,10 @@ export default {
         body: ['Jost', 'sans-serif'],
         accent: ['Courgette', 'cursive'],
       },
+      fontSize: {
+        body: ['1rem', { lineHeight: '1.625' }],
+        caption: ['0.8125rem', { lineHeight: '1.5' }],
+      },
       zIndex: {
         'back': '100',
         'card': '200',

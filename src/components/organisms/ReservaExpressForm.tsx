@@ -292,7 +292,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center">
           PREPARA TU VIAJE
         </h2>
-        <p className="font-body text-rosa-cuarzo text-sm text-center mb-6">
+        <p className="font-body text-rosa-cuarzo text-body text-center mb-6">
           Pre-reserva en menos de 2 minutos. Cierre digital o asesoría directa.
         </p>
 
@@ -469,7 +469,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             </span>
           </div>
           {!catalogLoading && !canShowPrice && (
-            <p className="text-[11px] text-gris-medio -mt-2">
+            <p className="font-body text-caption text-gris-medio -mt-2">
               Elige suite, pack de tiempo y fecha para calcular el valor.
             </p>
           )}

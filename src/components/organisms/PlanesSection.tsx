@@ -89,7 +89,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
         <h2 className="font-heading text-3xl md:text-4xl text-white uppercase">
           PLANES DE <span className="text-[#E6007E]">DECORACIÓN</span>
         </h2>
-        <p className="font-body text-xs text-[#B7B4BC] mt-2">
+        <p className="font-body text-body text-[#B7B4BC] mt-2">
           Precio desde pack 6 horas · Domingo a Jueves
           {pricesError ? ' · tarifas temporales no disponibles' : ''}
         </p>
@@ -127,7 +127,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
                   </span>
                 </div>
                 <h3 className="font-heading text-lg text-white uppercase mb-2">{plan.name}</h3>
-                <p className="font-body text-xs text-[#D1D1D6] leading-relaxed mb-4 min-h-[50px]">{plan.description}</p>
+                <p className="font-body text-body text-[#D1D1D6] leading-relaxed mb-4 min-h-[50px]">{plan.description}</p>
                 <div className="mb-6">
                   <span className="text-[10px] text-[#929095] block uppercase tracking-widest font-heading mb-1">
                     Desde (6h)
@@ -137,7 +137,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
 
                 <ul className="space-y-2 border-t border-white/5 pt-4 mb-6">
                   {plan.features.map((feature, fIdx) => (
-                    <li key={fIdx} className="font-body text-[11px] text-[#D1D1D6] flex items-start">
+                    <li key={fIdx} className="font-body text-body text-[#D1D1D6] flex items-start">
                       <span className="text-[#19A6E0] mr-2">✦</span>
                       <span>{feature}</span>
                     </li>

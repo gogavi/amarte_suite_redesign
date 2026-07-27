@@ -19,14 +19,14 @@ export default function ContactoSection() {
           <div className="space-y-4 mb-8">
             <div className="p-4 rounded-xl bg-[#17171E] border border-white/5">
               <p className="font-heading text-white text-sm uppercase tracking-wide">📍 DIRECCIÓN</p>
-              <p className="font-body text-xs text-[#D1D1D6] mt-1 leading-relaxed">
+              <p className="font-body text-body text-[#D1D1D6] mt-1 leading-relaxed">
                 Calle 62 # 14 - 19, Teusaquillo · Bogotá, Colombia
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-[#17171E] border border-white/5">
               <p className="font-heading text-white text-sm uppercase tracking-wide">📞 CELULAR & WHATSAPP</p>
-              <p className="font-body text-xs text-[#D1D1D6] mt-1 leading-relaxed">
+              <p className="font-body text-body text-[#D1D1D6] mt-1 leading-relaxed">
                 Celular:{' '}
                 <a href="tel:+573007416683" className="text-[#19A6E0] hover:underline font-medium">
                   300 741 6683
@@ -48,7 +48,7 @@ export default function ContactoSection() {
               <p className="font-heading text-white text-sm uppercase tracking-wide">✉️ CORREO ELECTRÓNICO</p>
               <a
                 href="mailto:info@amartesuite.com"
-                className="font-body text-xs text-[#D1D1D6] mt-1 block hover:text-[#E6007E] transition-colors"
+                className="font-body text-body text-[#D1D1D6] mt-1 block hover:text-[#E6007E] transition-colors"
               >
                 info@amartesuite.com
               </a>
@@ -85,7 +85,7 @@ export default function ContactoSection() {
             Únete a nuestra órbita
           </span>
           <h3 className="font-heading text-2xl text-white uppercase mb-4">REDES SOCIALES</h3>
-          <p className="font-body text-xs text-[#D1D1D6] max-w-xs leading-relaxed mb-8">
+          <p className="font-body text-body text-[#D1D1D6] max-w-xs leading-relaxed mb-8">
             Síguenos en nuestras redes sociales oficiales para conocer promociones exclusivas, tips de pareja y
             echar un vistazo a nuestras suites.
           </p>

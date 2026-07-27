@@ -74,7 +74,7 @@ export default function SexShopView({ onBack }: SexShopViewProps) {
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
             SEXSHOP <span className="text-[#E6007E] ">PREMIUM</span>
           </h1>
-          <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
+          <p className="font-body text-[#929095] text-body mt-3 leading-relaxed max-w-xl">
             Descubre nuestra fina selección de accesorios y juguetes eróticos. Puedes solicitar que los dejemos listos en tu habitación de manera 100% discreta.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function SexShopView({ onBack }: SexShopViewProps) {
                   {product.imageEmoji}
                 </div>
                 <h3 className="font-heading text-base text-white uppercase mb-1">{product.name}</h3>
-                <p className="font-body text-[11px] text-[#929095] leading-relaxed mb-4">{product.description}</p>
+                <p className="font-body text-body text-[#929095] leading-relaxed mb-4">{product.description}</p>
               </div>
 
               <div>

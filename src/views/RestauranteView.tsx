@@ -74,7 +74,7 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
             RESTAURANTE <span className="text-[#E6007E] ">GOURMET</span>
           </h1>
-          <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
+          <p className="font-body text-[#929095] text-body mt-3 leading-relaxed max-w-xl">
             Deleítate con nuestra carta gastronómica sin salir de la comodidad de tu suite. Platos preparados al instante por nuestros chefs colaboradores.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function RestauranteView({ onBack }: RestauranteViewProps) {
                   {dish.imageEmoji}
                 </div>
                 <h3 className="font-heading text-base text-white uppercase mb-1">{dish.name}</h3>
-                <p className="font-body text-[11px] text-[#929095] leading-relaxed mb-4">{dish.description}</p>
+                <p className="font-body text-body text-[#929095] leading-relaxed mb-4">{dish.description}</p>
               </div>
 
               <div>

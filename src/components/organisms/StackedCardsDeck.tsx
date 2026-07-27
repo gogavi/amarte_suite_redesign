@@ -95,7 +95,7 @@ export default function StackedCardsDeck({ suites, onSelectSuite }: StackedCards
         <span className="font-heading text-xs uppercase tracking-[0.28em] text-rosa-cuarzo/80">
           {activeIndex + 1} / {suites.length}
         </span>
-        <span className="mt-1 font-body text-[11px] text-gris-medio">
+        <span className="mt-1 font-body text-caption text-gris-medio">
           Explora y elige tu suite ideal
         </span>
       </div>

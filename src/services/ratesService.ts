@@ -35,7 +35,17 @@ export interface Suite {
   };
   image: string;
   whatsappLink: string;
+  /** URL pública del MP4 en el bucket `generated-videos` de Supabase Storage. */
+  videoUrl?: string;
   videoYoutubeId?: string;
+}
+
+const GENERATED_VIDEOS_BASE = `${
+  import.meta.env.VITE_SUPABASE_URL || "https://dftbelnombbtjryqphaa.supabase.co"
+}/storage/v1/object/public/generated-videos`;
+
+function buildSuiteVideoUrl(videoFile: string): string {
+  return `${GENERATED_VIDEOS_BASE}/${encodeURIComponent(videoFile)}`;
 }
 
 export const suitesData: Suite[] = [
@@ -51,7 +61,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgDiamante,
-    whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
+    whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE DELUXE DIAMANTE.mp4"),
+  },
   {
     id: "suite-gold",
     name: "Suite Deluxe Gold",
@@ -64,7 +76,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgGold,
-    whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
+    whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE DELUXE GOLD.mp4"),
+  },
   {
     id: "suite-rubi",
     name: "Suite Deluxe Rubí",
@@ -77,7 +91,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgRubi,
-    whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
+    whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE RUBI.mp4"),
+  },
   {
     id: "suite-zafiro",
     name: "Suite Deluxe Zafiro",
@@ -90,7 +106,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgZafiro,
-    whatsappLink: "https://wa.me/p/5897691113605046/573235726252"  },
+    whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE DELUXE ZAFIRO.mp4"),
+  },
   {
     id: "suite-gotica",
     name: "Suite Temática Gótica / Baticueva",
@@ -103,7 +121,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgBaticueva,
-    whatsappLink: "https://wa.me/p/4019349191434593/573235726252"  },
+    whatsappLink: "https://wa.me/p/4019349191434593/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE GOTICA.mp4"),
+  },
   {
     id: "suite-arabe",
     name: "Suite Temática Árabe",
@@ -116,7 +136,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgArabe,
-    whatsappLink: "https://wa.me/p/4019862324758030/573235726252"  },
+    whatsappLink: "https://wa.me/p/4019862324758030/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE DELUXE ARABE.mp4"),
+  },
   {
     id: "suite-harleyqueen",
     name: "Suite Temática Harley Queen",
@@ -129,7 +151,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
     image: imgHarleyQueen,
-    whatsappLink: "https://wa.me/p/4019862324758030/573235726252"  },
+    whatsappLink: "https://wa.me/p/4019862324758030/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE DELUXE QUEEN.mp4"),
+  },
   {
     id: "suite-vip-jacuzzi",
     name: "Suite Especial Jacuzzi VIP",
@@ -142,7 +166,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 240000, "8h": 290000, "12h": 360000, day_hotelero: 420000 }
     },
     image: imgJacuzziVip,
-    whatsappLink: "https://wa.me/p/4566077396739183/573235726252"  },
+    whatsappLink: "https://wa.me/p/4566077396739183/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE VIP JACUZZI.mp4"),
+  },
   {
     id: "suite-cabaña",
     name: "Suite Especial Cabaña",
@@ -155,7 +181,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
     image: imgCabana,
-    whatsappLink: "https://wa.me/p/3980047085436054/573235726252"  },
+    whatsappLink: "https://wa.me/p/3980047085436054/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE CABANA.mp4"),
+  },
   {
     id: "suite-amarte",
     name: "Suite Especial Amarte",
@@ -168,7 +196,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 120000, "8h": 160000, "12h": 220000, day_hotelero: 260000 }
     },
     image: imgAmarte,
-    whatsappLink: "https://wa.me/p/4566077396739183/573235726252"  },
+    whatsappLink: "https://wa.me/p/4566077396739183/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE AMARTE.mp4"),
+  },
   {
     id: "suite-movimiento",
     name: "Suite Especial Cama en Movimiento",
@@ -181,7 +211,9 @@ export const suitesData: Suite[] = [
       weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
     image: imgMovimiento,
-    whatsappLink: "https://wa.me/p/3980047085436054/573235726252"  }
+    whatsappLink: "https://wa.me/p/3980047085436054/573235726252",
+    videoUrl: buildSuiteVideoUrl("SUITE MOVIMIENTO.mp4"),
+  },
 ];
 
 export const getSuites = (): Suite[] => {

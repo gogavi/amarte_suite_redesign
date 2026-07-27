@@ -30,7 +30,7 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
         <h1 className="font-heading text-4xl md:text-5xl text-white mb-4 uppercase">
           CONOCE TU PRÓXIMO <span className="text-magenta-digital">DESTINO</span>
         </h1>
-        <p className="font-body text-rosa-cuarzo text-base font-light leading-relaxed">
+        <p className="font-body text-rosa-cuarzo text-body font-light leading-relaxed">
           {isMobile 
             ? "Explora una suite a la vez, compara el ambiente y elige la experiencia que mejor acompaña tu noche."
             : "Compara nuestras categorías premium de suites temáticas y deluxe para encontrar la velada perfecta."

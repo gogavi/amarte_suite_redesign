@@ -84,7 +84,7 @@ export default function PromoBanner({ onPromoClick }: PromoBannerProps) {
                 <h3 className="font-heading text-xl sm:text-2xl text-white uppercase mt-1">
                   {slide.title}
                 </h3>
-                <p className="font-body text-xs text-[#929095] mt-1 leading-relaxed">
+                <p className="font-body text-body text-[#929095] mt-1 leading-relaxed">
                   {slide.description}
                 </p>
               </div>

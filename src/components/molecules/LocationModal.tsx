@@ -52,10 +52,10 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
               <p className="font-heading text-[#FFF5F8] text-sm uppercase tracking-wide">
                 📌 Amarte Suite Teusaquillo
               </p>
-              <p className="font-body text-xs text-[#929095] mt-1 leading-relaxed">
+              <p className="font-body text-body text-[#929095] mt-1 leading-relaxed">
                 Calle 62 #14-19 · Bogotá, Colombia
               </p>
-              <p className="font-body text-xs text-[#E6007E] mt-2 font-medium">
+              <p className="font-body text-body text-[#E6007E] mt-2 font-medium">
                 Atención y Reservas 24/7
               </p>
             </div>

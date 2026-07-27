@@ -62,7 +62,7 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
           Diseña tu noche ideal <br />
           con nuestra <span className="text-[#E6007E]">Agente Virtual</span>
         </h2>
-        <p className="font-body text-sm text-[#929095] leading-relaxed mb-8 max-w-xl">
+        <p className="font-body text-body text-[#929095] leading-relaxed mb-8 max-w-xl">
           Martina es tu guía interactiva inteligente. Te ayuda a organizar cada detalle de tu estadía por chat o voz de manera inmediata antes de hablar con nuestro equipo humano.
         </p>
 
@@ -75,7 +75,7 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
                 <h4 className="font-heading text-sm text-white uppercase tracking-wide">
                   {feat.title}
                 </h4>
-                <p className="font-body text-xs text-[#929095] mt-0.5 leading-relaxed">
+                <p className="font-body text-body text-[#929095] mt-0.5 leading-relaxed">
                   {feat.desc}
                 </p>
               </div>

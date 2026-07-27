@@ -167,9 +167,9 @@ export default function Home() {
         <ContactoSection />
       </Suspense>
 
-      <footer className="py-12 border-t border-white/5 bg-bg-dark/80 text-center text-sm text-gris-medio font-light">
+      <footer className="py-12 border-t border-white/5 bg-bg-dark/80 text-center text-body text-gris-medio font-light">
         <p className="mb-2">© 2026 Inversiones Ogavi S.A. · Amarte Suite · El Planeta Romántico de Bogotá</p>
-        <p className="text-xs text-gris-carbon">Teusaquillo · Calle 62 #14-19 · Bogotá, Colombia</p>
+        <p className="text-caption text-gris-carbon">Teusaquillo · Calle 62 #14-19 · Bogotá, Colombia</p>
       </footer>
 
       {isFormOpen && (

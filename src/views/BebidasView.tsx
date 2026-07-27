@@ -74,7 +74,7 @@ export default function BebidasView({ onBack }: BebidasViewProps) {
           <h1 className="font-heading text-4xl md:text-5xl text-white uppercase mt-2">
             BEBIDAS <span className="text-[#19A6E0] ">Y LICORES</span>
           </h1>
-          <p className="font-body text-[#929095] text-sm mt-3 leading-relaxed max-w-xl">
+          <p className="font-body text-[#929095] text-body mt-3 leading-relaxed max-w-xl">
             Acompaña tu noche con nuestra coctelería de autor y licores premium. Ordena directo a tu suite con total privacidad.
           </p>
         </div>
@@ -97,7 +97,7 @@ export default function BebidasView({ onBack }: BebidasViewProps) {
                   {drink.imageEmoji}
                 </div>
                 <h3 className="font-heading text-base text-white uppercase mb-1">{drink.name}</h3>
-                <p className="font-body text-[11px] text-[#929095] leading-relaxed mb-4">{drink.description}</p>
+                <p className="font-body text-body text-[#929095] leading-relaxed mb-4">{drink.description}</p>
               </div>
 
               <div>

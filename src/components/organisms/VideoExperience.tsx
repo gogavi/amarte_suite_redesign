@@ -21,7 +21,7 @@ export default function VideoExperience({ videoId = 'OUDd45y2Fr8', startSeconds 
         <h2 className="font-heading text-4xl md:text-5xl text-white mb-4 uppercase">
           Así se vive una noche en AMARTE
         </h2>
-        <p className="font-body text-rosa-cuarzo text-base font-light leading-relaxed">
+        <p className="font-body text-rosa-cuarzo text-body font-light leading-relaxed">
           Descubre suites temáticas, experiencias románticas, gastronomía y momentos inolvidables.
         </p>
       </div>

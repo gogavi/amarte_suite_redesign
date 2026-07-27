@@ -845,7 +845,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             initial={reducedMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="max-w-xl font-body text-xs leading-relaxed text-[#FFF5F8]/68 sm:text-sm"
+            className="max-w-xl font-body text-body leading-relaxed text-[#FFF5F8]/68"
           >
             Martina interpreta tu intención y te guía hacia la suite, el plan y el momento perfecto. ¿Qué plan estás buscando?
           </motion.p>

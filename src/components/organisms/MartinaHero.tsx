@@ -45,7 +45,7 @@ export default function MartinaHero({ onActivateChat }: MartinaHeroProps) {
         <h2 className="font-heading text-4xl md:text-5xl text-white mb-4 uppercase">
           CONOCE A <span className="text-magenta-digital filter drop-shadow-[0_0_12px_rgba(230,0,126,0.25)]">MARTINA</span>
         </h2>
-        <p className="font-body text-rosa-cuarzo text-base font-light mb-6 leading-relaxed">
+        <p className="font-body text-rosa-cuarzo text-body font-light mb-6 leading-relaxed">
           Diseñada para ayudarte a personalizar tu escape. Consúltale por disponibilidad, precios de suites, juguetes del Sexshop, o pídele que prepare una sorpresa especial para tu pareja antes de que lleguen.
         </p>
         <button
@@ -70,7 +70,7 @@ export default function MartinaHero({ onActivateChat }: MartinaHeroProps) {
               exit={{ opacity: 0, scale: 0.8, y: 15 }}
               className="absolute -top-6 left-1/2 -translate-x-1/2 lg:translate-x-0 lg:left-[-10%] z-30 reflective-glass rounded-brand px-5 py-4 max-w-[260px] shadow-2xl text-left border border-white/10"
             >
-              <p className="font-body text-xs text-white/95 leading-relaxed">
+              <p className="font-body text-body text-white/95 leading-relaxed">
                 {bubbleText}
               </p>
               {/* Indicador curvo */}

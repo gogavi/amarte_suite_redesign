@@ -133,7 +133,7 @@ export default function MartinaWidget({ isOpen, onClose, initialUserMessage }: M
                 className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] rounded-brand px-4 py-3 text-sm leading-relaxed ${
+                  className={`max-w-[80%] rounded-brand px-4 py-3 font-body text-body leading-relaxed ${
                     msg.sender === 'user'
                       ? 'bg-magenta-digital text-white rounded-tr-none'
                       : 'bg-surface-card border border-white/5 text-white rounded-tl-none'

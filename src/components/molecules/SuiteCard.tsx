@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Suite } from '../../services/ratesService';
 import { useReservation } from '../../context/ReservationContext';
+import SuiteVideoModal from './SuiteVideoModal';
 
 interface SuiteCardProps {
   suite: Suite;
@@ -14,6 +15,11 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isPlayingMobile, setIsPlayingMobile] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  const handleCloseVideoModal = useCallback(() => {
+    setIsVideoModalOpen(false);
+  }, []);
 
   // Detectar pantalla móvil/táctil para desactivar el hover de video
   useEffect(() => {
@@ -38,13 +44,18 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
     onSelect(suite);
   };
 
+  const handleVideoClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsVideoModalOpen(true);
+  };
+
   const handlePlayClickMobile = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsPlayingMobile(true);
   };
 
   // URL de YouTube embebido optimizada para bucle silencioso
-  const videoUrl = suite.videoYoutubeId
+  const youtubeEmbedUrl = suite.videoYoutubeId
     ? `https://www.youtube.com/embed/${suite.videoYoutubeId}?autoplay=1&mute=1&loop=1&playlist=${suite.videoYoutubeId}&controls=0&modestbranding=1&rel=0`
     : '';
 
@@ -54,96 +65,119 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
     : (isHovered && suite.videoYoutubeId);
 
   return (
-    <div
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => !isMobile && setIsHovered(false)}
-      className={`relative reflective-glass glow-magenta-hover rounded-brand overflow-hidden flex flex-col h-full group border border-white/10 shadow-lg select-none transition-transform duration-200 ${
-        !isActiveDeckCard ? 'hover:-translate-y-1.5' : ''
-      }`}
-    >
-      {/* Contenedor de la Imagen / Video */}
-      <div className="relative h-52 md:h-56 overflow-hidden bg-[#0D0D11]">
-        
-        {/* Renderizado de Video Embebido de YouTube */}
-        <AnimatePresence>
-          {shouldPlayVideo && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+    <>
+      <div
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => !isMobile && setIsHovered(false)}
+        className={`relative reflective-glass glow-magenta-hover rounded-brand overflow-hidden flex flex-col h-full group border border-white/10 shadow-lg select-none transition-transform duration-200 ${
+          !isActiveDeckCard ? 'hover:-translate-y-1.5' : ''
+        }`}
+      >
+        {/* Contenedor de la Imagen / Video */}
+        <div className="relative h-52 md:h-56 overflow-hidden bg-[#0D0D11]">
+          
+          {/* Renderizado de Video Embebido de YouTube */}
+          <AnimatePresence>
+            {shouldPlayVideo && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+              >
+                <iframe
+                  src={youtubeEmbedUrl}
+                  title={`Vista previa de ${suite.name}`}
+                  className="w-full h-full scale-[1.35] object-cover border-none"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Imagen de Portada Estática */}
+          <img
+            src={suite.image}
+            alt={suite.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11] via-transparent to-transparent z-[5]"></div>
+
+          {/* Etiqueta de Categoría */}
+          <span className="absolute top-4 right-4 bg-bg-dark/90 px-3 py-1 rounded-full text-[10px] text-cyan-orbital border border-cyan-orbital/25 uppercase tracking-widest font-heading z-[5]">
+            {suite.category}
+          </span>
+
+          {/* Botón Play Explicito para móviles (solo si hay video y es la carta activa del mazo) */}
+          {suite.videoYoutubeId && isMobile && isActiveDeckCard && !isPlayingMobile && (
+            <button
+              onClick={handlePlayClickMobile}
+              className="absolute inset-0 m-auto z-[8] w-14 h-14 bg-bg-dark/90 text-white rounded-full flex items-center justify-center border border-white/20 shadow-2xl hover:scale-105 active:scale-95 transition-transform"
             >
-              <iframe
-                src={videoUrl}
-                title={`Vista previa de ${suite.name}`}
-                className="w-full h-full scale-[1.35] object-cover border-none"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
-              />
-            </motion.div>
+              <svg className="w-6 h-6 fill-current text-magenta-digital ml-0.5" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
           )}
-        </AnimatePresence>
-
-        {/* Imagen de Portada Estática */}
-        <img
-          src={suite.image}
-          alt={suite.name}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11] via-transparent to-transparent z-[5]"></div>
-
-        {/* Etiqueta de Categoría */}
-        <span className="absolute top-4 right-4 bg-bg-dark/90 px-3 py-1 rounded-full text-[10px] text-cyan-orbital border border-cyan-orbital/25 uppercase tracking-widest font-heading z-[5]">
-          {suite.category}
-        </span>
-
-        {/* Botón Play Explicito para móviles (solo si hay video y es la carta activa del mazo) */}
-        {suite.videoYoutubeId && isMobile && isActiveDeckCard && !isPlayingMobile && (
-          <button
-            onClick={handlePlayClickMobile}
-            className="absolute inset-0 m-auto z-[8] w-14 h-14 bg-bg-dark/90 text-white rounded-full flex items-center justify-center border border-white/20 shadow-2xl hover:scale-105 active:scale-95 transition-transform"
-          >
-            <svg className="w-6 h-6 fill-current text-magenta-digital ml-0.5" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </button>
-        )}
-      </div>
-
-      {/* Cuerpo de la tarjeta */}
-      <div className="p-5 flex flex-col flex-grow relative z-[5]">
-        <h3 className="font-heading text-lg md:text-xl text-white tracking-wide mb-2 group-hover:text-magenta-digital transition-colors uppercase">
-          {suite.name}
-        </h3>
-        
-        <p className="font-body text-xs md:text-sm text-gris-medio font-light line-clamp-3 mb-4 leading-relaxed flex-grow">
-          {suite.description}
-        </p>
-
-        {/* Comodidades destacadas */}
-        <div className="flex flex-wrap gap-2.5 mb-5 text-[10px] text-rosa-cuarzo font-light uppercase tracking-wider">
-          {suite.features.jacuzzi && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">🛁 Jacuzzi</span>}
-          {suite.features.sauna && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">♨️ Sauna</span>}
-          {suite.features.cama_movimiento && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">🌪️ Cama de Movimiento</span>}
-          {suite.features.aire_acondicionado && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">❄️ A/C</span>}
         </div>
 
-        {/* Precios e Interacción de Conversión */}
-        <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center">
-          <div>
-            <span className="text-[10px] text-gris-medio block uppercase tracking-widest font-heading">Desde (4h)</span>
-            <span className="text-base md:text-lg font-heading text-cyan-orbital font-bold">
-              ${suite.rates.weekday['4h'].toLocaleString('es-CO')} COP
-            </span>
+        {/* Cuerpo de la tarjeta */}
+        <div className="p-5 flex flex-col flex-grow relative z-[5]">
+          <h3 className="font-heading text-lg md:text-xl text-white tracking-wide mb-2 group-hover:text-magenta-digital transition-colors uppercase">
+            {suite.name}
+          </h3>
+          
+          <p className="font-body text-body text-gris-medio font-light line-clamp-3 mb-4 leading-relaxed flex-grow">
+            {suite.description}
+          </p>
+
+          {/* Comodidades destacadas */}
+          <div className="flex flex-wrap gap-2.5 mb-5 text-[10px] text-rosa-cuarzo font-light uppercase tracking-wider">
+            {suite.features.jacuzzi && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">🛁 Jacuzzi</span>}
+            {suite.features.sauna && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">♨️ Sauna</span>}
+            {suite.features.cama_movimiento && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">🌪️ Cama de Movimiento</span>}
+            {suite.features.aire_acondicionado && <span className="bg-white/5 px-2 py-0.5 rounded-full border border-white/5">❄️ A/C</span>}
           </div>
-          <button
-            onClick={handleBookClick}
-            className="bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading text-xs uppercase tracking-widest px-4 py-2.5 rounded-brand transition-all hover:scale-105 active:scale-95 duration-200 shadow-md glow-magenta"
-          >
-            Reservar
-          </button>
+
+          {/* Precios e Interacción de Conversión */}
+          <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center gap-3">
+            <div className="min-w-0">
+              <span className="text-[10px] text-gris-medio block uppercase tracking-widest font-heading">Desde (4h)</span>
+              <span className="text-base md:text-lg font-heading text-cyan-orbital font-bold">
+                ${suite.rates.weekday['4h'].toLocaleString('es-CO')} COP
+              </span>
+            </div>
+            <div className="flex shrink-0 items-center gap-2">
+              {suite.videoUrl && (
+                <button
+                  type="button"
+                  onClick={handleVideoClick}
+                  className="border border-white/20 hover:border-cyan-orbital/50 bg-white/5 hover:bg-white/10 text-white font-heading text-xs uppercase tracking-widest px-3 py-2.5 rounded-brand transition-all hover:scale-105 active:scale-95 duration-200"
+                >
+                  Ver video
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleBookClick}
+                className="bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading text-xs uppercase tracking-widest px-4 py-2.5 rounded-brand transition-all hover:scale-105 active:scale-95 duration-200 shadow-md glow-magenta"
+              >
+                Reservar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {suite.videoUrl && (
+        <SuiteVideoModal
+          isOpen={isVideoModalOpen}
+          title={suite.name}
+          videoUrl={suite.videoUrl}
+          onClose={handleCloseVideoModal}
+        />
+      )}
+    </>
   );
 }
