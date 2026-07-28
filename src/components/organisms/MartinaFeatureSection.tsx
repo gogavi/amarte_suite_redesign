@@ -27,7 +27,10 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
   ];
 
   return (
-    <section className="py-16 md:py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative overflow-hidden content-visibility-auto">
+    <section
+      id="martina"
+      className="scroll-mt-20 py-16 md:py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center relative overflow-hidden content-visibility-auto md:scroll-mt-4"
+    >
       <div
         className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[420px] h-[420px] bg-[#E6007E]/8 rounded-full pointer-events-none"
         aria-hidden="true"

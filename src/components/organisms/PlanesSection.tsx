@@ -81,7 +81,11 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
   };
 
   return (
-    <section className="py-16 md:py-20 px-6 max-w-6xl mx-auto relative content-visibility-auto" aria-label="Planes Románticos">
+    <section
+      id="planes"
+      className="scroll-mt-20 py-16 md:py-20 px-6 max-w-6xl mx-auto relative content-visibility-auto md:scroll-mt-4"
+      aria-label="Planes Románticos"
+    >
       <div className="mb-10 text-center sm:text-left">
         <span className="text-xs text-[#19A6E0] uppercase tracking-widest font-heading mb-2 block">
           Personaliza tu Estadía

@@ -1,9 +1,12 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import HeroOrbital from '../components/organisms/HeroOrbital';
 import TrustBar from '../components/molecules/TrustBar';
+import SectionDotNav from '../components/molecules/SectionDotNav';
+import SectionStickyNav from '../components/molecules/SectionStickyNav';
 import { Suite } from '../services/ratesService';
 import { openChat, prefetchMartinaWidget } from '../services/amarteChatbot';
 import { useReservation } from '../context/ReservationContext';
+import { useSectionSpy } from '../hooks/useSectionSpy';
 
 const VideoExperience = lazy(() => import('../components/organisms/VideoExperience'));
 const SuitesSection = lazy(() => import('../components/organisms/SuitesSection'));
@@ -28,6 +31,8 @@ export default function Home() {
   const [activeView, setActiveView] = useState<'home' | 'planes' | 'sexshop' | 'restaurante' | 'bebidas'>('home');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const isHomeView = activeView === 'home';
+  const { activeId, scrollToSection } = useSectionSpy(isHomeView);
 
   useEffect(() => {
     let cancelled = false;
@@ -124,7 +129,12 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      <HeroOrbital onActivateChat={handleActivateChat} onActivateVoice={handleActivateVoice} />
+      <SectionStickyNav activeId={activeId} onNavigate={scrollToSection} />
+      <SectionDotNav activeId={activeId} onNavigate={scrollToSection} />
+
+      <div id="inicio" className="scroll-mt-20 md:scroll-mt-0">
+        <HeroOrbital onActivateChat={handleActivateChat} onActivateVoice={handleActivateVoice} />
+      </div>
 
       <div className="py-2">
         <TrustBar />
@@ -134,7 +144,7 @@ export default function Home() {
         <VideoExperience videoId="OUDd45y2Fr8" startSeconds={3} />
       </Suspense>
 
-      <div id="suites-section">
+      <div id="suites-section" className="scroll-mt-20 md:scroll-mt-4">
         <Suspense fallback={<SectionFallback />}>
           <SuitesSection onSelectSuite={handleSelectSuite} />
         </Suspense>
