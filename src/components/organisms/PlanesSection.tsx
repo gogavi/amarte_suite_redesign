@@ -121,7 +121,7 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="flex-shrink-0 w-[290px] sm:w-[320px] snap-start rounded-2xl bg-[#17171E] border border-white/5 p-6 flex flex-col justify-between hover:border-[#E6007E]/30 transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_20px_rgba(230,0,126,0.12)]"
+              className="flex-shrink-0 w-[290px] sm:w-[320px] snap-start rounded-2xl bg-[#17171E] border border-cyan-orbital/50 p-6 flex flex-col justify-between hover:border-cyan-orbital transition-[border-color,box-shadow] duration-200 hover:shadow-[0_0_20px_rgba(25,166,224,0.2)]"
             >
               <div>
                 <div className="flex justify-between items-start mb-4">

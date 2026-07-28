@@ -10,7 +10,8 @@ export default function VideoExperience({ videoId = 'OUDd45y2Fr8', startSeconds 
   const [isPlaying, setIsPlaying] = useState(false);
 
   const startParam = startSeconds > 0 ? `&start=${startSeconds}` : '';
-  const youtubeUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3${startParam}`;
+  // mute=0: safe here because the iframe only mounts after an explicit user click
+  const youtubeUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3${startParam}`;
 
   return (
     <section className="relative w-full max-w-5xl mx-auto py-16 md:py-20 px-6 flex flex-col items-center content-visibility-auto">
