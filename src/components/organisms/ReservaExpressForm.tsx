@@ -47,6 +47,14 @@ function formatVisitDate(isoDate: string): string {
   });
 }
 
+function todayIsoDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function packLabel(pack: SuitePack): string {
   if (pack.name === 'Día Hotelero') return 'Día Hotelero (2pm - 12m)';
   return pack.name.replace('Pack ', '');
@@ -86,6 +94,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
   const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
   const dateLabel = formatVisitDate(formData.date);
+  const minVisitDate = todayIsoDate();
   const visitSummary = dateLabel
     ? `Seleccionada: ${dateLabel} · ${timeLabel}`
     : `Seleccionada: ${timeLabel}`;
@@ -262,6 +271,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const validateForm = (): string | null => {
     if (!formData.name.trim() || !formData.whatsapp || !formData.date) {
       return 'Completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.';
+    }
+
+    if (formData.date < todayIsoDate()) {
+      return 'La fecha de visita no puede ser anterior a hoy.';
     }
 
     if (formData.whatsapp.length < 10) {
@@ -541,6 +554,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 name="date"
                 value={formData.date}
                 onChange={handleSelectChange}
+                min={minVisitDate}
                 required
                 disabled={isSubmitting}
                 className={inputClass}
