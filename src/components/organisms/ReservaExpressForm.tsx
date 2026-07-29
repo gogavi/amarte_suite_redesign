@@ -35,9 +35,28 @@ function formatAmPmTime(hour: string, minute: string, period: TimePeriod): strin
   return `${hour}:${minute} ${period}`;
 }
 
+function formatVisitDate(isoDate: string): string {
+  if (!isoDate) return '';
+  const [year, month, day] = isoDate.split('-').map(Number);
+  if (!year || !month || !day) return isoDate;
+  return new Date(year, month - 1, day).toLocaleDateString('es-CO', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
 function packLabel(pack: SuitePack): string {
   if (pack.name === 'Día Hotelero') return 'Día Hotelero (2pm - 12m)';
   return pack.name.replace('Pack ', '');
+}
+
+/** Etiqueta corta para los chips de duración (estilo segmented control). */
+function packChipLabel(pack: SuitePack): string {
+  if (pack.name === 'Día Hotelero') return 'Día Hotelero';
+  const short = pack.name.replace('Pack ', '').replace(/\s*horas?\s*/i, ' h').trim();
+  return short.replace(/(\d+)\s*h/i, '$1 h');
 }
 
 export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps) {
@@ -66,6 +85,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
+  const dateLabel = formatVisitDate(formData.date);
+  const visitSummary = dateLabel
+    ? `Seleccionada: ${dateLabel} · ${timeLabel}`
+    : `Seleccionada: ${timeLabel}`;
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -450,43 +473,63 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
           <hr className="border-white/5 my-4" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass} style={labelStyle}>Selecciona Suite *</label>
-              <select
-                name="suiteId"
-                value={formData.suiteId}
-                onChange={handleSuiteChange}
-                disabled={isSubmitting || catalogLoading || !!catalogError || suiteLocked}
-                className={selectClass}
-              >
-                {catalogLoading && <option value="">Cargando suites…</option>}
-                {!catalogLoading && catalog.map((suite) => (
-                  <option key={suite.id} value={suite.id}>{suite.name}</option>
-                ))}
-              </select>
-              {suiteLocked && selectedSuite && (
-                <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
-                  Suite fijada desde la ficha seleccionada
+          <div>
+            <label className={labelClass} style={labelStyle}>Selecciona Suite *</label>
+            <select
+              name="suiteId"
+              value={formData.suiteId}
+              onChange={handleSuiteChange}
+              disabled={isSubmitting || catalogLoading || !!catalogError || suiteLocked}
+              className={selectClass}
+            >
+              {catalogLoading && <option value="">Cargando suites…</option>}
+              {!catalogLoading && catalog.map((suite) => (
+                <option key={suite.id} value={suite.id}>{suite.name}</option>
+              ))}
+            </select>
+            {suiteLocked && selectedSuite && (
+              <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
+                Suite fijada desde la ficha seleccionada
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label className={labelClass} style={labelStyle} id="pack-tiempo-label">
+              Pack de tiempo *
+            </label>
+            <div
+              role="group"
+              aria-labelledby="pack-tiempo-label"
+              className="flex flex-wrap gap-2"
+            >
+              {!availablePacks.length && (
+                <p className="text-sm text-gris-medio">
+                  {catalogLoading ? 'Cargando packs…' : 'Sin packs'}
                 </p>
               )}
-            </div>
-            <div>
-              <label className={labelClass} style={labelStyle}>Pack de tiempo *</label>
-              <select
-                name="packId"
-                value={formData.packId}
-                onChange={handleSelectChange}
-                disabled={isSubmitting || catalogLoading || !availablePacks.length}
-                className={selectClass}
-              >
-                {!availablePacks.length && <option value="">Sin packs</option>}
-                {availablePacks.map((pack) => (
-                  <option key={pack.rateTypeId} value={pack.rateTypeId}>
-                    {packLabel(pack)}
-                  </option>
-                ))}
-              </select>
+              {availablePacks.map((pack) => {
+                const isActive = formData.packId === pack.rateTypeId;
+                return (
+                  <button
+                    key={pack.rateTypeId}
+                    type="button"
+                    disabled={isSubmitting || catalogLoading}
+                    aria-pressed={isActive}
+                    title={packLabel(pack)}
+                    onClick={() =>
+                      setFormData((prev) => ({ ...prev, packId: pack.rateTypeId }))
+                    }
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition-[background-color,border-color,color,opacity] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#E6007E] disabled:opacity-60 ${
+                      isActive
+                        ? 'border border-[#E6007E] bg-[#E6007E] text-white'
+                        : 'border border-white/20 bg-white/5 text-gris-medio hover:border-white/40 hover:text-white'
+                    }`}
+                  >
+                    {packChipLabel(pack)}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -506,47 +549,63 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             <div>
               <label className={labelClass} style={labelStyle}>Hora aproximada *</label>
               <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-                <select
-                  name="timeHour"
-                  value={formData.timeHour}
-                  onChange={handleSelectChange}
-                  disabled={isSubmitting}
-                  className={selectClass}
-                  aria-label="Hora"
-                >
-                  {HOUR_OPTIONS.map((hour) => (
-                    <option key={hour} value={hour}>{hour}</option>
-                  ))}
-                </select>
-                <select
-                  name="timeMinute"
-                  value={formData.timeMinute}
-                  onChange={handleSelectChange}
-                  disabled={isSubmitting}
-                  className={selectClass}
-                  aria-label="Minutos"
-                >
-                  {MINUTE_OPTIONS.map((minute) => (
-                    <option key={minute} value={minute}>{minute}</option>
-                  ))}
-                </select>
-                <select
-                  name="timePeriod"
-                  value={formData.timePeriod}
-                  onChange={handleSelectChange}
-                  disabled={isSubmitting}
-                  className={selectClass}
-                  aria-label="AM o PM"
-                >
-                  <option value="AM">AM</option>
-                  <option value="PM">PM</option>
-                </select>
+                <div>
+                  <select
+                    name="timeHour"
+                    value={formData.timeHour}
+                    onChange={handleSelectChange}
+                    disabled={isSubmitting}
+                    className={selectClass}
+                    aria-label="Hora"
+                  >
+                    {HOUR_OPTIONS.map((hour) => (
+                      <option key={hour} value={hour}>{hour}</option>
+                    ))}
+                  </select>
+                  <span className="mt-1 block text-center text-[10px] uppercase tracking-widest text-gris-medio">
+                    Hora
+                  </span>
+                </div>
+                <div>
+                  <select
+                    name="timeMinute"
+                    value={formData.timeMinute}
+                    onChange={handleSelectChange}
+                    disabled={isSubmitting}
+                    className={selectClass}
+                    aria-label="Minutos"
+                  >
+                    {MINUTE_OPTIONS.map((minute) => (
+                      <option key={minute} value={minute}>{minute}</option>
+                    ))}
+                  </select>
+                  <span className="mt-1 block text-center text-[10px] uppercase tracking-widest text-gris-medio">
+                    Minuto
+                  </span>
+                </div>
+                <div>
+                  <select
+                    name="timePeriod"
+                    value={formData.timePeriod}
+                    onChange={handleSelectChange}
+                    disabled={isSubmitting}
+                    className={selectClass}
+                    aria-label="AM o PM"
+                  >
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                  </select>
+                  <span className="mt-1 block text-center text-[10px] uppercase tracking-widest text-gris-medio">
+                    Periodo
+                  </span>
+                </div>
               </div>
-              <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
-                Seleccionada: {timeLabel}
-              </p>
             </div>
           </div>
+
+          <p className="text-center text-[10px] text-gris-medio uppercase tracking-widest">
+            {visitSummary}
+          </p>
 
           <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6 gap-4">
             <span className="text-sm font-medium uppercase tracking-widest text-[#E6007E]" style={{ color: '#E6007E' }}>Valor de la reserva:</span>

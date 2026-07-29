@@ -5,8 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    // Si 3000 está ocupado, Vite usa 3001+; el backend ya permite cualquier localhost.
-    port: 3000,
-    strictPort: false,
+    port: 3005,
+    strictPort: true,
+  },
+  preview: {
+    port: 3005,
+    strictPort: true,
   },
 })

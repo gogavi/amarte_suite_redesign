@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
 import spaceBgMobile from '../../assets/home_motion/space-bg-mobile_comp.webp';
@@ -56,7 +57,6 @@ const conversationStarters: ConversationStarter[] = [
     videoEyebrow: 'Plan romántico',
     ariaLabel: 'Decoración romántica — ver video del plan',
   },
-  { icon: '💡', label: 'AmarTip de Hoy', href: INSTAGRAM_URL, ariaLabel: 'AmarTip de Hoy — Instagram de Amarte Suite' },
   {
     icon: '🎂',
     label: 'Cumpleaños sorpresa',
@@ -64,6 +64,7 @@ const conversationStarters: ConversationStarter[] = [
     videoEyebrow: 'Plan cumpleaños',
     ariaLabel: 'Cumpleaños sorpresa — ver video del plan',
   },
+  { icon: '💡', label: 'AmarTip de Hoy', href: INSTAGRAM_URL, ariaLabel: 'AmarTip de Hoy — Instagram de Amarte Suite' },
   { icon: '📍', label: 'Cómo llegar', href: MAPS_URL, ariaLabel: 'Cómo llegar — Google Maps de Amarte Suite' },
 ];
 
@@ -913,63 +914,66 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         </div>
       </div>
 
-      <AnimatePresence>
-        {videoModal && (
-          <div
-            className="fixed inset-0 z-[1300] flex items-center justify-center p-4 sm:p-6"
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Video de ${videoModal.title}`}
-          >
-            <motion.button
-              type="button"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: reducedMotion ? 0.1 : 0.25 }}
-              className="absolute inset-0 bg-black/85"
-              aria-label="Cerrar video"
-              onClick={() => setVideoModal(null)}
-            />
-
-            <motion.div
-              initial={reducedMotion ? false : { opacity: 0, scale: 0.94, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
-              transition={{ duration: reducedMotion ? 0.1 : 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D11] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+      {createPortal(
+        <AnimatePresence>
+          {videoModal && (
+            <div
+              className="fixed inset-0 z-[1300] flex items-center justify-center p-4 sm:p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Video de ${videoModal.title}`}
             >
-              <div className="flex items-center justify-between border-b border-white/8 px-4 py-3 sm:px-5">
-                <div className="text-left">
-                  <p className="font-heading text-[10px] uppercase tracking-[0.28em] text-[#E6007E]">{videoModal.eyebrow}</p>
-                  <h3 className="font-heading text-sm uppercase tracking-wide text-[#FFF5F8] sm:text-base">
-                    {videoModal.title}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setVideoModal(null)}
-                  className="rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-sm text-[#FFF5F8]/75 transition hover:border-[#E6007E]/45 hover:bg-white/10 hover:text-white"
-                  aria-label="Cerrar"
-                >
-                  ✕
-                </button>
-              </div>
+              <motion.button
+                type="button"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reducedMotion ? 0.1 : 0.25 }}
+                className="absolute inset-0 bg-black/85"
+                aria-label="Cerrar video"
+                onClick={() => setVideoModal(null)}
+              />
 
-              <div className="aspect-video w-full bg-black">
-                <video
-                  key={videoModal.src}
-                  src={videoModal.src}
-                  className="h-full w-full object-contain"
-                  controls
-                  autoPlay
-                  playsInline
-                />
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              <motion.div
+                initial={reducedMotion ? false : { opacity: 0, scale: 0.94, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0, scale: 0.96, y: 10 }}
+                transition={{ duration: reducedMotion ? 0.1 : 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className="relative z-10 mx-auto w-full max-w-4xl max-h-[min(94svh,100%)] overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D11] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+              >
+                <div className="flex items-center justify-between border-b border-white/8 px-4 py-3 sm:px-5">
+                  <div className="text-left">
+                    <p className="font-heading text-[10px] uppercase tracking-[0.28em] text-[#E6007E]">{videoModal.eyebrow}</p>
+                    <h3 className="font-heading text-sm uppercase tracking-wide text-[#FFF5F8] sm:text-base">
+                      {videoModal.title}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setVideoModal(null)}
+                    className="rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-sm text-[#FFF5F8]/75 transition hover:border-[#E6007E]/45 hover:bg-white/10 hover:text-white"
+                    aria-label="Cerrar"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="aspect-video w-full bg-black">
+                  <video
+                    key={videoModal.src}
+                    src={videoModal.src}
+                    className="h-full w-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                  />
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
 
       <AnimatePresence>
         {portalZoomed && (

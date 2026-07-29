@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface SuiteVideoModalProps {
@@ -31,7 +32,7 @@ export default function SuiteVideoModal({
     };
   }, [isOpen, onClose]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <div
@@ -57,7 +58,7 @@ export default function SuiteVideoModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
             transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            className="relative z-10 flex w-[min(calc(100vw-1.5rem),calc((94svh-4rem)*9/16),420px)] flex-col overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D11] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
+            className="relative z-10 mx-auto flex w-[min(calc(100vw-1.5rem),calc((94svh-4rem)*9/16),420px)] flex-col overflow-hidden rounded-2xl border border-white/12 bg-[#0D0D11] shadow-[0_24px_80px_rgba(0,0,0,0.55)]"
           >
             <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-3 py-2.5 sm:px-4">
               <div className="min-w-0 pr-3 text-left">
@@ -91,6 +92,7 @@ export default function SuiteVideoModal({
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
