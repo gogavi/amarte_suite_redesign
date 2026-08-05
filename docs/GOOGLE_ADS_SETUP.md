@@ -8,10 +8,12 @@ Guía operativa para conectar la web con Google Ads. El código ya empuja evento
 2. En `.env` (y en el entorno de producción / hosting):
 
 ```env
-VITE_GTM_ID=GTM-XXXXXXX
+VITE_GTM_ID=GTM-W5VQCDF5
 ```
 
-3. Redeploy / rebuild. Sin este valor, la web **no** carga GTM (útil en local).
+Contenedor actual de Amarte: **`GTM-W5VQCDF5`**.
+
+3. Redeploy / rebuild (local: reinicia `npm run dev`). Sin este valor, la web **no** carga GTM. En el hosting (Vercel/etc.) define la misma variable en el panel de Environment Variables.
 
 ### Eventos que ya dispara el sitio
 
