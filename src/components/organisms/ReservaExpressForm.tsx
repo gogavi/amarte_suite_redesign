@@ -9,6 +9,7 @@ import {
   type CatalogSuite,
   type SuitePack,
 } from '../../services/suiteCatalogService';
+import { trackEvent } from '../../lib/analytics';
 
 interface ReservaExpressFormProps {
   onClose: () => void;
@@ -102,6 +103,13 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
+
+  useEffect(() => {
+    trackEvent('reserva_form_open', {
+      location: 'reserva_express',
+      suite_name: lockedLocalSuiteName ?? undefined,
+    });
+  }, [lockedLocalSuiteName]);
 
   const isSubmittingRef = useRef(isSubmitting);
   useEffect(() => {
@@ -319,7 +327,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     setSubmitError(null);
 
     try {
-      await createWebReservation({
+      const reservation = await createWebReservation({
         name: formData.name.trim(),
         document: formData.document,
         whatsapp: formData.whatsapp,
@@ -345,9 +353,37 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       dispatch({ type: 'SET_TIME', payload: time });
       dispatch({ type: 'CALCULATE_PRICE', payload: price });
 
+      trackEvent('pre_reserva_submit', {
+        location: 'reserva_express',
+        transaction_id: reservation.id,
+        suite_name: selectedSuite.name,
+        plan_name: selectedPack.name,
+        method,
+        value: price,
+        currency: 'COP',
+      });
+
       if (method === 'wompi') {
+        trackEvent('checkout_init', {
+          location: 'reserva_express',
+          transaction_id: reservation.id,
+          suite_name: selectedSuite.name,
+          plan_name: selectedPack.name,
+          hours: selectedPack.name,
+          value: price,
+          currency: 'COP',
+        });
         window.open(getWompiCheckoutUrl(), '_blank');
       } else {
+        trackEvent('whatsapp_redirect', {
+          location: 'reserva_express',
+          transaction_id: reservation.id,
+          suite_name: selectedSuite.name,
+          plan_name: selectedPack.name,
+          estimated_value: price,
+          value: price,
+          currency: 'COP',
+        });
         const message = buildWhatsappReservationMessage({
           name: formData.name.trim(),
           document: formData.document,

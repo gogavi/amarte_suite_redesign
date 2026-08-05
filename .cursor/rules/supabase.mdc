@@ -1,0 +1,29 @@
+---
+description: Uso seguro de Supabase desde el frontend Amarte
+globs: src/lib/**/*.ts,src/services/**/*.ts
+alwaysApply: false
+---
+
+# Supabase
+
+## Cliente
+
+- Único entrypoint: `src/lib/supabaseClient.ts`.
+- Env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (nunca service role en el browser).
+
+## Consultas
+
+- Catálogo: `room_rates` con joins a `room_types`, `rate_types`, `day_categories`.
+- Pre-reserva: `insert` en `reservations` desde `reservationService`.
+- Filtrar `active === false` en tipos de habitación/tarifa cuando aplique.
+
+## Seguridad
+
+- Asumir RLS activo; no confiar en “ocultar” campos en el cliente.
+- No exponer keys en commits; `.env` fuera de git.
+- Validar inputs de reserva en UI **y** no enviar filas incompletas.
+
+## Cambios de schema
+
+- Documentar en `docs/database.md`.
+- Preferir migraciones/SQL revisados; no “fixar” columnas en prod sin acuerdo.

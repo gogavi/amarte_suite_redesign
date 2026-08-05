@@ -1,0 +1,29 @@
+---
+description: Servicios como capa API client — sin UI ni secrets
+globs: src/services/**/*.ts
+alwaysApply: false
+---
+
+# Backend (capa services)
+
+No hay servidor propio. `src/services/` actúa como API client.
+
+## Debe
+
+- Exponer funciones async tipadas (`fetchSuiteCatalog`, `createWebReservation`, etc.).
+- Mapear nombres locales ↔ BD cuando haga falta (`resolveCatalogSuiteName`).
+- Propagar errores con `Error` y mensajes claros en español.
+- Usar solo el cliente anon de Supabase (`../lib/supabaseClient`).
+
+## No debe
+
+- Importar React / JSX.
+- Contener estilos o copy largo de UI (eso va en `data/` o componentes).
+- Embebír service role keys, tokens Wompi secretos, ni credenciales.
+- Mutar el DOM.
+
+## Integraciones existentes
+
+- Catálogo/tarifas: `suiteCatalogService`, `plansCatalogService`, `ratesService`.
+- Pre-reserva: `reservationService` → tabla `reservations`.
+- Chat/pago: `amarteChatbot`, `paymentLinks`, `martinaService`.

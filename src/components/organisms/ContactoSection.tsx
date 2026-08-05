@@ -1,3 +1,5 @@
+import { trackEvent } from '../../lib/analytics';
+
 const socialLinkClass =
   'w-14 h-14 rounded-full bg-[#17171E] flex items-center justify-center text-white transition-[transform,border-color,box-shadow] duration-200 hover:scale-110 hover:-translate-y-1 active:scale-95';
 
@@ -39,6 +41,9 @@ export default function ContactoSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#E6007E] hover:underline font-medium"
+                  onClick={() =>
+                    trackEvent('whatsapp_redirect', { location: 'contacto' })
+                  }
                 >
                   300 741 6683
                 </a>

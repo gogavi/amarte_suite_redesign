@@ -1,0 +1,31 @@
+---
+description: Convenciones frontend React/TypeScript para Amarte
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Frontend
+
+## React / TypeScript
+
+- Componentes funcionales; TypeScript estricto.
+- Imports al inicio del archivo.
+- En `switch` sobre uniones/enums: caso `default` con chequeo `never`.
+- Preferir patrones del repo; no añadir `useMemo`/`useCallback` por defecto.
+
+## Motion
+
+- Framer Motion para estados/entradas; GSAP solo si ya hay precedente de scroll complejo.
+- Respetar `prefers-reduced-motion` (scroll instantáneo, animaciones off).
+- Budget: no saturar móvil con parallax/video pesado.
+
+## Navegación in-page
+
+- Secciones con `id` + `src/data/sectionNav.ts` + `useSectionSpy`.
+- Dots (`SectionDotNav`) en `md+`; sticky chips (`SectionStickyNav`) en móvil.
+- Nav solo en vista `home`.
+
+## Calidad
+
+- No dejar `console.log` de depuración en PRs.
+- Accesibilidad básica: `aria-label`, `aria-current`, focus visible en controles custom.

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getMartinaInitialGreeting, getMartinaResponse, Message } from '../../services/martinaService';
+import { trackEvent } from '../../lib/analytics';
 
 interface MartinaWidgetProps {
   isOpen: boolean;
@@ -13,12 +14,18 @@ export default function MartinaWidget({ isOpen, onClose, initialUserMessage }: M
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const chatStartTrackedRef = useRef(false);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     // Cargar mensaje inicial de Martina al abrir
     if (isOpen && messages.length === 0) {
+      trackEvent('martina_open', {
+        location: 'legacy_widget',
+        interaction_type: 'text',
+      });
+
       const welcomeMessage: Message = {
         id: 'welcome',
         sender: 'martina',
@@ -27,6 +34,12 @@ export default function MartinaWidget({ isOpen, onClose, initialUserMessage }: M
       };
 
       if (initialUserMessage) {
+        chatStartTrackedRef.current = true;
+        trackEvent('martina_chat_start', {
+          location: 'legacy_widget',
+          interaction_type: 'text',
+        });
+
         const userMessage: Message = {
           id: 'initial-user-msg',
           sender: 'user',
@@ -66,6 +79,14 @@ export default function MartinaWidget({ isOpen, onClose, initialUserMessage }: M
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
+
+    if (!chatStartTrackedRef.current) {
+      chatStartTrackedRef.current = true;
+      trackEvent('martina_chat_start', {
+        location: 'legacy_widget',
+        interaction_type: 'text',
+      });
+    }
 
     const userMsgText = inputValue;
     const userMessage: Message = {

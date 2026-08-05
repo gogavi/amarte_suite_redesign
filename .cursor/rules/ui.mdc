@@ -1,0 +1,30 @@
+---
+description: UI Amarte — tokens, dark theme y patrones visuales
+globs: src/components/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# UI
+
+## Tokens (obligatorio)
+
+Usar tokens de Tailwind / `07_DesignSystem.md`:
+
+- Fondos: `bg-dark` `#0D0D11`, surface `#17171E` / `surface-card`
+- Acentos: `magenta-digital` `#E6007E`, `cyan-orbital` `#19A6E0`
+- Texto: blanco, `rosa-cuarzo`, `gris-carbon` / `gris-medio`
+- Tipografía: `font-heading` (Fjalla One), `font-body` (Jost)
+- Radios: `rounded-brand`; glass: `reflective-glass`
+
+## Patrones
+
+- Tema oscuro fijo; no introducir light mode salvo pedido explícito.
+- Hero: brand fuerte, sin cards ni overlays tipo sticker.
+- CTAs primarios en magenta; acentos secundarios en cyan.
+- Chips/segmented controls: activo magenta sólido, inactivo borde sutil.
+- Modales de video: centrados en viewport vía portal; `object-contain`.
+
+## Evitar
+
+- Púrpura genérico, glows agresivos, pills “AI slop”, Inter/Roboto como display.
+- Cards decorativos sin interacción real.

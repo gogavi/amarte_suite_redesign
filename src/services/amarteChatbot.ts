@@ -1,3 +1,5 @@
+import { trackEvent } from '../lib/analytics';
+
 export type AmarteChatbotBridge = {
   openChat: (initialMessage?: string) => void;
   openLive: () => void;
@@ -97,6 +99,16 @@ export function prefetchMartinaWidget(): void {
  * (aceptable para starters; no usar para mic en vivo).
  */
 export async function openChat(initialMessage?: string): Promise<void> {
+  trackEvent('martina_open', {
+    location: 'widget',
+    interaction_type: 'text',
+  });
+  if (initialMessage?.trim()) {
+    trackEvent('martina_chat_start', {
+      location: 'widget',
+      interaction_type: 'text',
+    });
+  }
   const bridge = await ensureWidgetLoaded();
   bridge.openChat(initialMessage);
 }
@@ -107,6 +119,14 @@ export async function openChat(initialMessage?: string): Promise<void> {
  * en el onClick para no romper el gesto de micrófono.
  */
 export function openLiveSync(): void {
+  trackEvent('martina_open', {
+    location: 'widget',
+    interaction_type: 'voice',
+  });
+  trackEvent('martina_chat_start', {
+    location: 'widget',
+    interaction_type: 'voice',
+  });
   if (isBridgeReady(window.AmarteChatbot)) {
     window.AmarteChatbot.openLive();
     return;

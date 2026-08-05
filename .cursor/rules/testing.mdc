@@ -1,0 +1,26 @@
+---
+description: Convenciones de testing (Vitest/RTL cuando existan tests)
+globs: "**/*.{test,spec}.{ts,tsx}"
+alwaysApply: false
+---
+
+# Testing
+
+Hoy el repo es principalmente UI + servicios sin suite formal. Cuando se agreguen tests:
+
+## Stack previsto
+
+- **Vitest** + **React Testing Library** para componentes.
+- Tests de servicios con mocks del cliente Supabase (no pegar a prod).
+
+## Qué priorizar
+
+1. `reservationService` / validación de `ReservaExpressForm` (fecha ≥ hoy, packs, precio).
+2. Mappers de catálogo (`getPackPrice`, weekend vs weekday).
+3. Hooks puros (`useSectionSpy` con IntersectionObserver mockeado).
+
+## Estilo
+
+- Un assert principal por test; nombres en español o inglés consistente con el archivo.
+- No snapshots frágiles de markup completo del hero.
+- `data-testid` solo si no hay rol/aria accesible.

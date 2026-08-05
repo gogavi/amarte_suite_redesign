@@ -1,0 +1,36 @@
+---
+description: Arquitectura del SPA Amarte — capas, límites y decisiones de stack
+alwaysApply: true
+---
+
+# Architecture
+
+## Stack
+
+- SPA **React 18 + Vite + TypeScript + Tailwind**. No hay Next.js ni backend Node propio.
+- Datos y escritura vía **Supabase** desde el cliente (`src/lib/supabaseClient.ts`).
+- Orquestación de landing en `src/views/Home.tsx` (estado `activeView`, no `react-router` en uso real).
+
+## Capas (`src/`)
+
+| Capa | Rol |
+|---|---|
+| `views/` | Páginas / orquestación |
+| `components/organisms/` | Secciones y formularios compuestos |
+| `components/molecules/` | Piezas UI reutilizables |
+| `services/` | Clientes de datos / integraciones (sin JSX) |
+| `hooks/` | Estado/efectos reutilizables |
+| `data/` | Contenido editorial estático |
+| `context/` | Estado global ligero (ej. reserva) |
+
+## Reglas
+
+- No inventar un servidor Express/API REST: los “endpoints” son funciones en `services/`.
+- UI no habla a Supabase directo salvo casos triviales; preferir `services/`.
+- Imports al tope del módulo (sin imports inline).
+- Modales `fixed` dentro de ancestros con `transform` → montar con `createPortal(..., document.body)`.
+- Puerto de desarrollo: **3005** (`vite.config.ts`, `strictPort: true`).
+
+## Docs
+
+Ver `docs/business.md`, `docs/api.md`, `docs/database.md`, `AGENTS.md`.
