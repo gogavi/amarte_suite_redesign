@@ -1,0 +1,3692 @@
+{
+  "version": "2.17",
+  "children": [
+    {
+      "type": "frame",
+      "id": "t1z2ve",
+      "x": 0,
+      "y": 0,
+      "name": "Home Desktop",
+      "clip": true,
+      "width": 1440,
+      "fill": "$bgDark",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "YGuHK",
+          "name": "Hero",
+          "clip": true,
+          "width": 1440,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "radial",
+            "enabled": true,
+            "rotation": 0,
+            "size": {
+              "width": 1.2,
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#1A0A14",
+                "position": 0
+              },
+              {
+                "color": "#0D0D11",
+                "position": 0.55
+              },
+              {
+                "color": "#0D0D11",
+                "position": 1
+              }
+            ],
+            "center": {
+              "y": 0.35
+            }
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            24,
+            48,
+            48,
+            48
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "YrqAa",
+              "name": "Header",
+              "width": "fill_container",
+              "height": 56,
+              "padding": [
+                0,
+                0,
+                16,
+                0
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "p0sm5",
+                  "name": "Logo",
+                  "fill": "$softWhite",
+                  "content": "AMARTE",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 28,
+                  "fontWeight": "normal",
+                  "letterSpacing": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "q6xHn",
+                  "name": "Nav links",
+                  "gap": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QxBuE",
+                      "name": "Nav Suites",
+                      "fill": "#FFF5F8B8",
+                      "content": "Suites",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W82mdQ",
+                      "name": "Nav Experiencias",
+                      "fill": "#FFF5F8B8",
+                      "content": "Experiencias",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Xe60X",
+                      "name": "Nav Martina",
+                      "fill": "#FFF5F8B8",
+                      "content": "Martina",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hse7n",
+                  "name": "Btn Reserva",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF1F",
+                  "strokeWidth": 1,
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jpWja",
+                      "name": "Reserva label",
+                      "fill": "#000000",
+                      "content": "RESERVA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "By97V",
+              "name": "Eyebrow",
+              "fill": "#FFF5F894",
+              "content": "VOICE AGENT · MARTINA",
+              "fontFamily": "$fontBody",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 6
+            },
+            {
+              "type": "text",
+              "id": "t0K4w",
+              "name": "Headline Te llevo",
+              "fill": "$softWhite",
+              "content": "TE LLEVO",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 96,
+              "fontWeight": "normal",
+              "letterSpacing": -4
+            },
+            {
+              "type": "text",
+              "id": "SkmCs",
+              "name": "Headline a Marte",
+              "fill": "$magenta",
+              "content": "A MARTE",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 96,
+              "fontWeight": "normal",
+              "letterSpacing": -4
+            },
+            {
+              "type": "frame",
+              "id": "xIA6m",
+              "name": "Orb Stage",
+              "width": 420,
+              "height": 420,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "NnRaX",
+                  "x": 40,
+                  "y": 40,
+                  "name": "Orb glow",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#E6007E55",
+                        "position": 0
+                      },
+                      {
+                        "color": "#E6007E00",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 340,
+                  "height": 340
+                },
+                {
+                  "type": "ellipse",
+                  "id": "Foa7t",
+                  "x": 70,
+                  "y": 70,
+                  "name": "Planet",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FF6BA8",
+                        "position": 0
+                      },
+                      {
+                        "color": "#C3007A",
+                        "position": 0.4
+                      },
+                      {
+                        "color": "#4A1028",
+                        "position": 0.85
+                      },
+                      {
+                        "color": "#1A0610",
+                        "position": 1
+                      }
+                    ],
+                    "center": {
+                      "x": 0.35,
+                      "y": 0.3
+                    }
+                  },
+                  "width": 280,
+                  "height": 280,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E66",
+                    "blur": 40
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "p1skOD",
+                  "x": 70,
+                  "y": 185,
+                  "name": "CTA Martina",
+                  "width": 280,
+                  "height": 52,
+                  "fill": "$magenta",
+                  "cornerRadius": 999,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E80",
+                    "offset": {
+                      "x": 0,
+                      "y": 8
+                    },
+                    "blur": 28
+                  },
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "A3fQcY",
+                      "name": "Mic icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "mic",
+                      "library": "lucide",
+                      "fill": "#000000"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e6lVx",
+                      "name": "CTA label",
+                      "fill": "#000000",
+                      "content": "PREGÚNTALE A MARTINA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Lz8Dg",
+              "name": "Hero subcopy",
+              "fill": "#FFF5F8AD",
+              "textGrowth": "fixed-width",
+              "width": 520,
+              "content": "Martina interpreta tu intención y te guía hacia la suite, el plan y el momento perfecto.",
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Z5EdoO",
+              "name": "Conversation starters",
+              "gap": 10,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ql4rh",
+                  "name": "Chip Decoración romántica",
+                  "fill": "#FFFFFF1A",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF4D",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "a0lHZt",
+                      "name": "Chip icon Decoración romántica",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "heart",
+                      "library": "lucide",
+                      "fill": "$softWhite"
+                    },
+                    {
+                      "type": "text",
+                      "id": "RmQX1",
+                      "name": "Chip text Decoración romántica",
+                      "fill": "#FFF5F8E6",
+                      "content": "Decoración romántica",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "F2zSa",
+                  "name": "Chip Cumpleaños sorpresa",
+                  "fill": "#FFFFFF1A",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF4D",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "x1QGkg",
+                      "name": "Chip icon Cumpleaños sorpresa",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "cake",
+                      "library": "lucide",
+                      "fill": "$softWhite"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PGM0N",
+                      "name": "Chip text Cumpleaños sorpresa",
+                      "fill": "#FFF5F8E6",
+                      "content": "Cumpleaños sorpresa",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jjUxX",
+                  "name": "Chip AmarTip de Hoy",
+                  "fill": "#FFFFFF1A",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF4D",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "K4Mhb",
+                      "name": "Chip icon AmarTip de Hoy",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "lightbulb",
+                      "library": "lucide",
+                      "fill": "$softWhite"
+                    },
+                    {
+                      "type": "text",
+                      "id": "fm7Jw",
+                      "name": "Chip text AmarTip de Hoy",
+                      "fill": "#FFF5F8E6",
+                      "content": "AmarTip de Hoy",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pxVSH",
+                  "name": "Chip Cómo llegar",
+                  "fill": "#FFFFFF1A",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF4D",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    18
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "WTSN7",
+                      "name": "Chip icon Cómo llegar",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "map-pin",
+                      "library": "lucide",
+                      "fill": "$softWhite"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KIg8m",
+                      "name": "Chip text Cómo llegar",
+                      "fill": "#FFF5F8E6",
+                      "content": "Cómo llegar",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Ehsu8",
+          "name": "Trust Bar",
+          "width": 1440,
+          "layout": "vertical",
+          "padding": [
+            24,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "a7NuH",
+              "name": "Trust inner",
+              "width": 1100,
+              "fill": "$surfaceCard",
+              "cornerRadius": "$radius",
+              "stroke": "#FFFFFF14",
+              "strokeWidth": 1,
+              "gap": 16,
+              "padding": [
+                24,
+                32
+              ],
+              "justifyContent": "space_around",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tAb56",
+                  "name": "Stat Parejas Felices",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HkMQk",
+                      "name": "Stat value Parejas Felices",
+                      "fill": "$cyan",
+                      "content": "+50.000",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 24,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "eeif0",
+                      "name": "Stat label Parejas Felices",
+                      "fill": "$grisMedio",
+                      "content": "PAREJAS FELICES",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "BbTbe",
+                  "name": "Stat Se vale explorar",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "f6kXmR",
+                      "name": "Stat value Se vale explorar",
+                      "fill": "$cyan",
+                      "content": "Suites Temáticas",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 24,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "S0zXV",
+                      "name": "Stat label Se vale explorar",
+                      "fill": "$grisMedio",
+                      "content": "SE VALE EXPLORAR",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fIqxb",
+                  "name": "Stat Calificación Google",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LI1lc",
+                      "name": "Stat value Calificación Google",
+                      "fill": "$cyan",
+                      "content": "4.8 ★",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 24,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "LGaxX",
+                      "name": "Stat label Calificación Google",
+                      "fill": "$grisMedio",
+                      "content": "CALIFICACIÓN GOOGLE",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zd4zx",
+                  "name": "Stat Atención Digital",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "n217p",
+                      "name": "Stat value Atención Digital",
+                      "fill": "$cyan",
+                      "content": "24/7",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 24,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "Xji49",
+                      "name": "Stat label Atención Digital",
+                      "fill": "$grisMedio",
+                      "content": "ATENCIÓN DIGITAL",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "GGiwr",
+          "name": "Video Experience",
+          "width": 1440,
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            48,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "TQOCf",
+              "name": "Video eyebrow",
+              "fill": "$cyan",
+              "content": "LA EXPERIENCIA",
+              "fontFamily": "$fontHeading",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 4
+            },
+            {
+              "type": "text",
+              "id": "NtS1I",
+              "name": "Video title",
+              "fill": "#000000",
+              "content": "SIENTE EL PLANETA ROMÁNTICO",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "vQovv",
+              "name": "Video player",
+              "clip": true,
+              "width": 960,
+              "height": 540,
+              "fill": "#121218",
+              "cornerRadius": 16,
+              "stroke": "#FFFFFF14",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "Z5KjoY",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Video placeholder bg",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 135,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#2A0A1C",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0D1A24",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "width": 960,
+                  "height": 540
+                },
+                {
+                  "type": "frame",
+                  "id": "lw4W9",
+                  "x": 430,
+                  "y": 220,
+                  "name": "Play button",
+                  "width": 100,
+                  "height": 100,
+                  "fill": "$magenta",
+                  "cornerRadius": 999,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E66",
+                    "blur": 24
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Cot1F",
+                      "name": "Play icon",
+                      "width": 36,
+                      "height": 36,
+                      "icon": "play",
+                      "library": "lucide",
+                      "fill": "#000000"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "N3WvTA",
+          "name": "Suites Section",
+          "width": 1440,
+          "layout": "vertical",
+          "gap": 40,
+          "padding": 64,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "Di3BP",
+              "name": "Suites header",
+              "width": 640,
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "mO8wW",
+                  "name": "Suites eyebrow",
+                  "fill": "$cyan",
+                  "content": "NUESTRAS SUITES",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "text",
+                  "id": "Bc7oR",
+                  "name": "Suites title",
+                  "fill": "#000000",
+                  "textGrowth": "fixed-width",
+                  "width": 640,
+                  "content": "CONOCE TU PRÓXIMO DESTINO",
+                  "textAlign": "center",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 40,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "GsIaG",
+                  "name": "Suites sub",
+                  "fill": "$rosaCuarzo",
+                  "textGrowth": "fixed-width",
+                  "width": 520,
+                  "content": "Compara nuestras categorías premium de suites temáticas y deluxe para encontrar la velada perfecta.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Nbyfp",
+              "name": "Suites grid",
+              "width": 1100,
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NUyIo",
+                  "name": "Suite Deluxe Diamante",
+                  "clip": true,
+                  "width": 350,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E22",
+                    "offset": {
+                      "x": 0,
+                      "y": 8
+                    },
+                    "blur": 20
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rcjrN",
+                      "name": "Suite img Deluxe Diamante",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 160,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3A1028",
+                            "position": 0
+                          },
+                          {
+                            "color": "#121218",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "D2saTq",
+                      "name": "Suite body Deluxe Diamante",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OpHYx",
+                          "name": "Suite cat Deluxe Diamante",
+                          "fill": "$cyan",
+                          "content": "DELUXE",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "lNUnr",
+                          "name": "Suite name Deluxe Diamante",
+                          "fill": "#000000",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "DELUXE DIAMANTE",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Sxq2m",
+                          "name": "Suite desc Deluxe Diamante",
+                          "fill": "$grisMedio",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "Lujo absoluto, jacuzzi y atmósfera premium.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$fontBody",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "eRIs6",
+                          "name": "Suite price Deluxe Diamante",
+                          "fill": "$magenta",
+                          "content": "Desde $240.000",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iTsnn",
+                          "name": "Suite CTA Deluxe Diamante",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$magenta",
+                          "cornerRadius": "$radius",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZeHmb",
+                              "name": "Suite CTA label Deluxe Diamante",
+                              "fill": "#000000",
+                              "content": "RESERVAR",
+                              "fontFamily": "$fontHeading",
+                              "fontSize": 12,
+                              "fontWeight": "normal",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "b3MQk2",
+                  "name": "Suite Deluxe Gold",
+                  "clip": true,
+                  "width": 350,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E22",
+                    "offset": {
+                      "x": 0,
+                      "y": 8
+                    },
+                    "blur": 20
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zYEya",
+                      "name": "Suite img Deluxe Gold",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 160,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3A1028",
+                            "position": 0
+                          },
+                          {
+                            "color": "#121218",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tq9f2",
+                      "name": "Suite body Deluxe Gold",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "bFcaE",
+                          "name": "Suite cat Deluxe Gold",
+                          "fill": "$cyan",
+                          "content": "DELUXE",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "W8TOrE",
+                          "name": "Suite name Deluxe Gold",
+                          "fill": "#000000",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "DELUXE GOLD",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "j4oPqd",
+                          "name": "Suite desc Deluxe Gold",
+                          "fill": "$grisMedio",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "Atmósfera dorada de lujo y seducción.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$fontBody",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "b6j1C9",
+                          "name": "Suite price Deluxe Gold",
+                          "fill": "$magenta",
+                          "content": "Desde $240.000",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rXT9S",
+                          "name": "Suite CTA Deluxe Gold",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$magenta",
+                          "cornerRadius": "$radius",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "J8E1KE",
+                              "name": "Suite CTA label Deluxe Gold",
+                              "fill": "#000000",
+                              "content": "RESERVAR",
+                              "fontFamily": "$fontHeading",
+                              "fontSize": 12,
+                              "fontWeight": "normal",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hbqXz",
+                  "name": "Suite Temática Árabe",
+                  "clip": true,
+                  "width": 350,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#E6007E22",
+                    "offset": {
+                      "x": 0,
+                      "y": 8
+                    },
+                    "blur": 20
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fpQ4x",
+                      "name": "Suite img Temática Árabe",
+                      "width": "fill_container",
+                      "height": 200,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 160,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#3A1028",
+                            "position": 0
+                          },
+                          {
+                            "color": "#121218",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "layout": "none"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nGNQJ",
+                      "name": "Suite body Temática Árabe",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WnsEg",
+                          "name": "Suite cat Temática Árabe",
+                          "fill": "$cyan",
+                          "content": "TEMÁTICA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "r6bN8z",
+                          "name": "Suite name Temática Árabe",
+                          "fill": "#000000",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "TEMÁTICA ÁRABE",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "iaFV3",
+                          "name": "Suite desc Temática Árabe",
+                          "fill": "$grisMedio",
+                          "textGrowth": "fixed-width",
+                          "width": 310,
+                          "content": "Fantasía oriental, espejos y detalles únicos.",
+                          "lineHeight": 1.45,
+                          "fontFamily": "$fontBody",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "JMIVA",
+                          "name": "Suite price Temática Árabe",
+                          "fill": "$magenta",
+                          "content": "Desde $220.000",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CDs91",
+                          "name": "Suite CTA Temática Árabe",
+                          "width": "fill_container",
+                          "height": 44,
+                          "fill": "$magenta",
+                          "cornerRadius": "$radius",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xkgBz",
+                              "name": "Suite CTA label Temática Árabe",
+                              "fill": "#000000",
+                              "content": "RESERVAR",
+                              "fontFamily": "$fontHeading",
+                              "fontSize": 12,
+                              "fontWeight": "normal",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KRRWN",
+          "name": "Martina Section",
+          "width": 1440,
+          "gap": 64,
+          "padding": [
+            80,
+            120
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pPGtK",
+              "name": "Martina visual",
+              "width": 460,
+              "height": 520,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "AEfU4",
+                  "x": 40,
+                  "y": 80,
+                  "name": "Martina glow",
+                  "fill": "#E6007E22",
+                  "width": 380,
+                  "height": 380
+                },
+                {
+                  "type": "frame",
+                  "id": "hDUT3",
+                  "x": 80,
+                  "y": 40,
+                  "name": "Martina figure",
+                  "width": 300,
+                  "height": 460,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#E6007E33",
+                        "position": 0
+                      },
+                      {
+                        "color": "#17171E",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 32,
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "padding": 24,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zmt80",
+                      "name": "Martina badge",
+                      "fill": "$magenta",
+                      "content": "MARTINA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 28,
+                      "fontWeight": "normal",
+                      "letterSpacing": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sKST9",
+              "name": "Martina copy",
+              "width": 520,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RHFaN",
+                  "name": "Martina eyebrow",
+                  "fill": "$cyan",
+                  "content": "ANFITRIONA DIGITAL",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "text",
+                  "id": "Q7G7mi",
+                  "name": "Martina title",
+                  "fill": "#000000",
+                  "textGrowth": "fixed-width",
+                  "width": 520,
+                  "content": "DISEÑA TU NOCHE IDEAL CON NUESTRA AGENTE VIRTUAL",
+                  "lineHeight": 1.05,
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 40,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "i6bYo",
+                  "name": "Martina body",
+                  "fill": "$grisMedio",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "Martina es tu guía interactiva inteligente. Te ayuda a organizar cada detalle de tu estadía por chat o voz antes de hablar con el equipo humano.",
+                  "lineHeight": 1.55,
+                  "fontFamily": "$fontBody",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "jJa9d",
+                  "name": "Feature Reserva tu Suite al instante",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Bnyej",
+                      "name": "Check Reserva tu Suite al instante",
+                      "fill": "$magenta",
+                      "content": "✓",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j4DPr",
+                      "name": "Feature text Reserva tu Suite al instante",
+                      "fill": "#000000",
+                      "content": "RESERVA TU SUITE AL INSTANTE",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JwlJP",
+                  "name": "Feature Aconseja el mejor plan",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uQDao",
+                      "name": "Check Aconseja el mejor plan",
+                      "fill": "$magenta",
+                      "content": "✓",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jfJQX",
+                      "name": "Feature text Aconseja el mejor plan",
+                      "fill": "#000000",
+                      "content": "ACONSEJA EL MEJOR PLAN",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yhasi",
+                  "name": "Feature Asesora sobre tarifas y suites",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RXvbp",
+                      "name": "Check Asesora sobre tarifas y suites",
+                      "fill": "$magenta",
+                      "content": "✓",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Khwn3",
+                      "name": "Feature text Asesora sobre tarifas y suites",
+                      "fill": "#000000",
+                      "content": "ASESORA SOBRE TARIFAS Y SUITES",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B29qEa",
+                  "name": "Feature Entrega el AmarTip del día",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jRGLx",
+                      "name": "Check Entrega el AmarTip del día",
+                      "fill": "$magenta",
+                      "content": "✓",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "H0ZOoQ",
+                      "name": "Feature text Entrega el AmarTip del día",
+                      "fill": "#000000",
+                      "content": "ENTREGA EL AMARTIP DEL DÍA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "I5ChG",
+                  "name": "Martina actions",
+                  "gap": 12,
+                  "padding": [
+                    12,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mxgep",
+                      "name": "Hablar Martina",
+                      "fill": "$magenta",
+                      "cornerRadius": "$radius",
+                      "padding": [
+                        14,
+                        22
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UhX92",
+                          "name": "Hablar label",
+                          "fill": "#000000",
+                          "content": "HABLAR CON MARTINA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EEols",
+                      "name": "Explorar suites",
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": "$radius",
+                      "stroke": "#FFFFFF1A",
+                      "strokeWidth": 1,
+                      "padding": [
+                        14,
+                        22
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UBT5O",
+                          "name": "Explorar label",
+                          "fill": "#000000",
+                          "content": "EXPLORAR SUITES",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "t3NeC",
+          "name": "Planes Section",
+          "width": 1440,
+          "layout": "vertical",
+          "gap": 32,
+          "padding": 64,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "lLXx4",
+              "name": "Planes eyebrow",
+              "fill": "$cyan",
+              "content": "PLANES DE DECORACIÓN",
+              "fontFamily": "$fontHeading",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 4
+            },
+            {
+              "type": "text",
+              "id": "pdGM9",
+              "name": "Planes title",
+              "fill": "#000000",
+              "content": "EL MONTAJE PERFECTO PARA TU NOCHE",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "fvTFH",
+              "name": "Planes row",
+              "width": 1100,
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "YEfdy",
+                  "name": "Plan Plan Romántico",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tTAHI",
+                      "name": "Plan emoji Plan Romántico",
+                      "fill": "#000000",
+                      "content": "🌹",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 32,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "gOAIG",
+                      "name": "Plan name Plan Romántico",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "PLAN ROMÁNTICO",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W1xnmj",
+                      "name": "Plan desc Plan Romántico",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Montaje clásico de amor en suites Deluxe.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "qjdCO",
+                      "name": "Plan price Plan Romántico",
+                      "fill": "$magenta",
+                      "content": "Consultar",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Ho4k4",
+                      "name": "Plan CTA Plan Romántico",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": 10,
+                      "stroke": "#E6007E55",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MPtoH",
+                          "name": "Plan CTA label Plan Romántico",
+                          "fill": "$magenta",
+                          "content": "AÑADIR A RESERVA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "QPiZk",
+                  "name": "Plan Plan Cumpleaños",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mH3Nr",
+                      "name": "Plan emoji Plan Cumpleaños",
+                      "fill": "#000000",
+                      "content": "🎂",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 32,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "XgfHk",
+                      "name": "Plan name Plan Cumpleaños",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "PLAN CUMPLEAÑOS",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W4JCmA",
+                      "name": "Plan desc Plan Cumpleaños",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Festeja tu día especial con decoración sorpresa.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ggX5d",
+                      "name": "Plan price Plan Cumpleaños",
+                      "fill": "$magenta",
+                      "content": "Consultar",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "lwNm2",
+                      "name": "Plan CTA Plan Cumpleaños",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": 10,
+                      "stroke": "#E6007E55",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "te4LN",
+                          "name": "Plan CTA label Plan Cumpleaños",
+                          "fill": "$magenta",
+                          "content": "AÑADIR A RESERVA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "w0oGz",
+                  "name": "Plan Plan Amarte",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YGkxG",
+                      "name": "Plan emoji Plan Amarte",
+                      "fill": "#000000",
+                      "content": "💖",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 32,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "lUNBn",
+                      "name": "Plan name Plan Amarte",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "PLAN AMARTE",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "J9z0F",
+                      "name": "Plan desc Plan Amarte",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Experiencia insignia de romance total.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IihDl",
+                      "name": "Plan price Plan Amarte",
+                      "fill": "$magenta",
+                      "content": "Consultar",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DC9xK",
+                      "name": "Plan CTA Plan Amarte",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": 10,
+                      "stroke": "#E6007E55",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A1Ivh",
+                          "name": "Plan CTA label Plan Amarte",
+                          "fill": "$magenta",
+                          "content": "AÑADIR A RESERVA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q97Lp",
+                  "name": "Plan Plan Erótico",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zwn3A",
+                      "name": "Plan emoji Plan Erótico",
+                      "fill": "#000000",
+                      "content": "🖤",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 32,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l3LvgP",
+                      "name": "Plan name Plan Erótico",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "PLAN ERÓTICO",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Q4EBLr",
+                      "name": "Plan desc Plan Erótico",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 220,
+                      "content": "Fantasía y seducción con kit premium.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hhg9y",
+                      "name": "Plan price Plan Erótico",
+                      "fill": "$magenta",
+                      "content": "Consultar",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V18V0",
+                      "name": "Plan CTA Plan Erótico",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": 10,
+                      "stroke": "#E6007E55",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Lrzfh",
+                          "name": "Plan CTA label Plan Erótico",
+                          "fill": "$magenta",
+                          "content": "AÑADIR A RESERVA",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hx65z",
+          "name": "Promo Banner",
+          "width": 1440,
+          "layout": "vertical",
+          "padding": [
+            24,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pMQzF",
+              "name": "Promo inner",
+              "width": 1100,
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#2A0A1C",
+                    "position": 0
+                  },
+                  {
+                    "color": "#17171E",
+                    "position": 1
+                  }
+                ]
+              },
+              "cornerRadius": 16,
+              "stroke": "#E6007E44",
+              "strokeWidth": 1,
+              "gap": 24,
+              "padding": [
+                28,
+                36
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ryugH",
+                  "name": "Promo copy",
+                  "width": 700,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "nu85B",
+                      "name": "Promo tag",
+                      "fill": "$gold",
+                      "content": "CAMPAÑA ESPECIAL 2026",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 3
+                    },
+                    {
+                      "type": "text",
+                      "id": "VaWPL",
+                      "name": "Promo title",
+                      "fill": "#000000",
+                      "content": "¿CUMPLES AÑOS ESTE MES?",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 28,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "k7dR4B",
+                      "name": "Promo desc",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 680,
+                      "content": "Reserva la Suite Jacuzzi rato de 3 horas por solo $150.000 todos los días.",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "rW338",
+                  "name": "Promo CTA",
+                  "fill": "$magenta",
+                  "cornerRadius": "$radius",
+                  "padding": [
+                    14,
+                    22
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XGAsX",
+                      "name": "Promo CTA label",
+                      "fill": "#000000",
+                      "content": "APLICAR PROMO",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BW68h",
+          "name": "Hub Access",
+          "width": 1440,
+          "layout": "vertical",
+          "gap": 32,
+          "padding": 64,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "dxJHd",
+              "name": "Hub eyebrow",
+              "fill": "$cyan",
+              "content": "EXPERIENCIAS",
+              "fontFamily": "$fontHeading",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "letterSpacing": 4
+            },
+            {
+              "type": "text",
+              "id": "Aqs91",
+              "name": "Hub title",
+              "fill": "#000000",
+              "content": "TODO LO QUE COMPLEMENTA TU NOCHE",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 36,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "crc6a",
+              "name": "Hub grid",
+              "width": 1100,
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Xu7lV",
+                  "name": "Hub Boutique Erótica",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 22,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "mfVbI",
+                      "name": "Hub tag wrap Boutique Erótica",
+                      "fill": "#F1E5AC1A",
+                      "cornerRadius": 999,
+                      "stroke": "#F1E5AC33",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uDHIb",
+                          "name": "Hub tag Boutique Erótica",
+                          "fill": "#F1E5AC",
+                          "content": "PREMIUM",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 10,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "M5a9l",
+                      "name": "Hub title Boutique Erótica",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "BOUTIQUE ERÓTICA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "G31WxJ",
+                      "name": "Hub desc Boutique Erótica",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "Juguetes, lencería y secretos para tu noche.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RpKbq",
+                  "name": "Hub Restaurante a la Habitación",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 22,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "G5J6u",
+                      "name": "Hub title Restaurante a la Habitación",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "RESTAURANTE A LA HABITACIÓN",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "c7cBCQ",
+                      "name": "Hub desc Restaurante a la Habitación",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "Platos exclusivos y cenas románticas en suite.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yDEqq",
+                  "name": "Hub Bar & Coctelería",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 22,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xahTg",
+                      "name": "Hub title Bar & Coctelería",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "BAR & COCTELERÍA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vtws6",
+                      "name": "Hub desc Bar & Coctelería",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "Licores premium, champaña y cócteles de autor.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OExpd",
+                  "name": "Hub Contacto y Ubicación",
+                  "width": 260,
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF14",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 22,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hutn0",
+                      "name": "Hub title Contacto y Ubicación",
+                      "fill": "#000000",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "CONTACTO Y UBICACIÓN",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cLmxA",
+                      "name": "Hub desc Contacto y Ubicación",
+                      "fill": "$grisMedio",
+                      "textGrowth": "fixed-width",
+                      "width": 216,
+                      "content": "Cómo llegar a Teusaquillo, Waze y atención.",
+                      "lineHeight": 1.4,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "zZmjJ",
+          "name": "Contacto Section",
+          "width": 1440,
+          "gap": 64,
+          "padding": [
+            64,
+            120
+          ],
+          "justifyContent": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "I59GKn",
+              "name": "Contacto left",
+              "width": 480,
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "NSDxm",
+                  "name": "Contacto eyebrow",
+                  "fill": "$cyan",
+                  "content": "ENCUÉNTRANOS",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 12,
+                  "fontWeight": "normal",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "text",
+                  "id": "hE4xF",
+                  "name": "Contacto title",
+                  "fill": "#000000",
+                  "textGrowth": "fixed-width",
+                  "width": 480,
+                  "content": "CONTACTO Y UBICACIÓN",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 32,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "i1dqe",
+                  "name": "Info DIRECCIÓN",
+                  "width": "fill_container",
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF0D",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "d7sMyI",
+                      "name": "Info t DIRECCIÓN",
+                      "fill": "#000000",
+                      "content": "DIRECCIÓN",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "N5Yy9",
+                      "name": "Info d DIRECCIÓN",
+                      "fill": "#D1D1D6",
+                      "textGrowth": "fixed-width",
+                      "width": 430,
+                      "content": "Calle 62 # 14 - 19, Teusaquillo · Bogotá, Colombia",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q1vPPa",
+                  "name": "Info CELULAR & WHATSAPP",
+                  "width": "fill_container",
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF0D",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "eE2KZ",
+                      "name": "Info t CELULAR & WHATSAPP",
+                      "fill": "#000000",
+                      "content": "CELULAR & WHATSAPP",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "QecrX",
+                      "name": "Info d CELULAR & WHATSAPP",
+                      "fill": "#D1D1D6",
+                      "textGrowth": "fixed-width",
+                      "width": 430,
+                      "content": "300 741 6683",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IOHLs",
+                  "name": "Info CORREO ELECTRÓNICO",
+                  "width": "fill_container",
+                  "fill": "$surfaceCard",
+                  "cornerRadius": "$radius",
+                  "stroke": "#FFFFFF0D",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HvQIZ",
+                      "name": "Info t CORREO ELECTRÓNICO",
+                      "fill": "#000000",
+                      "content": "CORREO ELECTRÓNICO",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "PLmVJ",
+                      "name": "Info d CORREO ELECTRÓNICO",
+                      "fill": "#D1D1D6",
+                      "textGrowth": "fixed-width",
+                      "width": 430,
+                      "content": "info@amartesuite.com",
+                      "lineHeight": 1.45,
+                      "fontFamily": "$fontBody",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "S2XtX",
+                  "name": "Map buttons",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "iNlR4",
+                      "name": "Google Maps btn",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "$magenta",
+                      "cornerRadius": "$radius",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wTnd6",
+                          "name": "GMaps label",
+                          "fill": "#000000",
+                          "content": "ABRIR GOOGLE MAPS",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Aka2O",
+                      "name": "Waze btn",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "#FFFFFF0D",
+                      "cornerRadius": "$radius",
+                      "stroke": "#FFFFFF1A",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qJhBv",
+                          "name": "Waze label",
+                          "fill": "#000000",
+                          "content": "IR POR WAZE",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "m73vl",
+              "name": "Contacto map",
+              "clip": true,
+              "width": 480,
+              "height": 360,
+              "fill": "#121218",
+              "cornerRadius": 16,
+              "stroke": "#FFFFFF14",
+              "strokeWidth": 1,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "cLhN1",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Map gradient",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#19A6E033",
+                        "position": 0
+                      },
+                      {
+                        "color": "#17171E",
+                        "position": 1
+                      }
+                    ],
+                    "center": {
+                      "y": 0.45
+                    }
+                  },
+                  "width": 480,
+                  "height": 360
+                },
+                {
+                  "type": "text",
+                  "id": "lFx9e",
+                  "x": 120,
+                  "y": 168,
+                  "name": "Map pin label",
+                  "fill": "$cyan",
+                  "content": "📍 TEUSAQUILLO, BOGOTÁ",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "wS7ps",
+          "name": "Footer",
+          "width": 1440,
+          "fill": "#0A0A0E",
+          "stroke": "#FFFFFF0D",
+          "strokeWidth": 1,
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            48,
+            64
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "b1H0Nv",
+              "name": "Footer legal",
+              "fill": "$grisMedio",
+              "content": "© 2026 Inversiones Ogavi S.A. · Amarte Suite · El Planeta Romántico de Bogotá",
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "o8N8p",
+              "name": "Footer address",
+              "fill": "#8E8E93",
+              "content": "Teusaquillo · Calle 62 #14-19 · Bogotá, Colombia",
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "note",
+      "id": "oGFDc",
+      "x": 3520,
+      "y": 0,
+      "name": "Notas de trabajo",
+      "width": 360,
+      "height": 280,
+      "content": "AMARTE HOME — Pencil workspace\n\nFrames:\n• Home Desktop — landing completa\n• Home Mobile — hero + suites\n• Modal Pre-reserva — ReservaExpressForm\n\nCódigo React/Supabase NO se modifica desde aquí.\nFlujos vivos: reservationService, plansCatalogService, ratesService, Martina chat."
+    },
+    {
+      "type": "frame",
+      "id": "fVyvI",
+      "x": 1520,
+      "y": 320,
+      "name": "Home Mobile",
+      "clip": true,
+      "width": 390,
+      "fill": "$bgDark",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "GnWeR",
+          "name": "M Hero",
+          "clip": true,
+          "width": 390,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "radial",
+            "enabled": true,
+            "rotation": 0,
+            "size": {
+              "width": 1,
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#1A0A14",
+                "position": 0
+              },
+              {
+                "color": "#0D0D11",
+                "position": 1
+              }
+            ],
+            "center": {
+              "y": 0.3
+            }
+          },
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            20,
+            20,
+            32,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "M0ABH",
+              "name": "M Header",
+              "width": "fill_container",
+              "height": 44,
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IsBKY",
+                  "name": "M Logo",
+                  "fill": "$softWhite",
+                  "content": "AMARTE",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 20,
+                  "fontWeight": "normal",
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "frame",
+                  "id": "LNK5D",
+                  "name": "M Reserva",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF1F",
+                  "strokeWidth": 1,
+                  "padding": [
+                    8,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QGhWb",
+                      "name": "M Reserva label",
+                      "fill": "#000000",
+                      "content": "RESERVA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 10,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "gdX4u",
+              "name": "M eyebrow",
+              "fill": "#FFF5F894",
+              "content": "VOICE AGENT · MARTINA",
+              "fontFamily": "$fontBody",
+              "fontSize": 10,
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "MW4G9",
+              "name": "M h1",
+              "fill": "$softWhite",
+              "content": "TE LLEVO",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 56,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "yoZEq",
+              "name": "M h1b",
+              "fill": "$magenta",
+              "content": "A MARTE",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 56,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Dbvy4",
+              "name": "M Orb",
+              "width": 260,
+              "height": 260,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "hshsg",
+                  "x": 20,
+                  "y": 20,
+                  "name": "M Planet",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "radial",
+                    "enabled": true,
+                    "rotation": 0,
+                    "size": {
+                      "width": 1,
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#FF6BA8",
+                        "position": 0
+                      },
+                      {
+                        "color": "#C3007A",
+                        "position": 0.45
+                      },
+                      {
+                        "color": "#1A0610",
+                        "position": 1
+                      }
+                    ],
+                    "center": {
+                      "x": 0.35,
+                      "y": 0.3
+                    }
+                  },
+                  "width": 220,
+                  "height": 220
+                },
+                {
+                  "type": "frame",
+                  "id": "SlHxu",
+                  "x": 30,
+                  "y": 108,
+                  "name": "M CTA",
+                  "width": 200,
+                  "height": 44,
+                  "fill": "$magenta",
+                  "cornerRadius": 999,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Nttez",
+                      "name": "M CTA label",
+                      "fill": "#000000",
+                      "content": "PREGÚNTALE A MARTINA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 11,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "oYH2u",
+              "name": "M sub",
+              "fill": "#FFF5F8AD",
+              "textGrowth": "fixed-width",
+              "width": 300,
+              "content": "Martina te guía a la suite, el plan y el momento perfecto.",
+              "lineHeight": 1.45,
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EuBNt",
+          "name": "M Trust",
+          "width": 390,
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 16,
+          "children": [
+            {
+              "type": "frame",
+              "id": "eo0VV",
+              "name": "M Trust inner",
+              "width": "fill_container",
+              "fill": "$surfaceCard",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF14",
+              "strokeWidth": 1,
+              "padding": [
+                16,
+                8
+              ],
+              "justifyContent": "space_around",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NBcyq",
+                  "name": "M Stat Parejas",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "makcr",
+                      "name": "M Stat v Parejas",
+                      "fill": "$cyan",
+                      "content": "+50k",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kZ0ha",
+                      "name": "M Stat l Parejas",
+                      "fill": "$grisMedio",
+                      "content": "PAREJAS",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 9,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xv7sX",
+                  "name": "M Stat Google",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kt8vl",
+                      "name": "M Stat v Google",
+                      "fill": "$cyan",
+                      "content": "4.8★",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EYCAF",
+                      "name": "M Stat l Google",
+                      "fill": "$grisMedio",
+                      "content": "GOOGLE",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 9,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sAMEy",
+                  "name": "M Stat Digital",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "szL8f",
+                      "name": "M Stat v Digital",
+                      "fill": "$cyan",
+                      "content": "24/7",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "tWSwu",
+                      "name": "M Stat l Digital",
+                      "fill": "$grisMedio",
+                      "content": "DIGITAL",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 9,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IPZ6s",
+          "name": "M Suites",
+          "width": 390,
+          "layout": "vertical",
+          "gap": 16,
+          "padding": [
+            32,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "WZt0p",
+              "name": "M Suites title",
+              "fill": "#000000",
+              "textGrowth": "fixed-width",
+              "width": 320,
+              "content": "TU PRÓXIMO DESTINO",
+              "textAlign": "center",
+              "fontFamily": "$fontHeading",
+              "fontSize": 28,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "ANQTS",
+              "name": "M Suite card",
+              "clip": true,
+              "width": 350,
+              "fill": "$surfaceCard",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF1A",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "UmmHw",
+                  "name": "M Suite img",
+                  "width": "fill_container",
+                  "height": 180,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 160,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#3A1028",
+                        "position": 0
+                      },
+                      {
+                        "color": "#121218",
+                        "position": 1
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "k538pa",
+                  "name": "M Suite body",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "T2dALA",
+                      "name": "M Suite name",
+                      "fill": "#000000",
+                      "content": "DELUXE DIAMANTE",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MD3Ut",
+                      "name": "M Suite price",
+                      "fill": "$magenta",
+                      "content": "Desde $240.000",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MFKeN",
+                      "name": "M Suite CTA",
+                      "width": "fill_container",
+                      "height": 42,
+                      "fill": "$magenta",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xGJZV",
+                          "name": "M Suite CTA label",
+                          "fill": "#000000",
+                          "content": "RESERVAR",
+                          "fontFamily": "$fontHeading",
+                          "fontSize": 12,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "S7c7EQ",
+          "name": "M Footer",
+          "width": 390,
+          "fill": "#0A0A0E",
+          "layout": "vertical",
+          "gap": 6,
+          "padding": [
+            32,
+            20
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "zHvLz",
+              "name": "M Footer text",
+              "fill": "$grisMedio",
+              "content": "© 2026 Amarte Suite · Bogotá",
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oMBoa",
+      "x": 2000,
+      "y": 0,
+      "name": "Modal Pre-reserva",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "#0D0D11CC",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "xX9yQ",
+          "x": 420,
+          "y": 80,
+          "name": "ReservaExpressForm",
+          "width": 600,
+          "fill": "$surfaceCard",
+          "cornerRadius": 16,
+          "stroke": "#FFFFFF14",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "background_blur",
+            "radius": 12
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 28,
+          "children": [
+            {
+              "type": "frame",
+              "id": "w8SD2w",
+              "name": "Modal header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "I8qDNx",
+                  "name": "Modal title",
+                  "fill": "#000000",
+                  "content": "PRE-RESERVA EXPRESS",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 22,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "AlmBw",
+                  "name": "Close icon",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "x",
+                  "library": "lucide",
+                  "fill": "$grisMedio"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "PfsTw",
+              "name": "Modal suite",
+              "fill": "$cyan",
+              "content": "Suite Deluxe Diamante",
+              "fontFamily": "$fontBody",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "b824e",
+              "name": "Packs label",
+              "fill": "$grisMedio",
+              "content": "DURACIÓN",
+              "fontFamily": "$fontHeading",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "MFzzU",
+              "name": "Pack chips",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "D0CAP2",
+                  "name": "Pack 4H",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pDfTs",
+                      "name": "Pack label 4H",
+                      "fill": "#000000",
+                      "content": "4H",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AqDcF",
+                  "name": "Pack 8H",
+                  "fill": "$magenta",
+                  "cornerRadius": 999,
+                  "stroke": "$magenta",
+                  "strokeWidth": 1,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GsU6x",
+                      "name": "Pack label 8H",
+                      "fill": "#000000",
+                      "content": "8H",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LXSeT",
+                  "name": "Pack 12H",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XzRaO",
+                      "name": "Pack label 12H",
+                      "fill": "#000000",
+                      "content": "12H",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "XKu3n",
+                  "name": "Pack DÍA",
+                  "fill": "#FFFFFF0D",
+                  "cornerRadius": 999,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "m9goX",
+                      "name": "Pack label DÍA",
+                      "fill": "#000000",
+                      "content": "DÍA",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "cqZtz",
+              "name": "Date label",
+              "fill": "$grisMedio",
+              "content": "FECHA",
+              "fontFamily": "$fontHeading",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "vCd23",
+              "name": "Date field",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "#0D0D11",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF1A",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Fr4np",
+                  "name": "Date value",
+                  "fill": "$softWhite",
+                  "content": "11 / 08 / 2026",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "BO89T",
+              "name": "Time label",
+              "fill": "$grisMedio",
+              "content": "HORA DE LLEGADA",
+              "fontFamily": "$fontHeading",
+              "fontSize": 11,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "TRbAL",
+              "name": "Time row",
+              "width": "fill_container",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IAmr0",
+                  "name": "Time col 08",
+                  "width": "fill_container",
+                  "fill": "#0D0D11",
+                  "cornerRadius": 12,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zFc0j",
+                      "name": "Time val 08",
+                      "fill": "#000000",
+                      "content": "08",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "w1wnsu",
+                      "name": "Time sub 08",
+                      "fill": "$grisMedio",
+                      "content": "HORA",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 10,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "t75yrn",
+                  "name": "Time col 30",
+                  "width": "fill_container",
+                  "fill": "#0D0D11",
+                  "cornerRadius": 12,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "y1RhG1",
+                      "name": "Time val 30",
+                      "fill": "#000000",
+                      "content": "30",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "A5QgBn",
+                      "name": "Time sub 30",
+                      "fill": "$grisMedio",
+                      "content": "MIN",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 10,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lIiGK",
+                  "name": "Time col PM",
+                  "width": "fill_container",
+                  "fill": "#0D0D11",
+                  "cornerRadius": 12,
+                  "stroke": "#FFFFFF1A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OE4t9",
+                      "name": "Time val PM",
+                      "fill": "#000000",
+                      "content": "PM",
+                      "fontFamily": "$fontHeading",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "MplPa",
+                      "name": "Time sub PM",
+                      "fill": "$grisMedio",
+                      "content": "PERIODO",
+                      "fontFamily": "$fontBody",
+                      "fontSize": 10,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "E2Y60",
+              "name": "Summary",
+              "width": "fill_container",
+              "fill": "#E6007E14",
+              "cornerRadius": 12,
+              "layout": "vertical",
+              "gap": 4,
+              "padding": 14,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "S3lea",
+                  "name": "Summary date",
+                  "fill": "#000000",
+                  "content": "11 ago · 08:30 PM",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nmINm",
+                  "name": "Summary pack",
+                  "fill": "$rosaCuarzo",
+                  "content": "Pack 8 horas",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EAKUG",
+              "name": "Field Nombre",
+              "width": "fill_container",
+              "height": 46,
+              "fill": "#0D0D11",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF1A",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VHr7i",
+                  "name": "Placeholder Nombre",
+                  "fill": "$grisMedio",
+                  "content": "Nombre",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KJDnt",
+              "name": "Field WhatsApp",
+              "width": "fill_container",
+              "height": 46,
+              "fill": "#0D0D11",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF1A",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EMYS5",
+                  "name": "Placeholder WhatsApp",
+                  "fill": "$grisMedio",
+                  "content": "WhatsApp",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "BtY0I",
+              "name": "Field Email",
+              "width": "fill_container",
+              "height": 46,
+              "fill": "#0D0D11",
+              "cornerRadius": 12,
+              "stroke": "#FFFFFF1A",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "REjzn",
+                  "name": "Placeholder Email",
+                  "fill": "$grisMedio",
+                  "content": "Email",
+                  "fontFamily": "$fontBody",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "CGG0o",
+              "name": "Submit CTA",
+              "width": "fill_container",
+              "height": 50,
+              "fill": "$magenta",
+              "cornerRadius": 12,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WQ7Uk",
+                  "name": "Submit label",
+                  "fill": "#000000",
+                  "content": "ENVIAR PRE-RESERVA",
+                  "fontFamily": "$fontHeading",
+                  "fontSize": 13,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "SWeVr",
+              "name": "Logic note",
+              "fill": "#8E8E93",
+              "textGrowth": "fixed-width",
+              "width": 544,
+              "content": "UI mirror only · createWebReservation / Supabase intactos",
+              "textAlign": "center",
+              "fontFamily": "$fontBody",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bgDark": {
+      "type": "color",
+      "value": "#0D0D11"
+    },
+    "surfaceCard": {
+      "type": "color",
+      "value": "#17171E"
+    },
+    "magenta": {
+      "type": "color",
+      "value": "#E6007E"
+    },
+    "cyan": {
+      "type": "color",
+      "value": "#19A6E0"
+    },
+    "rosaCuarzo": {
+      "type": "color",
+      "value": "#CB7BA7"
+    },
+    "grisMedio": {
+      "type": "color",
+      "value": "#929095"
+    },
+    "softWhite": {
+      "type": "color",
+      "value": "#FFF5F8"
+    },
+    "gold": {
+      "type": "color",
+      "value": "#F1E5AC"
+    },
+    "fontHeading": {
+      "type": "string",
+      "value": "Fjalla One"
+    },
+    "fontBody": {
+      "type": "string",
+      "value": "Jost"
+    },
+    "radius": {
+      "type": "number",
+      "value": 12
+    },
+    "radiusLg": {
+      "type": "number",
+      "value": 24
+    }
+  },
+  "fileToken": "caf844b2-ac81-4a7a-96fb-b011a98f3992"
+}

@@ -14,7 +14,7 @@ Navegación in-page que indica la sección visible al scrollear y permite saltar
 |---|---|
 | Desktop / tablet (`md+`) | Opción A — cápsula vertical de dots a la derecha con label activo |
 | Móvil (`< md`) | Opción C — barra sticky superior con chips horizontales |
-| Secciones | Compacto: Inicio, Suites, Martina, Planes, Experiencias, Contacto |
+| Secciones | Compacto: Inicio, Suites, Planes, Experiencias, Contacto, Martina |
 | Label desktop | Siempre visible en el dot activo (`01. Inicio`) |
 | Chips móvil | Pills con borde/fondo cyan en el activo |
 | Fuera de alcance | Cablear labels decorativos del hero; nav en vistas internas |
@@ -25,10 +25,10 @@ Navegación in-page que indica la sección visible al scrollear y permite saltar
 |---|---|---|---|
 | 01 | Inicio | `inicio` | Wrapper around `HeroOrbital` |
 | 02 | Suites | `suites-section` | Existing wrapper in `Home.tsx` |
-| 03 | Martina | `martina` | `MartinaFeatureSection` root |
-| 04 | Planes | `planes` | `PlanesSection` root |
-| 05 | Experiencias | `experiencias` | `HubAccessGrid` root |
-| 06 | Contacto | `contacto` | `ContactoSection` root |
+| 03 | Planes | `planes` | `PlanesSection` root |
+| 04 | Experiencias | `experiencias` | `HubAccessGrid` root |
+| 05 | Contacto | `contacto` | `ContactoSection` root |
+| 06 | Martina | `martina` | `MartinaFeatureSection` root |
 
 TrustBar, VideoExperience, PromoBanner y Footer no aparecen en el menú.
 

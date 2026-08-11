@@ -151,10 +151,6 @@ export default function Home() {
       </div>
 
       <Suspense fallback={<SectionFallback />}>
-        <MartinaFeatureSection onSpeakToMartina={scrollToHero} onExploreSuites={scrollToSuites} />
-      </Suspense>
-
-      <Suspense fallback={<SectionFallback />}>
         <PlanesSection
           onSelectPlan={(planName) => {
             handleActivateChat(`Hola Martina, quiero reservar y añadir el plan: ${planName}`);
@@ -175,6 +171,10 @@ export default function Home() {
 
       <Suspense fallback={<SectionFallback />}>
         <ContactoSection />
+      </Suspense>
+
+      <Suspense fallback={<SectionFallback />}>
+        <MartinaFeatureSection onSpeakToMartina={scrollToHero} onExploreSuites={scrollToSuites} />
       </Suspense>
 
       <footer className="py-12 border-t border-white/5 bg-bg-dark/80 text-center text-body text-gris-medio font-light">

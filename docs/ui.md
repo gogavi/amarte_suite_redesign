@@ -10,7 +10,7 @@ Fuente canónica de tokens: [`07_DesignSystem.md`](../07_DesignSystem.md) + `tai
 
 ## Landing
 
-Orden típico en `Home.tsx`: Hero → Trust → Video → Suites → Martina → Planes → Promo → Hub → Contacto → Footer.
+Orden típico en `Home.tsx`: Hero → Trust → Video → Suites → Planes → Promo → Hub → Contacto → Martina → Footer.
 
 ### Navegación de secciones
 

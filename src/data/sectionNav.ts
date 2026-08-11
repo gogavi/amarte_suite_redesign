@@ -8,10 +8,10 @@ export type SectionNavItem = {
 export const SECTION_NAV_ITEMS: SectionNavItem[] = [
   { id: 'inicio', label: 'Inicio', index: 1 },
   { id: 'suites-section', label: 'Suites', index: 2 },
-  { id: 'martina', label: 'Martina', index: 3 },
-  { id: 'planes', label: 'Planes', index: 4 },
-  { id: 'experiencias', label: 'Experiencias', index: 5 },
-  { id: 'contacto', label: 'Contacto', index: 6 },
+  { id: 'planes', label: 'Planes', index: 3 },
+  { id: 'experiencias', label: 'Experiencias', index: 4 },
+  { id: 'contacto', label: 'Contacto', index: 5 },
+  { id: 'martina', label: 'Martina', index: 6 },
 ];
 
 export function formatSectionIndex(index: number): string {
