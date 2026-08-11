@@ -9,6 +9,7 @@ No existe un backend REST propio. El “contrato” son funciones en `src/servic
 - `fetchSuiteCatalog()` → lee `room_rates` (+ `room_types`, `rate_types`, `day_categories`).
 - `getPackPrice(pack, dateIso)` → weekday vs weekend (vie/sáb).
 - `resolveCatalogSuiteName(localName)` → mapeo UI → nombre BD.
+- `mergeSuitesWithCatalogPrices(suites, catalog)` → hidrata la vitrina (`SuitesSection`) con precios de BD.
 
 ## Planes de decoración
 

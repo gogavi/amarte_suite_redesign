@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Suite, suitesData } from '../../services/ratesService';
+import {
+  fetchSuiteCatalog,
+  mergeSuitesWithCatalogPrices,
+} from '../../services/suiteCatalogService';
 import SuiteCard from '../molecules/SuiteCard';
 import StackedCardsDeck from './StackedCardsDeck';
 
@@ -9,6 +13,7 @@ interface SuitesSectionProps {
 
 export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [suites, setSuites] = useState<Suite[]>(suitesData);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -17,6 +22,22 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const catalog = await fetchSuiteCatalog();
+        if (cancelled) return;
+        setSuites(mergeSuitesWithCatalogPrices(suitesData, catalog));
+      } catch {
+        if (!cancelled) setSuites(suitesData);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -44,14 +65,14 @@ export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
           // Vista Móvil: Showcase premium con suite protagonista
           <div className="w-full py-4">
             <StackedCardsDeck 
-              suites={suitesData} 
+              suites={suites} 
               onSelectSuite={onSelectSuite} 
             />
           </div>
         ) : (
           // Vista Escritorio: Grid de Comparación Clásico Premium
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
-            {suitesData.map((suite) => (
+            {suites.map((suite) => (
               <SuiteCard 
                 key={suite.id} 
                 suite={suite} 

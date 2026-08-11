@@ -165,3 +165,49 @@ export async function fetchSuiteCatalog(): Promise<CatalogSuite[]> {
       return a.name.localeCompare(b.name, 'es');
     });
 }
+
+type SuiteRatesBlock = {
+  weekday: { '4h': number; '8h': number; '12h': number; day_hotelero: number };
+  weekend: { '4h': number; '8h': number; '12h': number; day_hotelero: number };
+};
+
+/**
+ * Hidrata `rates` de la vitrina editorial con precios reales de `room_rates`.
+ * Si no hay match o pack, conserva el valor previo (fallback).
+ */
+export function mergeSuitesWithCatalogPrices<T extends { name: string; rates: SuiteRatesBlock }>(
+  suites: T[],
+  catalog: CatalogSuite[]
+): T[] {
+  if (!catalog.length) return suites;
+  const byDbName = new Map(catalog.map((item) => [item.name, item]));
+
+  return suites.map((suite) => {
+    const dbName = resolveCatalogSuiteName(suite.name);
+    const entry = dbName ? byDbName.get(dbName) : undefined;
+    if (!entry) return suite;
+
+    const pack4 = entry.packs.find((p) => p.hours === 4);
+    const pack8 = entry.packs.find((p) => p.hours === 8);
+    const pack12 = entry.packs.find((p) => p.hours === 12);
+    const packDay = entry.packs.find((p) => p.hours === 24);
+
+    return {
+      ...suite,
+      rates: {
+        weekday: {
+          '4h': pack4?.weekdayPrice || suite.rates.weekday['4h'],
+          '8h': pack8?.weekdayPrice || suite.rates.weekday['8h'],
+          '12h': pack12?.weekdayPrice || suite.rates.weekday['12h'],
+          day_hotelero: packDay?.weekdayPrice || suite.rates.weekday.day_hotelero,
+        },
+        weekend: {
+          '4h': pack4?.weekendPrice || suite.rates.weekend['4h'],
+          '8h': pack8?.weekendPrice || suite.rates.weekend['8h'],
+          '12h': pack12?.weekendPrice || suite.rates.weekend['12h'],
+          day_hotelero: packDay?.weekendPrice || suite.rates.weekend.day_hotelero,
+        },
+      },
+    };
+  });
+}
