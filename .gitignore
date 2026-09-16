@@ -40,3 +40,8 @@ Thumbs.db
 .env.test.local
 .env.production.local
 .vercel
+.env*
+
+# Secretos y Vercel
+!.env.example
+*.bak
