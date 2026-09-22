@@ -31,6 +31,10 @@ export default function Home() {
   const [activeView, setActiveView] = useState<'home' | 'planes' | 'sexshop' | 'restaurante' | 'bebidas'>('home');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [showPagoRetorno, setShowPagoRetorno] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('pago') === 'retorno';
+  });
   const isHomeView = activeView === 'home';
   const { activeId, scrollToSection } = useSectionSpy(isHomeView);
 
@@ -131,6 +135,22 @@ export default function Home() {
 
       <SectionStickyNav activeId={activeId} onNavigate={scrollToSection} />
       <SectionDotNav activeId={activeId} onNavigate={scrollToSection} />
+
+      {showPagoRetorno && (
+        <div
+          role="status"
+          className="relative z-20 border-b border-cyan-orbital/30 bg-[#17171E] px-4 py-3 text-center text-sm text-white"
+        >
+          Recibimos tu intento de pago. La reserva se confirma sola cuando Wompi lo apruebe; no hace falta enviar comprobante.
+          <button
+            type="button"
+            className="ml-3 underline decoration-cyan-orbital underline-offset-2 hover:text-cyan-orbital"
+            onClick={() => setShowPagoRetorno(false)}
+          >
+            Cerrar
+          </button>
+        </div>
+      )}
 
       <div id="inicio" className="scroll-mt-20 md:scroll-mt-0">
         <HeroOrbital onActivateChat={handleActivateChat} onActivateVoice={handleActivateVoice} />

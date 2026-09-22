@@ -110,7 +110,7 @@ export default function ContactoSection() {
             </a>
 
             <a
-              href="https://tiktok.com/@amarte_suite"
+              href="https://www.tiktok.com/@amarte.suite?_r=1&_t=ZS-99x1mVhgFS3"
               target="_blank"
               rel="noopener noreferrer"
               className={`${socialLinkClass} border border-[#19A6E0]/40 hover:border-[#19A6E0] hover:shadow-[0_0_20px_rgba(25,166,224,0.3)]`}

@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
 import { createWebReservation, type PaymentMethod } from '../../services/reservationService';
-import { buildWhatsappReservasUrl, buildWhatsappReservationMessage, getWompiCheckoutUrl } from '../../services/paymentLinks';
+import {
+  buildWhatsappReservasUrl,
+  buildWhatsappReservationMessage,
+  createWompiCheckout,
+} from '../../services/paymentLinks';
 import {
   fetchSuiteCatalog,
   getPackPrice,
@@ -68,6 +72,14 @@ function packChipLabel(pack: SuitePack): string {
   return short.replace(/(\d+)\s*h/i, '$1 h');
 }
 
+function openCheckout(popup: Window | null, url: string): void {
+  if (popup && !popup.closed) {
+    popup.location.href = url;
+    return;
+  }
+  window.location.assign(url);
+}
+
 export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps) {
   const { state, dispatch } = useReservation();
   const lockedLocalSuiteName = state.selectedSuite?.name ?? null;
@@ -93,7 +105,9 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const submitLockRef = useRef(false);
+  const createdReservationIdRef = useRef<string | null>(null);
 
   const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
   const dateLabel = formatVisitDate(formData.date);
@@ -344,43 +358,51 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     }
 
     try {
-      const reservation = await createWebReservation({
-        name: formData.name.trim(),
-        document: formData.document,
-        whatsapp: formData.whatsapp,
-        email,
-        tipo: selectedSuite.name,
-        packTiempo: selectedPack.name,
-        date: formData.date,
-        time,
-        price,
-        method,
-      });
-
-      dispatch({
-        type: 'SET_USER_DATA',
-        payload: {
+      const alreadyCreatedId = createdReservationIdRef.current;
+      const reservation = alreadyCreatedId
+        ? { id: alreadyCreatedId, tipo: selectedSuite.name, packTiempo: selectedPack.name }
+        : await createWebReservation({
           name: formData.name.trim(),
           document: formData.document,
           whatsapp: formData.whatsapp,
           email,
-        },
-      });
-      dispatch({ type: 'SET_DATE', payload: formData.date });
-      dispatch({ type: 'SET_TIME', payload: time });
-      dispatch({ type: 'CALCULATE_PRICE', payload: price });
+          tipo: selectedSuite.name,
+          packTiempo: selectedPack.name,
+          date: formData.date,
+          time,
+          price,
+          method,
+        });
 
-      trackEvent('pre_reserva_submit', {
-        location: 'reserva_express',
-        transaction_id: reservation.id,
-        suite_name: selectedSuite.name,
-        plan_name: selectedPack.name,
-        method,
-        value: price,
-        currency: 'COP',
-      });
+      createdReservationIdRef.current = reservation.id;
+
+      if (!alreadyCreatedId) {
+        dispatch({
+          type: 'SET_USER_DATA',
+          payload: {
+            name: formData.name.trim(),
+            document: formData.document,
+            whatsapp: formData.whatsapp,
+            email,
+          },
+        });
+        dispatch({ type: 'SET_DATE', payload: formData.date });
+        dispatch({ type: 'SET_TIME', payload: time });
+        dispatch({ type: 'CALCULATE_PRICE', payload: price });
+
+        trackEvent('pre_reserva_submit', {
+          location: 'reserva_express',
+          transaction_id: reservation.id,
+          suite_name: selectedSuite.name,
+          plan_name: selectedPack.name,
+          method,
+          value: price,
+          currency: 'COP',
+        });
+      }
 
       let checkoutUrl: string;
+      let successMessage: string;
       switch (method) {
         case 'wompi':
           trackEvent('checkout_init', {
@@ -392,7 +414,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             value: price,
             currency: 'COP',
           });
-          checkoutUrl = getWompiCheckoutUrl();
+          checkoutUrl = (await createWompiCheckout(reservation.id)).checkoutUrl;
+          successMessage = 'Pre-reserva guardada. Completa el pago en Wompi; la confirmación llega sola, sin enviar comprobante por WhatsApp.';
           break;
         case 'whatsapp':
           trackEvent('whatsapp_redirect', {
@@ -415,6 +438,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             timeLabel: time,
             price,
           }));
+          successMessage = 'Pre-reserva guardada. Continúa la conversación en WhatsApp.';
           break;
         default: {
           const exhaustive: never = method;
@@ -422,13 +446,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         }
       }
 
-      if (popup && !popup.closed) {
-        popup.location.href = checkoutUrl;
-      }
-
+      openCheckout(popup, checkoutUrl);
+      setSubmitSuccess(successMessage);
       setHasSubmitted(true);
     } catch (error) {
-      submitLockRef.current = false;
       if (popup && !popup.closed) {
         popup.close();
       }
@@ -437,6 +458,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         : 'No se pudo guardar la pre-reserva. Intenta de nuevo.';
       setSubmitError(message);
     } finally {
+      submitLockRef.current = false;
       isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
@@ -703,6 +725,11 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           {(submitError || catalogError) && (
             <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-brand px-3 py-2" role="alert">
               {submitError || catalogError}
+            </p>
+          )}
+          {submitSuccess && !submitError && (
+            <p className="text-sm text-cyan-orbital bg-cyan-orbital/10 border border-cyan-orbital/20 rounded-brand px-3 py-2" role="status">
+              {submitSuccess}
             </p>
           )}
 

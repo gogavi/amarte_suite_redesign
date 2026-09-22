@@ -1,0 +1,11 @@
+# Amarte Suite — Edge Functions Wompi
+# Las funciones se despliegan con `supabase functions deploy`.
+# JWT: create-wompi-payment lo exige (anon/sesión); wompi-webhook no (firma Wompi).
+
+project_id = "dftbelnombbtjryqphaa"
+
+[functions.create-wompi-payment]
+verify_jwt = true
+
+[functions.wompi-webhook]
+verify_jwt = false

@@ -1,10 +1,30 @@
-const DEFAULT_WOMPI_URL = 'https://checkout.wompi.co/l/VPOS_RXJqnz';
-const DEFAULT_WHATSAPP_NUMBER = '573007416683';
+import { supabase } from '../lib/supabaseClient';
 
-/** Checkout online (Wompi) — indicado para el botón de pago del formulario. */
-export function getWompiCheckoutUrl(): string {
-  const fromEnv = String(import.meta.env.VITE_WOMPI_CHECKOUT_URL || '').trim();
-  return fromEnv || DEFAULT_WOMPI_URL;
+const DEFAULT_WHATSAPP_NUMBER = '573007416683';
+const WOMPI_CHECKOUT_ORIGIN = 'https://checkout.wompi.co/';
+
+export type WompiCheckoutResult = {
+  checkoutUrl: string;
+};
+
+/** Crea un Web Checkout Wompi firmado en servidor para la reserva ya insertada. */
+export async function createWompiCheckout(
+  reservationId: string,
+): Promise<WompiCheckoutResult> {
+  const { data, error } = await supabase.functions.invoke('create-wompi-payment', {
+    body: { reservationId },
+  });
+
+  if (error) {
+    throw new Error('No se pudo iniciar el pago. Intenta de nuevo.');
+  }
+
+  const checkoutUrl = typeof data?.checkoutUrl === 'string' ? data.checkoutUrl.trim() : '';
+  if (!checkoutUrl.startsWith(WOMPI_CHECKOUT_ORIGIN)) {
+    throw new Error('No se pudo iniciar el pago. Intenta de nuevo.');
+  }
+
+  return { checkoutUrl };
 }
 
 /** Línea de WhatsApp reservas — indicada para el botón de WhatsApp del formulario. */
