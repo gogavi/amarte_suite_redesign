@@ -24,6 +24,7 @@ export type CreateWebReservationResult = {
 };
 
 type ReservationInsertRow = {
+  id: string;
   nombre: string;
   documento: string;
   whatsapp: string;
@@ -46,18 +47,77 @@ type ReservationInsertRow = {
   hotel_observations: string;
 };
 
+type TriggerPaymentFields = {
+  formaPago: string;
+  precio: string;
+  abono: string;
+};
+
+/**
+ * Valores que acepta `enforce_reservation_web_price` para el rol `anon`.
+ * WhatsApp = precio de catálogo, abono 0.
+ * Wompi = Pago total (80 % del pack, abono = precio).
+ */
+function paymentFieldsForTrigger(
+  method: PaymentMethod,
+  catalogPrice: number
+): TriggerPaymentFields {
+  const pack = Math.round(catalogPrice);
+
+  switch (method) {
+    case 'whatsapp':
+      return {
+        formaPago: 'Sin pago / Continuar por WhatsApp',
+        precio: String(pack),
+        abono: '0',
+      };
+    case 'wompi': {
+      const full = Math.round(pack * 0.8);
+      return {
+        formaPago: 'Pago total',
+        precio: String(full),
+        abono: String(full),
+      };
+    }
+    default: {
+      const exhaustive: never = method;
+      throw new Error(`Método de pago no soportado: ${exhaustive}`);
+    }
+  }
+}
+
+function createReservationId(): string {
+  if (typeof crypto.randomUUID !== 'function') {
+    throw new Error('No se pudo generar el id de la pre-reserva.');
+  }
+  return crypto.randomUUID();
+}
+
+function reservationErrorMessage(raw: string | undefined): string {
+  if (raw?.includes('SUITE_NO_DISPONIBLE')) {
+    return 'La suite no está disponible en esa fecha y hora.';
+  }
+  if (raw?.includes('SUITE_INACTIVA')) {
+    return 'Esa suite no está disponible.';
+  }
+  return 'No se pudo guardar la pre-reserva. Intenta de nuevo.';
+}
+
 export async function createWebReservation(
   input: CreateWebReservationInput
 ): Promise<CreateWebReservationResult> {
   const tipo = input.tipo.trim();
   const packTiempo = input.packTiempo.trim();
-  const formaPago = input.method === 'wompi' ? 'Wompi' : 'WhatsApp';
 
   if (!tipo || !packTiempo) {
     throw new Error('Faltan tipo de suite o pack de tiempo.');
   }
 
+  const id = createReservationId();
+  const payment = paymentFieldsForTrigger(input.method, input.price);
+
   const row: ReservationInsertRow = {
+    id,
     nombre: input.name.trim(),
     documento: (input.document ?? '').trim(),
     whatsapp: input.whatsapp.trim(),
@@ -67,35 +127,28 @@ export async function createWebReservation(
     fecha_reserva: input.date,
     hora_reserva: input.time,
     pack_tiempo: packTiempo,
-    precio: String(Math.round(input.price)),
+    precio: payment.precio,
     canal: 'Web Automático',
-    forma_pago: formaPago,
+    forma_pago: payment.formaPago,
     tipo_plan: 'Sin Decoración',
     decoracion: 'SIN DECORACIÓN',
     is_taken: false,
     mensaje: '',
     asesora: '',
     modificado_por: 'web',
-    abono: '',
+    abono: payment.abono,
     hotel_observations: '',
   };
 
-  const { data, error } = await supabase
-    .from('reservations')
-    .insert(row)
-    .select('id')
-    .single();
+  // Sin `.select()`: anon no tiene política SELECT y RETURNING devolvería 0 filas.
+  const { error } = await supabase.from('reservations').insert(row);
 
   if (error) {
-    throw new Error(error.message || 'No se pudo guardar la pre-reserva.');
-  }
-
-  if (!data?.id) {
-    throw new Error('La pre-reserva no devolvió un id.');
+    throw new Error(reservationErrorMessage(error.message));
   }
 
   return {
-    id: data.id as string,
+    id,
     tipo,
     packTiempo,
   };

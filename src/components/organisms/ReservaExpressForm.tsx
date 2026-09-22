@@ -91,7 +91,9 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     packId: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const submitLockRef = useRef(false);
 
   const timeLabel = formatAmPmTime(formData.timeHour, formData.timeMinute, formData.timePeriod);
   const dateLabel = formatVisitDate(formData.date);
@@ -179,6 +181,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const canShowPrice = Boolean(selectedSuite && selectedPack && formData.date);
   const price = canShowPrice && selectedPack ? getPackPrice(selectedPack, formData.date) : 0;
   const suiteLocked = Boolean(lockedCatalogName);
+  const formLocked = isSubmitting || hasSubmitted;
 
   useEffect(() => {
     let cancelled = false;
@@ -277,8 +280,14 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   };
 
   const validateForm = (): string | null => {
-    if (!formData.name.trim() || !formData.whatsapp || !formData.date) {
-      return 'Completa los campos obligatorios: Nombre, WhatsApp, Fecha y Hora.';
+    if (
+      !formData.name.trim()
+      || !formData.document
+      || !formData.whatsapp
+      || !formData.email.trim()
+      || !formData.date
+    ) {
+      return 'Completa los campos obligatorios: Nombre, Cédula, WhatsApp, Correo, Fecha y Hora.';
     }
 
     if (formData.date < todayIsoDate()) {
@@ -289,12 +298,12 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       return 'El WhatsApp debe tener al menos 10 dígitos.';
     }
 
-    if (formData.document && formData.document.length < 5) {
+    if (formData.document.length < 5) {
       return 'La cédula debe tener al menos 5 dígitos.';
     }
 
     const email = formData.email.trim();
-    if (email && !EMAIL_REGEX.test(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       return 'Ingresa un correo válido (ejemplo: nombre@correo.com).';
     }
 
@@ -311,6 +320,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
   const handleSubmit = async (e: React.FormEvent, method: PaymentMethod) => {
     e.preventDefault();
+    if (submitLockRef.current) return;
 
     const validationError = validateForm();
     if (validationError) {
@@ -323,8 +333,15 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     const time = timeLabel;
     const email = formData.email.trim();
 
+    submitLockRef.current = true;
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setSubmitError(null);
+
+    const popup = window.open('about:blank', '_blank');
+    if (popup) {
+      popup.opener = null;
+    }
 
     try {
       const reservation = await createWebReservation({
@@ -363,46 +380,64 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         currency: 'COP',
       });
 
-      if (method === 'wompi') {
-        trackEvent('checkout_init', {
-          location: 'reserva_express',
-          transaction_id: reservation.id,
-          suite_name: selectedSuite.name,
-          plan_name: selectedPack.name,
-          hours: selectedPack.name,
-          value: price,
-          currency: 'COP',
-        });
-        window.open(getWompiCheckoutUrl(), '_blank');
-      } else {
-        trackEvent('whatsapp_redirect', {
-          location: 'reserva_express',
-          transaction_id: reservation.id,
-          suite_name: selectedSuite.name,
-          plan_name: selectedPack.name,
-          estimated_value: price,
-          value: price,
-          currency: 'COP',
-        });
-        const message = buildWhatsappReservationMessage({
-          name: formData.name.trim(),
-          document: formData.document,
-          clientWhatsapp: formData.whatsapp,
-          email,
-          suiteName: selectedSuite.name,
-          packName: selectedPack.name,
-          dateIso: formData.date,
-          timeLabel: time,
-          price,
-        });
-        window.open(buildWhatsappReservasUrl(message), '_blank');
+      let checkoutUrl: string;
+      switch (method) {
+        case 'wompi':
+          trackEvent('checkout_init', {
+            location: 'reserva_express',
+            transaction_id: reservation.id,
+            suite_name: selectedSuite.name,
+            plan_name: selectedPack.name,
+            hours: selectedPack.name,
+            value: price,
+            currency: 'COP',
+          });
+          checkoutUrl = getWompiCheckoutUrl();
+          break;
+        case 'whatsapp':
+          trackEvent('whatsapp_redirect', {
+            location: 'reserva_express',
+            transaction_id: reservation.id,
+            suite_name: selectedSuite.name,
+            plan_name: selectedPack.name,
+            estimated_value: price,
+            value: price,
+            currency: 'COP',
+          });
+          checkoutUrl = buildWhatsappReservasUrl(buildWhatsappReservationMessage({
+            name: formData.name.trim(),
+            document: formData.document,
+            clientWhatsapp: formData.whatsapp,
+            email,
+            suiteName: selectedSuite.name,
+            packName: selectedPack.name,
+            dateIso: formData.date,
+            timeLabel: time,
+            price,
+          }));
+          break;
+        default: {
+          const exhaustive: never = method;
+          throw new Error(`Método de pago no soportado: ${exhaustive}`);
+        }
       }
+
+      if (popup && !popup.closed) {
+        popup.location.href = checkoutUrl;
+      }
+
+      setHasSubmitted(true);
     } catch (error) {
+      submitLockRef.current = false;
+      if (popup && !popup.closed) {
+        popup.close();
+      }
       const message = error instanceof Error
         ? error.message
         : 'No se pudo guardar la pre-reserva. Intenta de nuevo.';
       setSubmitError(message);
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -430,28 +465,18 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         disabled={isSubmitting}
       />
 
-      <div className="glass-panel w-full max-w-xl rounded-brand p-6 md:p-8 relative shadow-2xl my-8 z-10">
-        <div className="absolute top-3 right-3 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={requestClose}
-            disabled={isSubmitting}
-            className="rounded-brand border border-white/20 bg-white/5 px-3 py-2 font-heading text-[10px] uppercase tracking-widest text-white/80 transition hover:border-white/40 hover:bg-white/10 hover:text-white disabled:opacity-50"
-          >
-            Cerrar
-          </button>
-          <button
-            type="button"
-            onClick={requestClose}
-            disabled={isSubmitting}
-            aria-label="Cerrar"
-            className="flex min-h-10 min-w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-base text-gris-medio transition hover:border-white/30 hover:bg-white/10 hover:text-white disabled:opacity-50"
-          >
-            ✕
-          </button>
-        </div>
+      <div className="glass-panel w-full max-w-xl rounded-brand border border-white/10 bg-[#17171E] p-6 md:p-8 relative shadow-2xl my-8 z-10">
+        <button
+          type="button"
+          onClick={requestClose}
+          disabled={isSubmitting}
+          aria-label="Cerrar"
+          className="absolute top-3 right-3 flex min-h-10 min-w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-base text-gris-medio transition hover:border-white/30 hover:bg-white/10 hover:text-white disabled:opacity-50"
+        >
+          ✕
+        </button>
 
-        <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center pr-28">
+        <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center pr-14">
           PREPARA TU VIAJE
         </h2>
         <p className="font-body text-rosa-cuarzo text-body text-center mb-6">
@@ -469,13 +494,13 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 onChange={handleNameChange}
                 autoCapitalize="characters"
                 required
-                disabled={isSubmitting}
+                disabled={formLocked}
                 className={`${inputClass} uppercase`}
                 placeholder="NOMBRE COMPLETO"
               />
             </div>
             <div>
-              <label className={labelClass} style={labelStyle}>Cédula (Opcional)</label>
+              <label className={labelClass} style={labelStyle}>Cédula *</label>
               <input
                 type="text"
                 name="document"
@@ -483,7 +508,8 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 pattern="[0-9]*"
                 value={formData.document}
                 onChange={handleDocumentChange}
-                disabled={isSubmitting}
+                required
+                disabled={formLocked}
                 className={inputClass}
                 placeholder="Solo números"
               />
@@ -501,19 +527,20 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 value={formData.whatsapp}
                 onChange={handleWhatsappChange}
                 required
-                disabled={isSubmitting}
+                disabled={formLocked}
                 className={inputClass}
                 placeholder="3001234567"
               />
             </div>
             <div>
-              <label className={labelClass} style={labelStyle}>Correo (Opcional)</label>
+              <label className={labelClass} style={labelStyle}>Correo *</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleEmailChange}
-                disabled={isSubmitting}
+                required
+                disabled={formLocked}
                 className={inputClass}
                 placeholder="nombre@correo.com"
               />
@@ -528,7 +555,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
               name="suiteId"
               value={formData.suiteId}
               onChange={handleSuiteChange}
-              disabled={isSubmitting || catalogLoading || !!catalogError || suiteLocked}
+              disabled={formLocked || catalogLoading || !!catalogError || suiteLocked}
               className={selectClass}
             >
               {catalogLoading && <option value="">Cargando suites…</option>}
@@ -563,7 +590,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                   <button
                     key={pack.rateTypeId}
                     type="button"
-                    disabled={isSubmitting || catalogLoading}
+                    disabled={formLocked || catalogLoading}
                     aria-pressed={isActive}
                     title={packLabel(pack)}
                     onClick={() =>
@@ -592,7 +619,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 onChange={handleSelectChange}
                 min={minVisitDate}
                 required
-                disabled={isSubmitting}
+                disabled={formLocked}
                 className={inputClass}
               />
             </div>
@@ -604,7 +631,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                     name="timeHour"
                     value={formData.timeHour}
                     onChange={handleSelectChange}
-                    disabled={isSubmitting}
+                    disabled={formLocked}
                     className={selectClass}
                     aria-label="Hora"
                   >
@@ -621,7 +648,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                     name="timeMinute"
                     value={formData.timeMinute}
                     onChange={handleSelectChange}
-                    disabled={isSubmitting}
+                    disabled={formLocked}
                     className={selectClass}
                     aria-label="Minutos"
                   >
@@ -638,7 +665,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                     name="timePeriod"
                     value={formData.timePeriod}
                     onChange={handleSelectChange}
-                    disabled={isSubmitting}
+                    disabled={formLocked}
                     className={selectClass}
                     aria-label="AM o PM"
                   >
@@ -683,18 +710,18 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'wompi')}
-              disabled={isSubmitting || catalogLoading || !!catalogError || !canShowPrice}
+              disabled={formLocked || catalogLoading || !!catalogError || !canShowPrice}
               className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              {isSubmitting ? 'Guardando…' : '💳 Pagar Online (Wompi)'}
+              {isSubmitting ? 'Guardando…' : hasSubmitted ? 'Reserva enviada' : '💳 Pagar Online (Wompi)'}
             </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'whatsapp')}
-              disabled={isSubmitting || catalogLoading || !!catalogError || !canShowPrice}
+              disabled={formLocked || catalogLoading || !!catalogError || !canShowPrice}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              {isSubmitting ? 'Guardando…' : '💬 Reservar por WhatsApp'}
+              {isSubmitting ? 'Guardando…' : hasSubmitted ? 'Reserva enviada' : '💬 Reservar por WhatsApp'}
             </button>
           </div>
         </form>

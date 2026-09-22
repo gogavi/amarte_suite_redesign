@@ -754,12 +754,12 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             <span>Experiencias</span>
             <span>Martina</span>
           </div>
-          <button
-            onClick={() => onActivateChat()}
+          <a
+            href="https://reservas.amartesuite.com"
             className="rounded-full border border-white/12 bg-white/5 px-4 py-2 font-heading text-xs uppercase tracking-widest text-white transition hover:border-[#E6007E]/50 hover:bg-white/10"
           >
             Reserva
-          </button>
+          </a>
         </header>
 
         <div className="relative flex w-full flex-1 flex-col items-center justify-center gap-2 py-2 text-center">
