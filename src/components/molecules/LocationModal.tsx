@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { trackEvent } from '../../lib/analytics';
 
 interface LocationModalProps {
   isOpen: boolean;
@@ -70,9 +69,7 @@ export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-heading text-sm text-[#FFF5F8] hover:text-[#E6007E] transition-colors"
-                  onClick={() =>
-                    trackEvent('whatsapp_redirect', { location: 'location_modal' })
-                  }
+                  data-wa-location="location_modal"
                 >
                   +573007416683
                 </a>

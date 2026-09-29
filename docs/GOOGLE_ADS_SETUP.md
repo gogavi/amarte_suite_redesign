@@ -25,8 +25,13 @@ Contenedor actual de Amarte: **`GTM-W5VQCDF5`**.
 | `reserva_form_open` | Apertura del formulario express | Embudo / observación |
 | `martina_open` | Apertura de Martina | Micro / remarketing |
 | `martina_chat_start` | Primer mensaje o voz | Micro / embudo |
+| `purchase` | `/gracias` confirma el pago Wompi en servidor | **Compra AS** (primaria de venta) |
 
 Parámetros habituales: `value`, `currency` (`COP`), `suite_name`, `plan_name`, `method`, `transaction_id`, `location`.
+
+`purchase` solo se empuja en `www.amartesuite.com/gracias` cuando `express-purchase-status` responde `confirmed: true`. Lleva `transaction_id` (id de la reserva), `value` (pesos cobrados) y `currency: COP`. El navegador guarda los últimos ids en `localStorage` (`amarte-www-purchase-ids`) y no vuelve a empujar el mismo id.
+
+El sitio carga **un** contenedor, `GTM-W5VQCDF5`, desde `initGoogleTagManager()` (`src/main.tsx`). No hay snippet en `index.html` ni un segundo `gtag.js`. `/gracias` es la misma SPA: no añade otro contenedor. La etiqueta Google `AW-774067101` que ya está en Initialization del contenedor sigue siendo la única.
 
 ---
 
@@ -67,6 +72,7 @@ Crea un activador por evento:
 | CE - reserva_form_open | Evento personalizado | `reserva_form_open` |
 | CE - martina_open | Evento personalizado | `martina_open` |
 | CE - martina_chat_start | Evento personalizado | `martina_chat_start` |
+| CE - purchase | Evento personalizado | `purchase` |
 
 ### Etiquetas
 
@@ -110,11 +116,12 @@ Crea un activador por evento:
 
 ## D. Buenas prácticas
 
-- Un solo **Conversion Linker**. No instales a la vez gtag Ads hardcodeado **y** tags Ads en GTM (duplicarías conversiones).
-- Envía `value` en COP en `pre_reserva_submit` / `checkout_init` para optimizar por valor cuando haya volumen.
+- Un solo **Conversion Linker**. No instales a la vez gtag Ads hardcodeado **y** tags Ads en GTM (duplicarías conversiones). No pegues otro snippet de `GTM-W5VQCDF5` ni `gtag/js?id=AW-774067101` en el HTML.
+- **Compra AS** (label `pmATCJyy3YkbEJ2njfEC`, ID `AW-774067101`): etiqueta de conversión con activador `purchase`. Valor `{{dlv - value}}`, moneda `COP`, ID de transacción `{{dlv - transaction_id}}`, recuento **una**. Sin esa etiqueta el `dataLayer` no llega a Google Ads: el contenedor publicado (v7) no tiene activador de compra.
+- **WhatsApp**: activador `whatsapp_redirect` (contacto, modal de ubicación, Reserva Express y el enlace del widget Martina, `location: martina_widget`). El label sale de la acción en Google Ads; no está en el código.
+- Envía `value` en COP en `pre_reserva_submit` / `checkout_init` / `purchase`.
 - No marques `martina_open` ni `reserva_form_open` como conversión primaria.
-- Wompi abre en otra pestaña: **no** uses “pago confirmado” como conversión principal hasta tener URL de retorno controlada.
-- Fase 2 (opcional): Enhanced Conversions con email/WhatsApp hasheados del formulario.
+- Fase 2 (opcional): Enhanced Conversions con email/WhatsApp hasheados del formulario. gclid/gbraid/wbraid se guardan en la reserva cuando esas columnas existen; la importación offline sigue viviendo en el SQL de reservas.
 
 ---
 

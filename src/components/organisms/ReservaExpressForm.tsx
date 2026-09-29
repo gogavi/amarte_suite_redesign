@@ -14,6 +14,7 @@ import {
   type SuitePack,
 } from '../../services/suiteCatalogService';
 import { trackEvent } from '../../lib/analytics';
+import { clickIdsForReservation, rememberGoogleClickIdsFromBrowser } from '../../lib/googleClickIds';
 
 interface ReservaExpressFormProps {
   onClose: () => void;
@@ -372,6 +373,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           time,
           price,
           method,
+          clickIds: clickIdsForReservation(rememberGoogleClickIdsFromBrowser()),
         });
 
       createdReservationIdRef.current = reservation.id;

@@ -37,6 +37,8 @@ Columnas de pago Wompi (solo las escribe el webhook / `create-wompi-payment` con
 
 Trigger `strip_anon_reservation_payment`: en INSERT/UPDATE del rol `anon`, anula esas cuatro columnas. `anon` no tiene política SELECT ni UPDATE.
 
+Click ids de Google Ads (`gclid`, `gbraid`, `wbraid`, `click_ids_captured_at`): el INSERT de Reserva Express los envía si los capturó (URL o cookies `_gcl_aw` / `_gcl_gb`). Esas columnas las añade el SQL de Microservicio-Reservas en el proyecto compartido. Si todavía no existen, el cliente reintenta el mismo `id` **sin** esos campos y la pre-reserva se guarda igual. No van en el checkout de Wompi.
+
 RLS web: `anon_insert_prereserva_web` (`canal = 'Web Automático' AND is_taken = false`). Staff `authenticated_*` según helpers `is_reservas_*`.
 
 ### `wompi_webhook_events`

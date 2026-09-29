@@ -153,3 +153,130 @@ export function colombianLocalPhone(raw: string): string | undefined {
   if (digits.length === 12 && digits.startsWith('57')) return digits.slice(2);
   return undefined;
 }
+
+const DEFAULT_WWW_ORIGIN = 'https://www.amartesuite.com';
+const HTTPS_ORIGIN = /^https:\/\/[a-z0-9.-]+$/i;
+const WOMPI_TX_ID = /^[A-Za-z0-9_-]{4,80}$/;
+const FINAL_PAYMENT_FAILURE = new Set(['DECLINED', 'VOIDED', 'ERROR']);
+
+/**
+ * Origen del SPA. `PUBLIC_SITE_URL` es opcional y no es un secreto.
+ * Un valor que no sea `https://host` cae en www.amartesuite.com.
+ */
+export function publicSiteOrigin(raw: string): string {
+  const trimmed = raw.trim().replace(/\/+$/, '');
+  if (HTTPS_ORIGIN.test(trimmed)) return trimmed;
+  return DEFAULT_WWW_ORIGIN;
+}
+
+/** Retorno del Web Checkout. Wompi añade `id` de la transacción a esta URL. */
+export function expressThanksUrl(origin: string, reservationId: string): string {
+  const base = publicSiteOrigin(origin);
+  return `${base}/gracias?rt=${encodeURIComponent(reservationId)}`;
+}
+
+export function isWompiTransactionId(value: string): boolean {
+  return WOMPI_TX_ID.test(value);
+}
+
+export type StoredReservationPayment = {
+  id: string;
+  precio: string;
+  paymentStatus: string | null;
+  paidAmount: number | null;
+};
+
+export type WompiTxView = {
+  id: string;
+  status: string;
+  amountInCents: number;
+  reference: string;
+  currency?: string;
+};
+
+export type ExpressPurchaseVerdict =
+  | { action: 'return'; value: number; transactionId: string }
+  | { action: 'approve'; value: number; transactionId: string; wompiTransactionId: string }
+  | { action: 'mark_mismatch'; wompiTransactionId: string }
+  | { action: 'mark_failure'; status: 'declined' | 'voided' | 'error'; wompiTransactionId: string }
+  | { action: 'wait' };
+
+function positiveCop(value: number | null): number | null {
+  if (value === null || !Number.isFinite(value) || value <= 0) return null;
+  return Math.round(value);
+}
+
+function precioCop(precio: string): number | null {
+  const pesos = Number(String(precio).replace(/[$\s,]/g, '').trim());
+  return positiveCop(pesos);
+}
+
+/**
+ * Decide si la página /gracias puede contar la compra.
+ * Un pago ya `approved` no se vuelve a escribir. Si llega la transacción de Wompi,
+ * solo cuenta cuando `reference` es el id de la reserva y el monto coincide.
+ */
+export function decideExpressPurchase(
+  reservation: StoredReservationPayment,
+  wompi: WompiTxView | null,
+): ExpressPurchaseVerdict {
+  if (reservation.paymentStatus === 'approved') {
+    const value = positiveCop(reservation.paidAmount) ?? precioCop(reservation.precio);
+    if (value === null) return { action: 'wait' };
+    return { action: 'return', value, transactionId: reservation.id };
+  }
+
+  if (!wompi || !isWompiTransactionId(wompi.id)) return { action: 'wait' };
+  if (!isUuid(wompi.reference) || wompi.reference.toLowerCase() !== reservation.id.toLowerCase()) {
+    return { action: 'wait' };
+  }
+  if (wompi.currency && wompi.currency.toUpperCase() !== 'COP') return { action: 'wait' };
+
+  const status = wompi.status.toUpperCase();
+  if (status === 'APPROVED') {
+    const expectedCents = pesosToCents(reservation.precio);
+    if (expectedCents === null || expectedCents !== wompi.amountInCents) {
+      return { action: 'mark_mismatch', wompiTransactionId: wompi.id };
+    }
+    return {
+      action: 'approve',
+      value: expectedCents / 100,
+      transactionId: reservation.id,
+      wompiTransactionId: wompi.id,
+    };
+  }
+
+  if (FINAL_PAYMENT_FAILURE.has(status)) {
+    const lowered = status.toLowerCase();
+    if (lowered === 'declined' || lowered === 'voided' || lowered === 'error') {
+      return { action: 'mark_failure', status: lowered, wompiTransactionId: wompi.id };
+    }
+  }
+
+  return { action: 'wait' };
+}
+
+export function parseWompiTransactionPayload(json: unknown): WompiTxView | null {
+  if (!json || typeof json !== 'object') return null;
+  const data = (json as { data?: unknown }).data;
+  if (!data || typeof data !== 'object') return null;
+  const row = data as {
+    id?: unknown;
+    status?: unknown;
+    amount_in_cents?: unknown;
+    reference?: unknown;
+    currency?: unknown;
+  };
+  if (typeof row.id !== 'string' || !isWompiTransactionId(row.id)) return null;
+  if (typeof row.status !== 'string' || !row.status.trim()) return null;
+  if (typeof row.reference !== 'string') return null;
+  if (typeof row.amount_in_cents !== 'number' || !Number.isInteger(row.amount_in_cents)) return null;
+  const currency = typeof row.currency === 'string' ? row.currency : undefined;
+  return {
+    id: row.id,
+    status: row.status,
+    amountInCents: row.amount_in_cents,
+    reference: row.reference,
+    currency,
+  };
+}
