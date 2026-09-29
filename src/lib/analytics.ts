@@ -5,7 +5,8 @@ export type AnalyticsEventName =
   | 'checkout_init'
   | 'martina_open'
   | 'martina_chat_start'
-  | 'reserva_form_open';
+  | 'reserva_form_open'
+  | 'purchase';
 
 export type AnalyticsEventParams = {
   location?: string;

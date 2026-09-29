@@ -50,11 +50,18 @@ El frontend **no** incluye `WOMPI_PRIVATE_KEY`, secreto de integridad ni secreto
 formulario INSERT reservations (anon)
   → create-wompi-payment (service_role lee precio, firma integridad)
   → popup Web Checkout
-  → Wompi POST wompi-webhook (checksum + GET /v1/transactions/{id})
+  → Wompi redirige a https://www.amartesuite.com/gracias?rt=<id-reserva>&id=<tx>
+  → express-purchase-status confirma con GET /v1/transactions/{id}
+  → Wompi POST wompi-webhook (checksum + el mismo GET)
   → UPDATE payment_status = approved si monto coincide
+  → /gracias hace dataLayer.push({ event: 'purchase', transaction_id, value, currency: 'COP' })
 ```
 
-Redirección del checkout (`WOMPI_REDIRECT_URL`, típico `https://reservas.amartesuite.com/?pago=retorno`) es informativa. **No** marca la reserva como pagada. La fuente de verdad es el webhook.
+El retorno **no** marca la reserva como pagada por sí solo. `/gracias` llama `express-purchase-status`, que solo confirma si `payment_status` ya es `approved` o si la transacción de Wompi tiene `reference` = id de la reserva y el monto coincide. El webhook sigue siendo la otra vía de confirmación.
+
+`create-wompi-payment` arma `redirect-url` como `{PUBLIC_SITE_URL}/gracias?rt=<uuid>`. Si `PUBLIC_SITE_URL` no está o no es `https://host`, usa `https://www.amartesuite.com`. **Ya no lee `WOMPI_REDIRECT_URL`.** Ese secreto puede quedar en el proyecto; esta función lo ignora.
+
+Este checkout es el Web Checkout (`checkout.wompi.co/p/`), no el Payment Link `create-wompi-payment-link` de reservas.amartesuite.com. Por eso el cliente no vuelve a `reservas.amartesuite.com/gracias`: esa página consulta `receipt_token` / `estado_pago`, y Reserva Express guarda el pago en `payment_status`.
 
 ### Edge Function `create-wompi-payment`
 
@@ -65,6 +72,16 @@ Redirección del checkout (`WOMPI_REDIRECT_URL`, típico `https://reservas.amart
 - `amount-in-cents` = `Number(precio) * 100` (Wompi cobra en centavos).
 - Rate limit: 5 intentos / 10 min por reserva y 30 / 10 min por hash de IP.
 - Respuesta: `{ checkoutUrl }`. No expone secretos.
+- `redirect-url` del checkout: `https://www.amartesuite.com/gracias?rt=<id de la reserva>` (ver arriba).
+
+### Edge Function `express-purchase-status`
+
+- JWT: `verify_jwt = true` (anon key).
+- Body: `{ reservationId, transactionId? }`. `transactionId` es el `id` que Wompi agrega al volver. No acepta montos del cliente.
+- No devuelve nombre, correo, teléfono, documento ni click ids.
+- Si `payment_status = approved`, responde `{ ok, confirmed: true, value, currency: 'COP', transaction_id }`. `transaction_id` es el **id de la reserva** (estable para deduplicar en Google Ads). `value` es el monto cobrado en pesos.
+- Si aún no está aprobado y llega `transactionId`, hace `GET {WOMPI_API_BASE}/transactions/{id}` con `WOMPI_PUBLIC_KEY` (igual que el webhook). `APPROVED` + `reference` = reserva + monto exacto → escribe `payment_status = approved`.
+- Referencia de otra reserva, monto distinto o estado no final → `{ confirmed: false }` sin marcar pagada.
 
 ### Edge Function `wompi-webhook`
 
@@ -97,7 +114,8 @@ supabase secrets set WOMPI_ENV
 | `WOMPI_INTEGRITY_SECRET` | `create-wompi-payment` | Prefijo `prod_integrity_` / `test_integrity_`. |
 | `WOMPI_EVENTS_SECRET` | `wompi-webhook` | Prefijo `prod_events_` / `test_events_`. |
 | `WOMPI_PRIVATE_KEY` | ninguna (reservada) | Prefijo `prv_prod_` / `prv_test_`. Guardarla rotada; no referenciarla en código. |
-| `WOMPI_REDIRECT_URL` | `create-wompi-payment` | HTTPS del SPA, p. ej. `https://reservas.amartesuite.com/?pago=retorno`. |
+| `WOMPI_REDIRECT_URL` | ninguna (legado) | `create-wompi-payment` ya no la lee. El retorno sale de `PUBLIC_SITE_URL`. |
+| `PUBLIC_SITE_URL` | `create-wompi-payment` | Opcional. `https://host` sin path. Si falta: `https://www.amartesuite.com`. |
 | `WOMPI_API_BASE` | `wompi-webhook` | `https://production.wompi.co/v1` o `https://sandbox.wompi.co/v1`. |
 | `WOMPI_ENV` | `wompi-webhook` | `prod` o `test` (debe coincidir con `environment` del evento). |
 | `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | ambas | Las inyecta la plataforma. En local: `supabase/.env.local` (gitignored). |
@@ -114,14 +132,16 @@ Despliegue al proyecto (después de `supabase secrets set` y `supabase link`):
 
 ```bash
 npx supabase functions deploy create-wompi-payment
+npx supabase functions deploy express-purchase-status
 npx supabase functions deploy wompi-webhook
 ```
 
-`config.toml` ya pone `verify_jwt = true` en create-wompi-payment y `false` en wompi-webhook.
+`config.toml` ya pone `verify_jwt = true` en create-wompi-payment y express-purchase-status, y `false` en wompi-webhook.
 
 Serve local (curl / prueba de firma; el SPA sigue pegándole al proyecto remoto salvo que uses stack local):
 
 npx supabase functions serve create-wompi-payment --env-file supabase/.env.local --no-verify-jwt
+npx supabase functions serve express-purchase-status --env-file supabase/.env.local --no-verify-jwt
 npx supabase functions serve wompi-webhook --env-file supabase/.env.local --no-verify-jwt
 ```
 

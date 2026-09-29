@@ -1,7 +1,11 @@
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
 import {
+  decideExpressPurchase,
   eventChecksum,
+  expressThanksUrl,
   integritySignature,
+  parseWompiTransactionPayload,
+  publicSiteOrigin,
   readDataProperty,
   sha256Hex,
   timingSafeEqualHex,
@@ -87,4 +91,56 @@ Deno.test('timingSafeEqualHex ignora mayúsculas', () => {
     true,
   );
   assertEquals(timingSafeEqualHex('aa', 'ab'), false);
+});
+
+Deno.test('retorno de Reserva Express apunta a /gracias con el id de la reserva', () => {
+  const id = '11111111-1111-4111-8111-111111111111';
+  assertEquals(
+    expressThanksUrl('', id),
+    `https://www.amartesuite.com/gracias?rt=${id}`,
+  );
+  assertEquals(
+    expressThanksUrl('https://amarte-suite-redesign-vert.vercel.app/', id),
+    `https://amarte-suite-redesign-vert.vercel.app/gracias?rt=${id}`,
+  );
+  assertEquals(publicSiteOrigin('http://evil.example'), 'https://www.amartesuite.com');
+  assertEquals(publicSiteOrigin('https://evil.example/phish'), 'https://www.amartesuite.com');
+});
+
+Deno.test('compra express solo si el pago aprobado coincide con la reserva', () => {
+  const reservation = {
+    id: '11111111-1111-4111-8111-111111111111',
+    precio: '80000',
+    paymentStatus: null,
+    paidAmount: null,
+  };
+  const approved = {
+    id: '1234-1610641025-49201',
+    status: 'APPROVED',
+    amountInCents: 8_000_000,
+    reference: reservation.id,
+    currency: 'COP',
+  };
+  assertEquals(decideExpressPurchase(reservation, approved), {
+    action: 'approve',
+    value: 80000,
+    transactionId: reservation.id,
+    wompiTransactionId: approved.id,
+  });
+  assertEquals(
+    decideExpressPurchase(reservation, { ...approved, reference: '22222222-2222-4222-8222-222222222222' }).action,
+    'wait',
+  );
+  assertEquals(
+    decideExpressPurchase(reservation, { ...approved, amountInCents: 100 }).action,
+    'mark_mismatch',
+  );
+  assertEquals(
+    decideExpressPurchase(
+      { ...reservation, paymentStatus: 'approved', paidAmount: 80000 },
+      null,
+    ),
+    { action: 'return', value: 80000, transactionId: reservation.id },
+  );
+  assertEquals(parseWompiTransactionPayload({ data: { id: 'x', status: 'APPROVED' } }), null);
 });

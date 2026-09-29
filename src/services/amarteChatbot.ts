@@ -1,4 +1,6 @@
 import { trackEvent } from '../lib/analytics';
+import { analyticsFromMartinaPayload, type MartinaTrackPayload } from '../lib/martinaAnalytics';
+import { whatsappAnchorTrackedJustNow } from '../lib/whatsappTracking';
 
 export type AmarteChatbotBridge = {
   openChat: (initialMessage?: string) => void;
@@ -10,7 +12,18 @@ declare global {
   interface Window {
     AMARTE_CHATBOT_URL?: string;
     AmarteChatbot?: AmarteChatbotBridge;
+    __amarteAnalyticsTrack?: (payload: MartinaTrackPayload) => void;
   }
+}
+
+/** El widget de Martina llama este hook al pulsar su enlace de WhatsApp. */
+export function installMartinaAnalyticsBridge(): void {
+  if (typeof window === 'undefined') return;
+  window.__amarteAnalyticsTrack = (payload) => {
+    const mapped = analyticsFromMartinaPayload(payload);
+    if (!mapped || whatsappAnchorTrackedJustNow()) return;
+    trackEvent(mapped.event, { location: mapped.location });
+  };
 }
 
 const SCRIPT_ATTR = 'data-amarte-widget-loader';
@@ -52,6 +65,7 @@ function waitForBridge(timeoutMs = 8000): Promise<AmarteChatbotBridge> {
  * Prefetch en mount; openLive debe invocarse en el mismo gesto de clic.
  */
 export function ensureWidgetLoaded(): Promise<AmarteChatbotBridge> {
+  installMartinaAnalyticsBridge();
   if (isBridgeReady(window.AmarteChatbot)) {
     return Promise.resolve(window.AmarteChatbot);
   }

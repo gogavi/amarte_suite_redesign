@@ -1,3 +1,7 @@
+import {
+  isMissingClickIdColumn,
+  type ReservationClickColumns,
+} from '../lib/googleClickIds';
 import { supabase } from '../lib/supabaseClient';
 
 export type PaymentMethod = 'wompi' | 'whatsapp';
@@ -15,6 +19,8 @@ export type CreateWebReservationInput = {
   time: string;
   price: number;
   method: PaymentMethod;
+  /** gclid / gbraid / wbraid. Se omiten si la tabla aún no tiene esas columnas. */
+  clickIds?: ReservationClickColumns;
 };
 
 export type CreateWebReservationResult = {
@@ -140,8 +146,20 @@ export async function createWebReservation(
     hotel_observations: '',
   };
 
+  const clickIds = input.clickIds ?? {};
+  const hasClickIds = Object.keys(clickIds).length > 0;
+  const rowWithClicks: ReservationInsertRow & ReservationClickColumns = {
+    ...row,
+    ...clickIds,
+  };
+
   // Sin `.select()`: anon no tiene política SELECT y RETURNING devolvería 0 filas.
-  const { error } = await supabase.from('reservations').insert(row);
+  let { error } = await supabase.from('reservations').insert(hasClickIds ? rowWithClicks : row);
+
+  if (error && hasClickIds && isMissingClickIdColumn(error)) {
+    const retry = await supabase.from('reservations').insert(row);
+    error = retry.error;
+  }
 
   if (error) {
     throw new Error(reservationErrorMessage(error.message));

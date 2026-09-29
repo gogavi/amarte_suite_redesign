@@ -4,6 +4,7 @@ import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import {
   buildWompiCheckoutUrl,
   colombianLocalPhone,
+  expressThanksUrl,
   integritySignature,
   isUuid,
   pesosToCents,
@@ -45,9 +46,8 @@ Deno.serve(async (req: Request) => {
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
   const publicKey = Deno.env.get('WOMPI_PUBLIC_KEY') ?? '';
   const integritySecret = Deno.env.get('WOMPI_INTEGRITY_SECRET') ?? '';
-  const redirectUrl = Deno.env.get('WOMPI_REDIRECT_URL') ?? '';
 
-  if (!supabaseUrl || !serviceRoleKey || !publicKey || !integritySecret || !redirectUrl) {
+  if (!supabaseUrl || !serviceRoleKey || !publicKey || !integritySecret) {
     console.error('create-wompi-payment: missing required env');
     return jsonResponse({ error: 'Pago no disponible.' }, 500);
   }
@@ -151,6 +151,11 @@ Deno.serve(async (req: Request) => {
       console.error('create-wompi-payment: could not mark pending');
     }
   }
+
+  const redirectUrl = expressThanksUrl(
+    Deno.env.get('PUBLIC_SITE_URL') ?? '',
+    reservation.id,
+  );
 
   const checkoutUrl = buildWompiCheckoutUrl({
     publicKey,
