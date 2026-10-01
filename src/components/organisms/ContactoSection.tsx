@@ -29,7 +29,11 @@ export default function ContactoSection() {
               <p className="font-heading text-white text-sm uppercase tracking-wide">📞 CELULAR & WHATSAPP</p>
               <p className="font-body text-body text-[#D1D1D6] mt-1 leading-relaxed">
                 Celular:{' '}
-                <a href="tel:+573007416683" className="text-[#19A6E0] hover:underline font-medium">
+                <a
+                  href="tel:+573007416683"
+                  className="text-[#19A6E0] hover:underline font-medium"
+                  data-tel-location="contacto"
+                >
                   300 741 6683
                 </a>{' '}
                 <br />

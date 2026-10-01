@@ -195,8 +195,8 @@ export type WompiTxView = {
 };
 
 export type ExpressPurchaseVerdict =
-  | { action: 'return'; value: number; transactionId: string }
-  | { action: 'approve'; value: number; transactionId: string; wompiTransactionId: string }
+  | { action: 'return'; value: number; transactionId: string; reservationTotal: number }
+  | { action: 'approve'; value: number; transactionId: string; wompiTransactionId: string; reservationTotal: number }
   | { action: 'mark_mismatch'; wompiTransactionId: string }
   | { action: 'mark_failure'; status: 'declined' | 'voided' | 'error'; wompiTransactionId: string }
   | { action: 'wait' };
@@ -211,6 +211,10 @@ function precioCop(precio: string): number | null {
   return positiveCop(pesos);
 }
 
+function reservationTotalCop(reservation: StoredReservationPayment, charged: number): number {
+  return precioCop(reservation.precio) ?? charged;
+}
+
 /**
  * Decide si la página /gracias puede contar la compra.
  * Un pago ya `approved` no se vuelve a escribir. Si llega la transacción de Wompi,
@@ -223,7 +227,12 @@ export function decideExpressPurchase(
   if (reservation.paymentStatus === 'approved') {
     const value = positiveCop(reservation.paidAmount) ?? precioCop(reservation.precio);
     if (value === null) return { action: 'wait' };
-    return { action: 'return', value, transactionId: reservation.id };
+    return {
+      action: 'return',
+      value,
+      transactionId: reservation.id,
+      reservationTotal: reservationTotalCop(reservation, value),
+    };
   }
 
   if (!wompi || !isWompiTransactionId(wompi.id)) return { action: 'wait' };
@@ -238,11 +247,13 @@ export function decideExpressPurchase(
     if (expectedCents === null || expectedCents !== wompi.amountInCents) {
       return { action: 'mark_mismatch', wompiTransactionId: wompi.id };
     }
+    const value = expectedCents / 100;
     return {
       action: 'approve',
-      value: expectedCents / 100,
+      value,
       transactionId: reservation.id,
       wompiTransactionId: wompi.id,
+      reservationTotal: reservationTotalCop(reservation, value),
     };
   }
 

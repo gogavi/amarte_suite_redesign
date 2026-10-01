@@ -1,6 +1,10 @@
-import { trackEvent } from '../lib/analytics';
-import { analyticsFromMartinaPayload, type MartinaTrackPayload } from '../lib/martinaAnalytics';
-import { whatsappAnchorTrackedJustNow } from '../lib/whatsappTracking';
+import {
+  trackEvent,
+  trackMartinaOpen,
+  type MartinaInteraction,
+  type MartinaOpenLocation,
+} from '../lib/analytics.ts';
+import { dispatchMartinaTrackPayload, type MartinaTrackPayload } from '../lib/martinaAnalytics.ts';
 
 export type AmarteChatbotBridge = {
   openChat: (initialMessage?: string) => void;
@@ -16,13 +20,11 @@ declare global {
   }
 }
 
-/** El widget de Martina llama este hook al pulsar su enlace de WhatsApp. */
+/** El widget entrega el evento; esta homepage lo escribe en dataLayer. */
 export function installMartinaAnalyticsBridge(): void {
   if (typeof window === 'undefined') return;
   window.__amarteAnalyticsTrack = (payload) => {
-    const mapped = analyticsFromMartinaPayload(payload);
-    if (!mapped || whatsappAnchorTrackedJustNow()) return;
-    trackEvent(mapped.event, { location: mapped.location });
+    dispatchMartinaTrackPayload(payload);
   };
 }
 
@@ -112,15 +114,17 @@ export function prefetchMartinaWidget(): void {
  * Abre chat de texto. Si el widget aún no cargó, espera y luego abre
  * (aceptable para starters; no usar para mic en vivo).
  */
-export async function openChat(initialMessage?: string): Promise<void> {
-  trackEvent('martina_open', {
-    location: 'widget',
-    interaction_type: 'text',
-  });
+export async function openChat(
+  initialMessage?: string,
+  source: { location?: MartinaOpenLocation; interactionType?: MartinaInteraction } = {},
+): Promise<void> {
+  const location = source.location ?? 'hero';
+  const interactionType = source.interactionType ?? 'text';
+  trackMartinaOpen({ location, interactionType });
   if (initialMessage?.trim()) {
     trackEvent('martina_chat_start', {
-      location: 'widget',
-      interaction_type: 'text',
+      location,
+      interaction_type: interactionType,
     });
   }
   const bridge = await ensureWidgetLoaded();
@@ -132,13 +136,13 @@ export async function openChat(initialMessage?: string): Promise<void> {
  * Preferible: llamar ensureWidgetLoaded() antes (prefetch) y luego openLiveSync()
  * en el onClick para no romper el gesto de micrófono.
  */
-export function openLiveSync(): void {
-  trackEvent('martina_open', {
-    location: 'widget',
-    interaction_type: 'voice',
-  });
+export function openLiveSync(
+  source: { location?: MartinaOpenLocation } = {},
+): void {
+  const location = source.location ?? 'launcher';
+  trackMartinaOpen({ location, interactionType: 'voice' });
   trackEvent('martina_chat_start', {
-    location: 'widget',
+    location,
     interaction_type: 'voice',
   });
   if (isBridgeReady(window.AmarteChatbot)) {
