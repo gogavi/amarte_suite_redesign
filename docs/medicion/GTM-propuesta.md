@@ -89,7 +89,7 @@ Evento: `generate_lead`. Condición: `method` igual a `phone`.
 
 Parámetros: `location`, `phone_number` (solo dígitos).
 
-En `www` el enlace publicado es `tel:+573007416683` (contacto). El número `573013307909` de la spec no está en esta homepage; si el widget lo envía por `__amarteAnalyticsTrack`, el puente lo reenvía con el `phone_number` que traiga el payload.
+En `www` el enlace de Llamar en contacto es `tel:+573013307909` (`phone_number` `573013307909`). WhatsApp de contacto sigue en `wa.me/573007416683`. El widget, si llama al puente, manda el mismo `573013307909`.
 
 No marcar la llamada como conversión primaria de compra.
 

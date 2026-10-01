@@ -59,7 +59,7 @@ describe('medición homepage', { concurrency: false }, () => {
       location: 'contacto',
       linkUrl: 'https://wa.me/573007416683',
     });
-    trackGenerateLeadPhone({ location: 'contacto', phoneNumber: '+57 300 741 6683' });
+    trackGenerateLeadPhone({ location: 'contacto', phoneNumber: '+57 301 330 7909' });
     trackGenerateLeadReserva({ transactionId: RESERVATION_ID, tipoPago: 'sin_pago' });
     trackMartinaOpen({ location: 'hero', interactionType: 'voice' });
     trackViewItemListSuites('www');
@@ -98,7 +98,7 @@ describe('medición homepage', { concurrency: false }, () => {
       event: 'generate_lead',
       method: 'phone',
       location: 'contacto',
-      phone_number: '573007416683',
+      phone_number: '573013307909',
     });
     assert.deepEqual(dataLayer[2], {
       event: 'generate_lead',
@@ -173,12 +173,12 @@ describe('medición homepage', { concurrency: false }, () => {
       ],
     );
     assert.deepEqual(
-      eventsForLeadAnchor(anchor('tel:+573007416683', { 'data-tel-location': 'contacto' })),
+      eventsForLeadAnchor(anchor('tel:+573013307909', { 'data-tel-location': 'contacto' })),
       [{
         event: 'generate_lead',
         method: 'phone',
         location: 'contacto',
-        phone_number: '573007416683',
+        phone_number: '573013307909',
       }],
     );
   });
