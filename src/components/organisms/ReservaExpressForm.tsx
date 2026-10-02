@@ -13,7 +13,15 @@ import {
   type CatalogSuite,
   type SuitePack,
 } from '../../services/suiteCatalogService';
-import { trackEvent } from '../../lib/analytics';
+import {
+  trackAddPaymentInfo,
+  trackBeginCheckout,
+  trackEvent,
+  trackGenerateLeadReserva,
+  trackGenerateLeadWhatsapp,
+  tipoPagoForReservationMethod,
+} from '../../lib/analytics';
+import { copFromWompiCheckoutUrl } from '../../lib/wompiAmount';
 import { clickIdsForReservation, rememberGoogleClickIdsFromBrowser } from '../../lib/googleClickIds';
 
 interface ReservaExpressFormProps {
@@ -126,6 +134,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       location: 'reserva_express',
       suite_name: lockedLocalSuiteName ?? undefined,
     });
+    trackBeginCheckout('reserva_express');
   }, [lockedLocalSuiteName]);
 
   const isSubmittingRef = useRef(isSubmitting);
@@ -392,6 +401,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         dispatch({ type: 'SET_TIME', payload: time });
         dispatch({ type: 'CALCULATE_PRICE', payload: price });
 
+        const tipoPago = tipoPagoForReservationMethod(method);
         trackEvent('pre_reserva_submit', {
           location: 'reserva_express',
           transaction_id: reservation.id,
@@ -400,6 +410,11 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           method,
           value: price,
           currency: 'COP',
+          tipo_pago: tipoPago,
+        });
+        trackGenerateLeadReserva({
+          transactionId: reservation.id,
+          tipoPago,
         });
       }
 
@@ -417,6 +432,14 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             currency: 'COP',
           });
           checkoutUrl = (await createWompiCheckout(reservation.id)).checkoutUrl;
+          const amountToCharge = copFromWompiCheckoutUrl(checkoutUrl);
+          if (amountToCharge !== null) {
+            trackAddPaymentInfo({
+              transactionId: reservation.id,
+              value: amountToCharge,
+              tipoPago: 'total_100',
+            });
+          }
           successMessage = 'Pre-reserva guardada. Completa el pago en Wompi; la confirmación llega sola, sin enviar comprobante por WhatsApp.';
           break;
         case 'whatsapp':
@@ -440,6 +463,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             timeLabel: time,
             price,
           }));
+          trackGenerateLeadWhatsapp({
+            location: 'reserva_express',
+            linkUrl: checkoutUrl,
+          });
           successMessage = 'Pre-reserva guardada. Continúa la conversación en WhatsApp.';
           break;
         default: {

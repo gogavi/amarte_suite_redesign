@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import { trackEvent } from '../lib/analytics';
-import {
-  claimPurchaseId,
-  readSentPurchaseIds,
-  rememberSentPurchaseId,
-  shouldFirePurchase,
-} from '../lib/purchaseTracking';
+import { commitServerPurchase } from '../lib/purchaseTracking';
 import { parseThanksSearch } from '../lib/thanksReturn';
 import { fetchExpressPurchaseStatus, type ExpressPurchaseResult } from '../services/purchaseStatus';
 
@@ -33,20 +27,18 @@ function formatCop(value: number): string {
   }).format(value);
 }
 
-function firePurchaseOnce(value: number, transactionId: string): void {
-  const storage = window.localStorage;
-  const decision = shouldFirePurchase(
-    { confirmed: true, transactionId, value, currency: 'COP' },
-    readSentPurchaseIds(storage),
+function firePurchaseOnce(result: Extract<ExpressPurchaseResult, { confirmed: true }>): void {
+  commitServerPurchase(
+    {
+      confirmed: true,
+      transactionId: result.transactionId,
+      value: result.value,
+      currency: result.currency,
+      reservationTotal: result.reservationTotal,
+      tipoPago: result.tipoPago,
+    },
+    window.localStorage,
   );
-  if (!decision.fire || !decision.transactionId || decision.value === undefined) return;
-  if (!claimPurchaseId(decision.transactionId)) return;
-  trackEvent('purchase', {
-    transaction_id: decision.transactionId,
-    value: decision.value,
-    currency: 'COP',
-  });
-  rememberSentPurchaseId(storage, decision.transactionId);
 }
 
 function phaseFromResult(result: ExpressPurchaseResult): { phase: GraciasPhase; paid: PaidSummary | null } {
@@ -89,13 +81,13 @@ export default function GraciasView() {
           last = { ok: false, confirmed: false, retry: true, error: 'No pudimos consultar el pago.' };
         }
         if (cancelled) return;
-        const next = phaseFromResult(last);
-        if (next.phase === 'paid' && next.paid) {
-          firePurchaseOnce(next.paid.value, next.paid.transactionId);
-          setPaid(next.paid);
+        if (last.confirmed) {
+          firePurchaseOnce(last);
+          setPaid({ value: last.value, transactionId: last.transactionId });
           setPhase('paid');
           return;
         }
+        const next = phaseFromResult(last);
         if (!last.ok && !last.retry) {
           setPhase('error');
           return;

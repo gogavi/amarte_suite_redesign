@@ -29,7 +29,9 @@ Contenedor actual de Amarte: **`GTM-W5VQCDF5`**.
 
 Parámetros habituales: `value`, `currency` (`COP`), `suite_name`, `plan_name`, `method`, `transaction_id`, `location`.
 
-`purchase` solo se empuja en `www.amartesuite.com/gracias` cuando `express-purchase-status` responde `confirmed: true`. Lleva `transaction_id` (id de la reserva), `value` (pesos cobrados) y `currency: COP`. El navegador guarda los últimos ids en `localStorage` (`amarte-www-purchase-ids`) y no vuelve a empujar el mismo id.
+`purchase` solo se empuja en `www.amartesuite.com/gracias` cuando `express-purchase-status` responde `confirmed: true`. Lleva `transaction_id` (id de la reserva), `value` (pesos cobrados), `currency: COP`, `tipo_pago: total_100` y `reservation_total`. El navegador guarda los últimos ids en `localStorage` (`amarte-www-purchase-ids`) y no vuelve a empujar el mismo id.
+
+Los eventos nuevos (`generate_lead`, `view_item_list`, `begin_checkout`, `add_payment_info`, `martina_open` con location) ya salen al `dataLayer`. **No están publicados en GTM.** La propuesta de etiquetas, sin publicar, está en [`docs/medicion/GTM-propuesta.md`](medicion/GTM-propuesta.md). Hasta que se publique, siguen vivas las conversiones actuales: `pre_reserva_submit`, `whatsapp_redirect` y `purchase`.
 
 El sitio carga **un** contenedor, `GTM-W5VQCDF5`, desde `initGoogleTagManager()` (`src/main.tsx`). No hay snippet en `index.html` ni un segundo `gtag.js`. `/gracias` es la misma SPA: no añade otro contenedor. La etiqueta Google `AW-774067101` que ya está en Initialization del contenedor sigue siendo la única.
 

@@ -90,7 +90,13 @@ test('no confirma una transacción de otra reserva ni un monto distinto', () => 
     reference: RESERVATION_ID,
     currency: 'COP',
   };
-  assert.equal(decideExpressPurchase(reservation, tx).action, 'approve');
+  const approved = decideExpressPurchase(reservation, tx);
+  assert.equal(approved.action, 'approve');
+  if (approved.action === 'approve') {
+    assert.equal(approved.value, 80000);
+    assert.equal(approved.reservationTotal, 80000);
+    assert.equal(approved.transactionId, RESERVATION_ID);
+  }
   assert.equal(decideExpressPurchase(reservation, { ...tx, reference: 'otra-reserva' }).action, 'wait');
   assert.equal(decideExpressPurchase(reservation, { ...tx, status: 'DECLINED' }).action, 'mark_failure');
   assert.equal(decideExpressPurchase(
@@ -114,11 +120,11 @@ test('el enlace de WhatsApp declara su location y el widget cae en martina_widge
   }), 'location_modal');
 });
 
-test('el WhatsApp del widget Martina se traduce a whatsapp_redirect', () => {
+test('live_voice_whatsapp_clicked sigue siendo whatsapp_redirect y no un generate_lead', () => {
   assert.deepEqual(
     analyticsFromMartinaPayload({ event: 'live_voice_whatsapp_clicked' }),
-    { event: 'whatsapp_redirect', location: 'martina_widget' },
+    [{ kind: 'whatsapp_redirect' }],
   );
-  assert.equal(analyticsFromMartinaPayload({ event: 'live_voice_connected' }), null);
-  assert.equal(analyticsFromMartinaPayload(null), null);
+  assert.deepEqual(analyticsFromMartinaPayload({ event: 'live_voice_connected' }), []);
+  assert.deepEqual(analyticsFromMartinaPayload(null), []);
 });

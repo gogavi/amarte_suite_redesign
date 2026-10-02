@@ -54,7 +54,7 @@ formulario INSERT reservations (anon)
   → express-purchase-status confirma con GET /v1/transactions/{id}
   → Wompi POST wompi-webhook (checksum + el mismo GET)
   → UPDATE payment_status = approved si monto coincide
-  → /gracias hace dataLayer.push({ event: 'purchase', transaction_id, value, currency: 'COP' })
+  → /gracias hace dataLayer.push({ event: 'purchase', transaction_id, value, currency: 'COP', tipo_pago: 'total_100', reservation_total })
 ```
 
 El retorno **no** marca la reserva como pagada por sí solo. `/gracias` llama `express-purchase-status`, que solo confirma si `payment_status` ya es `approved` o si la transacción de Wompi tiene `reference` = id de la reserva y el monto coincide. El webhook sigue siendo la otra vía de confirmación.
@@ -79,7 +79,7 @@ Este checkout es el Web Checkout (`checkout.wompi.co/p/`), no el Payment Link `c
 - JWT: `verify_jwt = true` (anon key).
 - Body: `{ reservationId, transactionId? }`. `transactionId` es el `id` que Wompi agrega al volver. No acepta montos del cliente.
 - No devuelve nombre, correo, teléfono, documento ni click ids.
-- Si `payment_status = approved`, responde `{ ok, confirmed: true, value, currency: 'COP', transaction_id }`. `transaction_id` es el **id de la reserva** (estable para deduplicar en Google Ads). `value` es el monto cobrado en pesos.
+- Si `payment_status = approved`, responde `{ ok, confirmed: true, value, currency: 'COP', transaction_id, tipo_pago: 'total_100', reservation_total }`. `transaction_id` es el **id de la reserva** (estable para deduplicar en Google Ads). `value` es el monto cobrado en pesos (`paid_amount` o el monto Wompi). `reservation_total` es el `precio` guardado de la reserva. Esta función solo confirma `forma_pago = Pago total`.
 - Si aún no está aprobado y llega `transactionId`, hace `GET {WOMPI_API_BASE}/transactions/{id}` con `WOMPI_PUBLIC_KEY` (igual que el webhook). `APPROVED` + `reference` = reserva + monto exacto → escribe `payment_status = approved`.
 - Referencia de otra reserva, monto distinto o estado no final → `{ confirmed: false }` sin marcar pagada.
 

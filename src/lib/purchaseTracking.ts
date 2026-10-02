@@ -1,3 +1,5 @@
+import { trackEvent, type PaidTipoPago } from './analytics.ts';
+
 const STORAGE_KEY = 'amarte-www-purchase-ids';
 const MAX_STORED_IDS = 50;
 
@@ -6,6 +8,23 @@ export type PurchaseCandidate = {
   transactionId: string;
   value: number;
   currency: string;
+};
+
+export type ServerPurchaseInput = {
+  confirmed: boolean;
+  transactionId: string;
+  value: number;
+  currency: string;
+  reservationTotal?: number | null;
+  tipoPago?: string | null;
+};
+
+export type PurchaseEventPayload = {
+  transaction_id: string;
+  value: number;
+  currency: 'COP';
+  tipo_pago: PaidTipoPago;
+  reservation_total: number;
 };
 
 export type PurchaseFireDecision = {
@@ -80,3 +99,77 @@ export function claimPurchaseId(transactionId: string): boolean {
 }
 
 export const PURCHASE_IDS_STORAGE_KEY = STORAGE_KEY;
+
+export type PurchaseCommitDecision =
+  | { fire: false; reason: PurchaseFireDecision['reason'] | 'missing-reservation-total' | 'tipo-pago' }
+  | { fire: true; reason: 'ok'; payload: PurchaseEventPayload };
+
+function resolveTipoPago(tipoPago: string | null | undefined): PaidTipoPago | null {
+  if (tipoPago === undefined || tipoPago === null || tipoPago.trim() === '') return 'total_100';
+  if (tipoPago === 'abono_50' || tipoPago === 'total_100') return tipoPago;
+  return null;
+}
+
+function resolveReservationTotal(
+  value: number,
+  tipoPago: PaidTipoPago,
+  reservationTotal: number | null | undefined,
+): number | null {
+  if (reservationTotal !== undefined && reservationTotal !== null) {
+    if (!Number.isFinite(reservationTotal) || reservationTotal <= 0) return null;
+    return Math.round(reservationTotal);
+  }
+  if (tipoPago === 'total_100') return Math.round(value);
+  return null;
+}
+
+/** Arma `purchase` solo con datos confirmados por el servidor. */
+export function purchaseEventFromServer(
+  status: ServerPurchaseInput,
+  alreadySentIds: ReadonlySet<string>,
+): PurchaseCommitDecision {
+  const gate = shouldFirePurchase(
+    {
+      confirmed: status.confirmed,
+      transactionId: status.transactionId,
+      value: status.value,
+      currency: status.currency,
+    },
+    alreadySentIds,
+  );
+  if (!gate.fire || !gate.transactionId || gate.value === undefined) {
+    const reason = gate.reason === 'ok' ? 'invalid-value' : gate.reason;
+    return { fire: false, reason };
+  }
+
+  const tipoPago = resolveTipoPago(status.tipoPago);
+  if (!tipoPago) return { fire: false, reason: 'tipo-pago' };
+
+  const reservationTotal = resolveReservationTotal(gate.value, tipoPago, status.reservationTotal);
+  if (reservationTotal === null) return { fire: false, reason: 'missing-reservation-total' };
+
+  return {
+    fire: true,
+    reason: 'ok',
+    payload: {
+      transaction_id: gate.transactionId,
+      value: gate.value,
+      currency: 'COP',
+      tipo_pago: tipoPago,
+      reservation_total: reservationTotal,
+    },
+  };
+}
+
+/** Empuja `purchase` una vez por transaction_id. No dispara si el servidor no confirmó. */
+export function commitServerPurchase(
+  status: ServerPurchaseInput,
+  storage: IdStorage | null | undefined,
+): boolean {
+  const decision = purchaseEventFromServer(status, readSentPurchaseIds(storage));
+  if (!decision.fire) return false;
+  if (!claimPurchaseId(decision.payload.transaction_id)) return false;
+  trackEvent('purchase', decision.payload);
+  rememberSentPurchaseId(storage, decision.payload.transaction_id);
+  return true;
+}

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
+import { trackBeginCheckout } from '../../lib/analytics';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
@@ -758,6 +759,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             href="https://reservas.amartesuite.com"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackBeginCheckout('header')}
             className="rounded-full border border-white/12 bg-white/5 px-4 py-2 font-heading text-xs uppercase tracking-widest text-white transition hover:border-[#E6007E]/50 hover:bg-white/10"
           >
             Reserva

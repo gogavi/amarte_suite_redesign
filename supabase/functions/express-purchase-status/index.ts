@@ -20,6 +20,22 @@ type ReservationRow = {
   paid_amount: number | string | null;
 };
 
+function confirmedPurchaseBody(params: {
+  value: number;
+  transactionId: string;
+  reservationTotal: number;
+}) {
+  return {
+    ok: true,
+    confirmed: true,
+    value: params.value,
+    currency: 'COP',
+    transaction_id: params.transactionId,
+    tipo_pago: 'total_100',
+    reservation_total: params.reservationTotal,
+  };
+}
+
 function asCop(value: number | string | null): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (typeof value === 'string' && value.trim()) {
@@ -142,13 +158,11 @@ async function applyVerdict(
 ): Promise<Response> {
   switch (verdict.action) {
     case 'return':
-      return jsonResponse({
-        ok: true,
-        confirmed: true,
+      return jsonResponse(confirmedPurchaseBody({
         value: verdict.value,
-        currency: 'COP',
-        transaction_id: verdict.transactionId,
-      });
+        transactionId: verdict.transactionId,
+        reservationTotal: verdict.reservationTotal,
+      }));
     case 'wait':
       return jsonResponse({
         ok: true,
@@ -164,6 +178,7 @@ async function applyVerdict(
       }, {
         confirmedValue: verdict.value,
         transactionId: verdict.transactionId,
+        reservationTotal: verdict.reservationTotal,
       });
     case 'mark_mismatch':
       return writePayment(supabase, reservation.id, {
@@ -187,7 +202,12 @@ async function writePayment(
   supabase: ReturnType<typeof createClient>,
   reservationId: string,
   patch: Record<string, unknown>,
-  outcome: { confirmedValue?: number; transactionId?: string; terminalStatus?: string },
+  outcome: {
+    confirmedValue?: number;
+    transactionId?: string;
+    reservationTotal?: number;
+    terminalStatus?: string;
+  },
 ): Promise<Response> {
   const { data: updated, error: updateError } = await supabase
     .from('reservations')
@@ -221,13 +241,11 @@ async function writePayment(
     }), null);
 
     if (again.action === 'return') {
-      return jsonResponse({
-        ok: true,
-        confirmed: true,
+      return jsonResponse(confirmedPurchaseBody({
         value: again.value,
-        currency: 'COP',
-        transaction_id: again.transactionId,
-      });
+        transactionId: again.transactionId,
+        reservationTotal: again.reservationTotal,
+      }));
     }
 
     return jsonResponse({
@@ -238,13 +256,11 @@ async function writePayment(
   }
 
   if (outcome.confirmedValue && outcome.transactionId && updated.payment_status === 'approved') {
-    return jsonResponse({
-      ok: true,
-      confirmed: true,
+    return jsonResponse(confirmedPurchaseBody({
       value: outcome.confirmedValue,
-      currency: 'COP',
-      transaction_id: outcome.transactionId,
-    });
+      transactionId: outcome.transactionId,
+      reservationTotal: outcome.reservationTotal ?? outcome.confirmedValue,
+    }));
   }
 
   return jsonResponse({

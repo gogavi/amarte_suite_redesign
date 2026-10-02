@@ -4,6 +4,7 @@ import TrustBar from '../components/molecules/TrustBar';
 import SectionDotNav from '../components/molecules/SectionDotNav';
 import SectionStickyNav from '../components/molecules/SectionStickyNav';
 import { Suite } from '../services/ratesService';
+import { trackViewItemListSuites } from '../lib/analytics';
 import { openChat, prefetchMartinaWidget } from '../services/amarteChatbot';
 import { useReservation } from '../context/ReservationContext';
 import { useSectionSpy } from '../hooks/useSectionSpy';
@@ -67,24 +68,33 @@ export default function Home() {
     setIsFormOpen(true);
   };
 
-  const handleActivateChat = (initialMsg?: string) => {
-    void openChat(initialMsg);
+  const handleActivateChat = (initialMsg?: string, location: 'hero' | 'seccion' = 'hero') => {
+    void openChat(initialMsg, { location, interactionType: 'text' });
   };
 
   const handleActivateVoice = () => {
-    void openChat();
+    void openChat(undefined, { location: 'hero', interactionType: 'voice' });
   };
 
   const scrollToHero = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    void openChat('Hola Martina, quiero reservar una suite.');
+    void openChat('Hola Martina, quiero reservar una suite.', {
+      location: 'seccion',
+      interactionType: 'text',
+    });
   };
 
   const scrollToSuites = () => {
+    trackViewItemListSuites('www');
     const el = document.getElementById('suites-section');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleSectionNavigate = (id: string) => {
+    if (id === 'suites-section') trackViewItemListSuites('www');
+    scrollToSection(id);
   };
 
   if (activeView === 'planes') {
@@ -94,7 +104,8 @@ export default function Home() {
           onBack={() => setActiveView('home')}
           onSelectPlan={(planName) => {
             handleActivateChat(
-              `Hola Martina, quiero reservar una suite y agregar el plan de decoración: ${planName}`
+              `Hola Martina, quiero reservar una suite y agregar el plan de decoración: ${planName}`,
+              'seccion',
             );
           }}
         />
@@ -133,8 +144,8 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      <SectionStickyNav activeId={activeId} onNavigate={scrollToSection} />
-      <SectionDotNav activeId={activeId} onNavigate={scrollToSection} />
+      <SectionStickyNav activeId={activeId} onNavigate={handleSectionNavigate} />
+      <SectionDotNav activeId={activeId} onNavigate={handleSectionNavigate} />
 
       {showPagoRetorno && (
         <div
@@ -173,13 +184,13 @@ export default function Home() {
       <Suspense fallback={<SectionFallback />}>
         <PlanesSection
           onSelectPlan={(planName) => {
-            handleActivateChat(`Hola Martina, quiero reservar y añadir el plan: ${planName}`);
+            handleActivateChat(`Hola Martina, quiero reservar y añadir el plan: ${planName}`, 'seccion');
           }}
         />
       </Suspense>
 
       <Suspense fallback={<SectionFallback />}>
-        <PromoBanner onPromoClick={(message) => handleActivateChat(message)} />
+        <PromoBanner onPromoClick={(message) => handleActivateChat(message, 'seccion')} />
       </Suspense>
 
       <Suspense fallback={<SectionFallback />}>
