@@ -421,7 +421,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       let checkoutUrl: string;
       let successMessage: string;
       switch (method) {
-        case 'wompi':
+        case 'wompi': {
           trackEvent('checkout_init', {
             location: 'reserva_express',
             transaction_id: reservation.id,
@@ -442,6 +442,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           }
           successMessage = 'Pre-reserva guardada. Completa el pago en Wompi; la confirmación llega sola, sin enviar comprobante por WhatsApp.';
           break;
+        }
         case 'whatsapp':
           trackEvent('whatsapp_redirect', {
             location: 'reserva_express',

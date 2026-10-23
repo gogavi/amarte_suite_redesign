@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
 import { trackBeginCheckout } from '../../lib/analytics';
+import { RESERVAS_HOME_URL, reservaHrefFromBrowser } from '../../lib/reservaAttribution';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
@@ -98,12 +99,17 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const [isInView, setIsInView] = useState(true);
   const [portalZoomed, setPortalZoomed] = useState(false);
   const [videoModal, setVideoModal] = useState<VideoModalContent | null>(null);
+  const [reservaHref, setReservaHref] = useState(RESERVAS_HOME_URL);
 
   const effectsActive = isInView && !reducedMotion;
   const enableParallax = effectsActive && !isMobile;
   const enableMotionVideo = effectsActive && !isMobile;
 
   useEffect(() => setCurrentState(martinaState), [martinaState]);
+
+  useEffect(() => {
+    setReservaHref(reservaHrefFromBrowser(RESERVAS_HOME_URL));
+  }, []);
 
   useEffect(() => {
     if (!videoModal) return;
@@ -756,10 +762,13 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
             <span>Martina</span>
           </div>
           <a
-            href="https://reservas.amartesuite.com"
+            href={reservaHref}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackBeginCheckout('header')}
+            onClick={(event) => {
+              trackBeginCheckout('header');
+              event.currentTarget.href = reservaHrefFromBrowser(RESERVAS_HOME_URL);
+            }}
             className="rounded-full border border-white/12 bg-white/5 px-4 py-2 font-heading text-xs uppercase tracking-widest text-white transition hover:border-[#E6007E]/50 hover:bg-white/10"
           >
             Reserva
