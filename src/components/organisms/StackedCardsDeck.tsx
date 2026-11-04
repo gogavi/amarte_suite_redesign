@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Suite } from '../../services/ratesService';
 import SuiteCard from '../molecules/SuiteCard';
+import ResponsiveImage from '../molecules/ResponsiveImage';
 
 interface StackedCardsDeckProps {
   suites: Suite[];
@@ -11,7 +12,13 @@ interface StackedCardsDeckProps {
 function PreviewSuiteCard({ suite }: { suite: Suite }) {
   return (
     <div className="relative h-full w-full overflow-hidden rounded-brand border border-white/8 bg-bg-dark">
-      <img src={suite.image} alt="" aria-hidden="true" className="h-full w-full object-cover opacity-70" loading="lazy" />
+      <ResponsiveImage
+        image={suite.image}
+        alt=""
+        sizes="300px"
+        className="block h-full w-full"
+        imgClassName="h-full w-full object-cover opacity-70"
+      />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11]/90 via-[#0D0D11]/20 to-transparent" />
       <span className="absolute bottom-5 left-5 font-heading text-sm uppercase tracking-widest text-white/80">
         {suite.name}

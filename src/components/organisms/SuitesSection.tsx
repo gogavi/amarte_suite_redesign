@@ -6,13 +6,14 @@ import {
 } from '../../services/suiteCatalogService';
 import SuiteCard from '../molecules/SuiteCard';
 import StackedCardsDeck from './StackedCardsDeck';
+import { viewportMatches } from '../../lib/heroMedia';
 
 interface SuitesSectionProps {
   onSelectSuite: (suite: Suite) => void;
 }
 
 export default function SuitesSection({ onSelectSuite }: SuitesSectionProps) {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => viewportMatches('(max-width: 1023px)'));
   const [suites, setSuites] = useState<Suite[]>(suitesData);
 
   useEffect(() => {

@@ -581,7 +581,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                 required
                 disabled={formLocked}
                 className={inputClass}
-                placeholder="3001234567"
+                placeholder="Tu celular"
               />
             </div>
             <div>

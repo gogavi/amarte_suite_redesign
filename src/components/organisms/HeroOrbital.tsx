@@ -1,12 +1,10 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
 import { trackBeginCheckout } from '../../lib/analytics';
 import { RESERVAS_HOME_URL, reservaHrefFromBrowser } from '../../lib/reservaAttribution';
+import { shouldMountHeroVideo, viewportMatches } from '../../lib/heroMedia';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import videoHomeNubes from '../../assets/home_motion/video_home_nubes_comp.mp4';
-import spaceBgMobile from '../../assets/home_motion/space-bg-mobile_comp.webp';
-import spaceBgDesktop from '../../assets/home_motion/space-bg-desktop_comp.jpg';
-import planetaAmarte from '../../assets/planeta-amarte.jpg';
 
 /** Kill-switch temporal del aura (anillos / plasma / glow). Volver a true para reactivar. */
 const SHOW_ORB_AURA = false;
@@ -94,8 +92,9 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [currentState, setCurrentState] = useState<MartinaState>(martinaState);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => viewportMatches('(prefers-reduced-motion: reduce)'));
+  const [isMobile, setIsMobile] = useState(() => viewportMatches('(max-width: 767px)'));
+  const [videoArmed, setVideoArmed] = useState(false);
   const [isInView, setIsInView] = useState(true);
   const [portalZoomed, setPortalZoomed] = useState(false);
   const [videoModal, setVideoModal] = useState<VideoModalContent | null>(null);
@@ -103,7 +102,12 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
 
   const effectsActive = isInView && !reducedMotion;
   const enableParallax = effectsActive && !isMobile;
-  const enableMotionVideo = effectsActive && !isMobile;
+  const enableMotionVideo = shouldMountHeroVideo({
+    isMobile,
+    reducedMotion,
+    inView: isInView,
+    armed: videoArmed,
+  });
 
   useEffect(() => setCurrentState(martinaState), [martinaState]);
 
@@ -152,6 +156,25 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   }, []);
 
   useEffect(() => {
+    let idleId = 0;
+    let timeoutId = 0;
+    const arm = () => {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(() => setVideoArmed(true), { timeout: 2000 });
+      } else {
+        timeoutId = window.setTimeout(() => setVideoArmed(true), 400);
+      }
+    };
+    if (document.readyState === 'complete') arm();
+    else window.addEventListener('load', arm, { once: true });
+    return () => {
+      window.removeEventListener('load', arm);
+      if (idleId && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     if (enableMotionVideo) {
@@ -179,6 +202,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         const y = Math.max(-1, Math.min(1, (event.clientY - rect.top - rect.height / 2) / (rect.height / 2)));
         root.style.setProperty('--mx', x.toFixed(4));
         root.style.setProperty('--my', y.toFixed(4));
+        document.getElementById('lcp-cta-slot')?.style.setProperty('--mx', x.toFixed(4));
+        document.getElementById('lcp-cta-slot')?.style.setProperty('--my', y.toFixed(4));
         if (SHOW_CURSOR_DIMPLE) {
           root.style.setProperty('--cursor-x', `${((event.clientX - rect.left) / rect.width) * 100}%`);
           root.style.setProperty('--cursor-y', `${((event.clientY - rect.top) / rect.height) * 100}%`);
@@ -189,6 +214,8 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
     const reset = () => {
       root.style.setProperty('--mx', '0');
       root.style.setProperty('--my', '0');
+      document.getElementById('lcp-cta-slot')?.style.setProperty('--mx', '0');
+      document.getElementById('lcp-cta-slot')?.style.setProperty('--my', '0');
       if (SHOW_CURSOR_DIMPLE) {
         root.style.setProperty('--cursor-x', '50%');
         root.style.setProperty('--cursor-y', '50%');
@@ -342,7 +369,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
   return (
     <section
       ref={rootRef}
-      className={`hero-agent-v6 ${stateClass}${pauseClass} relative min-h-[100svh] w-full overflow-hidden bg-[#0D0D11] text-[#FFF5F8]`}
+      className={`hero-agent-v6 ${stateClass}${pauseClass} relative min-h-[100svh] w-full overflow-hidden bg-transparent text-[#FFF5F8]`}
       style={rootStyle}
     >
       <style>{`
@@ -384,11 +411,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         .v6-bg {
-          background-image:
-            linear-gradient(180deg, rgba(5,5,8,0.04), rgba(5,5,8,0.2) 58%, #050508 100%),
-            image-set(url(${spaceBgMobile}) 1x);
-          background-position: center;
-          background-size: cover;
+          background: none;
           transform: translate3d(0, 0, 0) scale(1.08);
         }
 
@@ -402,11 +425,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         .v6-space-grade {
-          background:
-            radial-gradient(circle at 50% 42%, rgba(230,0,126,0.14), transparent 0 23%),
-            radial-gradient(ellipse at 50% 48%, transparent 0 28%, rgba(0,0,0,0.24) 62%, rgba(0,0,0,0.8) 100%),
-            linear-gradient(90deg, rgba(5,5,8,0.82), transparent 24%, transparent 76%, rgba(5,5,8,0.82)),
-            linear-gradient(180deg, rgba(5,5,8,0.48), rgba(5,5,8,0.04) 38%, rgba(5,5,8,0.76));
+          background: none;
         }
         .v6-planet-layer {
           transform: translate3d(-50%, -50%, 0) scale(1);
@@ -690,11 +709,6 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
         }
 
         @media (min-width: 768px) {
-          .v6-bg {
-            background-image:
-              linear-gradient(180deg, rgba(5,5,8,0.04), rgba(5,5,8,0.2) 58%, #050508 100%),
-              image-set(url(${spaceBgDesktop}) 1x);
-          }
           .hero-agent-v6:not(.hero-agent--paused) .v6-bg {
             transform: translate3d(calc(var(--mx) * -6px), calc(var(--my) * -4px), 0) scale(1.1);
             transition: transform 700ms cubic-bezier(0.25, 1, 0.5, 1);
@@ -817,15 +831,7 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
                 <div
                   className="v6-orb-core absolute left-[8%] right-[8%] top-[9.5%] bottom-[6.5%] overflow-hidden rounded-full"
                   aria-hidden="true"
-                >
-                  <img
-                    src={planetaAmarte}
-                    alt=""
-                    className="v6-mars-surface"
-                    draggable={false}
-                    decoding="async"
-                  />
-                </div>
+                />
               </div>
               {SHOW_ORB_AURA && (
                 <>
@@ -846,13 +852,16 @@ export default function HeroOrbital({ onActivateChat, onActivateVoice, martinaSt
               )}
             </div>
 
+            {createPortal(
             <button
               type="button"
               onClick={activateVoice}
-              className="v6-cta absolute z-30 inline-flex items-center justify-center gap-2 rounded-full border border-[#FFF5F8]/18 bg-[#E6007E] px-7 py-3.5 font-heading text-sm uppercase leading-none tracking-widest text-white shadow-[0_0_42px_rgba(230,0,126,0.5),0_20px_80px_rgba(0,0,0,0.55)] transition hover:scale-105 hover:bg-[#ff0a90] active:scale-95 sm:px-9 sm:py-4"
+              className="v6-cta relative z-30 inline-flex items-center justify-center gap-2 rounded-full border border-[#FFF5F8]/18 bg-[#E6007E] px-7 py-3.5 font-heading text-sm uppercase leading-none tracking-widest text-white shadow-[0_0_42px_rgba(230,0,126,0.5),0_20px_80px_rgba(0,0,0,0.55)] transition hover:scale-105 hover:bg-[#ff0a90] active:scale-95 sm:px-9 sm:py-4"
             >
               <svg aria-hidden="true" className="h-[15px] w-[15px] shrink-0 translate-y-[0.5px]" viewBox="0 0 24 24" fill="none"><path d="M12 13.75c1.66 0 3-1.34 3-3V6.25c0-1.66-1.34-3-3-3s-3 1.34-3 3v4.5c0 1.66 1.34 3 3 3Z" stroke="currentColor" strokeWidth="1.65"/><path d="M6.5 10.25c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5M12 15.75v3.5M9.25 19.25h5.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round"/><path d="M10.25 6.5h3.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" opacity="0.7"/></svg> PREGÚNTALE A MARTINA
-            </button>
+            </button>,
+            document.getElementById('lcp-cta-slot') ?? document.body,
+            )}
           </div>
 
           <motion.p
