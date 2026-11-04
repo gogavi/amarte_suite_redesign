@@ -1,5 +1,9 @@
 import { motion } from 'framer-motion';
-import martinaSectionImg from '../../assets/martina_sectionV2_transparent.png';
+import martinaSectionImg from '../../assets/martina_sectionV2_transparent.png?w=480;768;1080&format=avif;webp&as=picture';
+import ResponsiveImage from '../molecules/ResponsiveImage';
+import { responsiveFromPicture } from '../../lib/responsiveImage';
+
+const martinaImage = responsiveFromPicture(martinaSectionImg);
 
 interface MartinaFeatureSectionProps {
   onSpeakToMartina: () => void;
@@ -46,12 +50,12 @@ export default function MartinaFeatureSection({ onSpeakToMartina, onExploreSuite
           className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl flex justify-center lg:-ml-8"
         >
           <div className="absolute inset-x-4 bottom-0 top-8 rounded-[2rem] bg-black/35 pointer-events-none" />
-          <img
-            src={martinaSectionImg}
+          <ResponsiveImage
+            image={martinaImage}
             alt="Interfaz interactiva de Martina Agente Virtual"
-            className="relative z-[1] w-full h-auto object-contain block mix-blend-screen"
-            loading="lazy"
-            decoding="async"
+            sizes="(max-width: 1024px) 90vw, 560px"
+            className="relative z-[1] block w-full"
+            imgClassName="w-full h-auto object-contain block mix-blend-screen"
           />
         </motion.div>
       </div>

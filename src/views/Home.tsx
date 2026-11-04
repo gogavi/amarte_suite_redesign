@@ -48,14 +48,19 @@ export default function Home() {
     let idleId: number | undefined;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    if (typeof window.requestIdleCallback === 'function') {
-      idleId = window.requestIdleCallback(run, { timeout: 4000 });
-    } else {
-      timeoutId = setTimeout(run, 2500);
-    }
+    const schedule = () => {
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(run, { timeout: 4000 });
+      } else {
+        timeoutId = setTimeout(run, 2500);
+      }
+    };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
 
     return () => {
       cancelled = true;
+      window.removeEventListener('load', schedule);
       if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
         window.cancelIdleCallback(idleId);
       }
@@ -138,7 +143,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-dark text-white relative">
+    <div className="min-h-screen text-white relative">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] bg-[radial-gradient(ellipse_at_20%_20%,rgba(230,0,126,0.06),transparent_55%),radial-gradient(ellipse_at_80%_70%,rgba(25,166,224,0.05),transparent_50%)]"
         aria-hidden="true"
@@ -167,6 +172,7 @@ export default function Home() {
         <HeroOrbital onActivateChat={handleActivateChat} onActivateVoice={handleActivateVoice} />
       </div>
 
+      <div className="relative bg-bg-dark">
       <div className="py-2">
         <TrustBar />
       </div>
@@ -212,6 +218,7 @@ export default function Home() {
         <p className="mb-2">© 2026 Inversiones Ogavi S.A. · Amarte Suite · El Planeta Romántico de Bogotá</p>
         <p className="text-caption text-gris-carbon">Teusaquillo · Calle 62 #14-19 · Bogotá, Colombia</p>
       </footer>
+      </div>
 
       {isFormOpen && (
         <Suspense fallback={null}>

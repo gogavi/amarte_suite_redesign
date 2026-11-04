@@ -1,14 +1,15 @@
-import imgDiamante from '../assets/suites/suite_diamante.jpg';
-import imgGold from '../assets/suites/suite_gold.jpg';
-import imgRubi from '../assets/suites/suite_rubi.jpg';
-import imgZafiro from '../assets/suites/suite_zafiro.jpg';
-import imgArabe from '../assets/suites/suite_arabe.jpg';
-import imgBaticueva from '../assets/suites/suite_baticueva.jpg';
-import imgHarleyQueen from '../assets/suites/suite_harleyqueen.jpg';
-import imgJacuzziVip from '../assets/suites/suite_jacuzzi_VIP.jpg';
-import imgCabana from '../assets/suites/suite_cabana.jpg';
-import imgAmarte from '../assets/suites/suite_amarte.jpg';
-import imgMovimiento from '../assets/suites/suite_movimiento.jpg';
+import { responsiveFromPicture, type ResponsiveImage } from '../lib/responsiveImage';
+import imgDiamante from '../assets/suites/suite_diamante.jpg?w=480;960&format=avif;webp&as=picture';
+import imgGold from '../assets/suites/suite_gold.jpg?w=480;960&format=avif;webp&as=picture';
+import imgRubi from '../assets/suites/suite_rubi.jpg?w=480;960&format=avif;webp&as=picture';
+import imgZafiro from '../assets/suites/suite_zafiro.jpg?w=480;960&format=avif;webp&as=picture';
+import imgArabe from '../assets/suites/suite_arabe.jpg?w=480;960&format=avif;webp&as=picture';
+import imgBaticueva from '../assets/suites/suite_baticueva.jpg?w=480;960&format=avif;webp&as=picture';
+import imgHarleyQueen from '../assets/suites/suite_harleyqueen.jpg?w=480;960&format=avif;webp&as=picture';
+import imgJacuzziVip from '../assets/suites/suite_jacuzzi_VIP.jpg?w=480;960&format=avif;webp&as=picture';
+import imgCabana from '../assets/suites/suite_cabana.jpg?w=480;960&format=avif;webp&as=picture';
+import imgAmarte from '../assets/suites/suite_amarte.jpg?w=480;960&format=avif;webp&as=picture';
+import imgMovimiento from '../assets/suites/suite_movimiento.jpg?w=480;960&format=avif;webp&as=picture';
 
 export interface SuiteRate {
   "4h": number;
@@ -33,7 +34,7 @@ export interface Suite {
     weekday: SuiteRate;
     weekend: SuiteRate;
   };
-  image: string;
+  image: ResponsiveImage;
   whatsappLink: string;
   /** URL pública del MP4 en el bucket `generated-videos` de Supabase Storage. */
   videoUrl?: string;
@@ -60,7 +61,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgDiamante,
+    image: responsiveFromPicture(imgDiamante),
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE DELUXE DIAMANTE.mp4"),
   },
@@ -75,7 +76,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgGold,
+    image: responsiveFromPicture(imgGold),
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE DELUXE GOLD.mp4"),
   },
@@ -90,7 +91,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgRubi,
+    image: responsiveFromPicture(imgRubi),
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE RUBI.mp4"),
   },
@@ -105,7 +106,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgZafiro,
+    image: responsiveFromPicture(imgZafiro),
     whatsappLink: "https://wa.me/p/5897691113605046/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE DELUXE ZAFIRO.mp4"),
   },
@@ -120,7 +121,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgBaticueva,
+    image: responsiveFromPicture(imgBaticueva),
     whatsappLink: "https://wa.me/p/4019349191434593/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE GOTICA.mp4"),
   },
@@ -135,7 +136,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgArabe,
+    image: responsiveFromPicture(imgArabe),
     whatsappLink: "https://wa.me/p/4019862324758030/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE DELUXE ARABE.mp4"),
   },
@@ -150,7 +151,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
     },
-    image: imgHarleyQueen,
+    image: responsiveFromPicture(imgHarleyQueen),
     whatsappLink: "https://wa.me/p/4019862324758030/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE DELUXE QUEEN.mp4"),
   },
@@ -165,7 +166,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 200000, "8h": 240000, "12h": 300000, day_hotelero: 380000 },
       weekend: { "4h": 240000, "8h": 290000, "12h": 360000, day_hotelero: 420000 }
     },
-    image: imgJacuzziVip,
+    image: responsiveFromPicture(imgJacuzziVip),
     whatsappLink: "https://wa.me/p/4566077396739183/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE VIP JACUZZI.mp4"),
   },
@@ -180,7 +181,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
       weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
-    image: imgCabana,
+    image: responsiveFromPicture(imgCabana),
     whatsappLink: "https://wa.me/p/3980047085436054/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE CABANA.mp4"),
   },
@@ -195,7 +196,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 90000, "8h": 120000, "12h": 160000, day_hotelero: 200000 },
       weekend: { "4h": 120000, "8h": 160000, "12h": 220000, day_hotelero: 260000 }
     },
-    image: imgAmarte,
+    image: responsiveFromPicture(imgAmarte),
     whatsappLink: "https://wa.me/p/4566077396739183/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE AMARTE.mp4"),
   },
@@ -210,7 +211,7 @@ export const suitesData: Suite[] = [
       weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
       weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
     },
-    image: imgMovimiento,
+    image: responsiveFromPicture(imgMovimiento),
     whatsappLink: "https://wa.me/p/3980047085436054/573235726252",
     videoUrl: buildSuiteVideoUrl("SUITE MOVIMIENTO.mp4"),
   },

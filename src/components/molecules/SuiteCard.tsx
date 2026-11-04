@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Suite } from '../../services/ratesService';
 import { useReservation } from '../../context/ReservationContext';
 import SuiteVideoModal from './SuiteVideoModal';
+import ResponsiveImage from './ResponsiveImage';
 
 interface SuiteCardProps {
   suite: Suite;
@@ -96,11 +97,12 @@ export default function SuiteCard({ suite, onSelect, isActiveDeckCard = false }:
           </AnimatePresence>
 
           {/* Imagen de Portada Estática */}
-          <img
-            src={suite.image}
+          <ResponsiveImage
+            image={suite.image}
             alt={suite.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            loading="lazy"
+            sizes="(max-width: 1023px) 380px, 340px"
+            className="block h-full w-full"
+            imgClassName="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D11] via-transparent to-transparent z-[5]"></div>
 
