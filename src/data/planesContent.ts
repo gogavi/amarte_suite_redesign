@@ -38,7 +38,7 @@ export const PLANES_CONTENT: PlanContent[] = [
     dbName: 'Plan Cumpleaños',
     category: 'Celebración',
     description:
-      'Festeja tu día especial en Suites Deluxe Queen, Gótica o Árabe.',
+      'Festeja tu día especial en Suites Queen, Gótica o Árabe.',
     features: [
       'Vino espumoso',
       'Globos',
@@ -46,7 +46,7 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Crispetas',
       'Velas',
       'Dos chocolates',
-      'Sauna y jacuzzi',
+      'Jacuzzi',
     ],
     imageEmoji: '🎂',
   },
@@ -72,7 +72,7 @@ export const PLANES_CONTENT: PlanContent[] = [
     dbName: 'Plan Erótico',
     category: 'Fantasía',
     description:
-      'Fantasía y seducción en Suites Deluxe Queen, Diamante o Árabe.',
+      'Fantasía y seducción en Suites Queen, Diamante o Árabe.',
     features: [
       'Antifaz - Body - Esposas - Látigo',
       'Vino espumoso',
