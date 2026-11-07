@@ -54,9 +54,9 @@ export const suitesData: Suite[] = [
     id: "suite-diamante",
     name: "Suite Deluxe Diamante",
     slug: "suite-deluxe-diamante",
-    category: "deluxe",
-    description: "Nuestra suite insignia. Lujo absoluto, jacuzzi de hidromasaje, acabados premium y atmósfera con iluminación digital programable para una noche inolvidable.",
-    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: true },
+    category: "tematica",
+    description: "Suite temática con jacuzzi.",
+    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
@@ -70,8 +70,8 @@ export const suitesData: Suite[] = [
     name: "Suite Deluxe Gold",
     slug: "suite-deluxe-gold",
     category: "deluxe",
-    description: "Atmósfera dorada de lujo y seducción. Diseñada con detalles en chapa de oro y espejos panorámicos para una velada llena de sofisticación.",
-    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
+    description: "Suite deluxe en tonos dorados, con sauna y jacuzzi.",
+    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
@@ -85,8 +85,8 @@ export const suitesData: Suite[] = [
     name: "Suite Deluxe Rubí",
     slug: "suite-deluxe-rubi",
     category: "deluxe",
-    description: "Elegancia y pasión en tonalidades carmesí. Cuenta con tina de hidromasajes, acabados de mármol y un ambiente diseñado para encender los sentidos.",
-    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
+    description: "Suite deluxe en tonos carmesí, con sauna y jacuzzi.",
+    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
@@ -100,8 +100,8 @@ export const suitesData: Suite[] = [
     name: "Suite Deluxe Zafiro",
     slug: "suite-deluxe-zafiro",
     category: "deluxe",
-    description: "Atmósfera azul zafiro que evoca calma y exclusividad. Equipada con jacuzzi, luces inteligentes graduables y cama king size premium.",
-    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
+    description: "Suite deluxe en tonos azules, con sauna y jacuzzi.",
+    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
@@ -115,8 +115,8 @@ export const suitesData: Suite[] = [
     name: "Suite Temática Gótica / Baticueva",
     slug: "suite-gotica",
     category: "tematica",
-    description: "Fantasía oscura y misterio. Iluminación de acento tenue, decoración gótica evocando la baticueva, tina de hidromasaje y detalles temáticos únicos.",
-    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: false },
+    description: "Suite temática de estilo gótico, con sauna y jacuzzi.",
+    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: false },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
       weekend: { "4h": 300000, "8h": 350000, "12h": 420000, day_hotelero: 470000 }
@@ -130,7 +130,7 @@ export const suitesData: Suite[] = [
     name: "Suite Temática Árabe",
     slug: "suite-arabe",
     category: "tematica",
-    description: "Transpórtate a las mil y una noches. Cúpulas orientales, cojines de seda, jacuzzi con iluminación cálida y cama redonda de ensueño rodeada de velos.",
+    description: "Suite temática de estilo árabe, con jacuzzi.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
@@ -145,7 +145,7 @@ export const suitesData: Suite[] = [
     name: "Suite Temática Harley Queen",
     slug: "suite-harleyqueen",
     category: "tematica",
-    description: "Decoración inspirada en el arte pop y el dinamismo urbano. Colores vibrantes, jacuzzi de hidromasaje y ambiente lúdico y divertido.",
+    description: "Suite temática de estilo pop, con jacuzzi.",
     features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 240000, "8h": 280000, "12h": 340000, day_hotelero: 420000 },
@@ -160,8 +160,8 @@ export const suitesData: Suite[] = [
     name: "Suite Especial Jacuzzi VIP",
     slug: "suite-vip-jacuzzi",
     category: "especial",
-    description: "Máxima relajación y escape de la rutina. Jacuzzi gigante climatizado con cromoterapia para una desconexión total en Teusaquillo.",
-    features: { jacuzzi: true, sauna: true, cama_movimiento: false, aire_acondicionado: false },
+    description: "Suite con jacuzzi.",
+    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: false },
     rates: {
       weekday: { "4h": 200000, "8h": 240000, "12h": 300000, day_hotelero: 380000 },
       weekend: { "4h": 240000, "8h": 290000, "12h": 360000, day_hotelero: 420000 }
@@ -175,8 +175,8 @@ export const suitesData: Suite[] = [
     name: "Suite Especial Cabaña",
     slug: "suite-cabana",
     category: "especial",
-    description: "Estilo rústico, íntimo y acogedor. Chimenea artificial, paredes de madera y cama de gran tamaño para simular un escape en la montaña.",
-    features: { jacuzzi: false, sauna: false, cama_movimiento: true, aire_acondicionado: false },
+    description: "Suite de estilo cabaña.",
+    features: { jacuzzi: false, sauna: false, cama_movimiento: false, aire_acondicionado: false },
     rates: {
       weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
       weekend: { "4h": 150000, "8h": 180000, "12h": 260000, day_hotelero: 320000 }
@@ -190,8 +190,8 @@ export const suitesData: Suite[] = [
     name: "Suite Especial Amarte",
     slug: "suite-amarte",
     category: "especial",
-    description: "Nuestra suite homónima. Decoración romántica insuperable, jacuzzi privado y detalles florales y de luces listos para sorprender.",
-    features: { jacuzzi: true, sauna: false, cama_movimiento: false, aire_acondicionado: true },
+    description: "Suite sencilla, sin jacuzzi.",
+    features: { jacuzzi: false, sauna: false, cama_movimiento: false, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 90000, "8h": 120000, "12h": 160000, day_hotelero: 200000 },
       weekend: { "4h": 120000, "8h": 160000, "12h": 220000, day_hotelero: 260000 }
@@ -205,7 +205,7 @@ export const suitesData: Suite[] = [
     name: "Suite Especial Cama en Movimiento",
     slug: "suite-movimiento",
     category: "especial",
-    description: "Lleva tu fantasía a otro plano. Suite equipada con nuestra famosa cama con movimiento rítmico automatizado y sonido de alta fidelidad.",
+    description: "Suite con cama en movimiento.",
     features: { jacuzzi: false, sauna: false, cama_movimiento: true, aire_acondicionado: true },
     rates: {
       weekday: { "4h": 120000, "8h": 160000, "12h": 190000, day_hotelero: 240000 },
