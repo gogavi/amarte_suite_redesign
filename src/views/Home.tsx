@@ -4,7 +4,9 @@ import TrustBar from '../components/molecules/TrustBar';
 import SectionDotNav from '../components/molecules/SectionDotNav';
 import SectionStickyNav from '../components/molecules/SectionStickyNav';
 import { Suite } from '../services/ratesService';
+import type { PlanContent } from '../data/planesContent';
 import { trackViewItemListSuites } from '../lib/analytics';
+import { isPlanDirectBookingEnabled } from '../lib/planSuites';
 import { openChat, prefetchMartinaWidget } from '../services/amarteChatbot';
 import { useReservation } from '../context/ReservationContext';
 import { useSectionSpy } from '../hooks/useSectionSpy';
@@ -31,6 +33,7 @@ export default function Home() {
   const { dispatch } = useReservation();
   const [activeView, setActiveView] = useState<'home' | 'planes' | 'sexshop' | 'restaurante' | 'bebidas'>('home');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [planBooking, setPlanBooking] = useState<PlanContent | null>(null);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [showPagoRetorno, setShowPagoRetorno] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -68,8 +71,29 @@ export default function Home() {
     };
   }, []);
 
+  const closeReservationForm = () => {
+    setIsFormOpen(false);
+    setPlanBooking(null);
+    dispatch({ type: 'RESET' });
+  };
+
   const handleSelectSuite = (suite: Suite) => {
-    void suite;
+    dispatch({ type: 'SET_SUITE', payload: suite });
+    setPlanBooking(null);
+    setIsFormOpen(true);
+  };
+
+  const handleSelectPlan = (plan: PlanContent) => {
+    if (!isPlanDirectBookingEnabled()) {
+      handleActivateChat(
+        `Hola Martina, quiero reservar y añadir el plan: ${plan.name}`,
+        'seccion',
+      );
+      return;
+    }
+    dispatch({ type: 'RESET' });
+    dispatch({ type: 'SET_PLAN', payload: plan.dbName });
+    setPlanBooking(plan);
     setIsFormOpen(true);
   };
 
@@ -104,17 +128,22 @@ export default function Home() {
 
   if (activeView === 'planes') {
     return (
-      <Suspense fallback={<SectionFallback />}>
-        <PlanesView
-          onBack={() => setActiveView('home')}
-          onSelectPlan={(planName) => {
-            handleActivateChat(
-              `Hola Martina, quiero reservar una suite y agregar el plan de decoración: ${planName}`,
-              'seccion',
-            );
-          }}
-        />
-      </Suspense>
+      <>
+        <Suspense fallback={<SectionFallback />}>
+          <PlanesView
+            onBack={() => {
+              setActiveView('home');
+              closeReservationForm();
+            }}
+            onSelectPlan={handleSelectPlan}
+          />
+        </Suspense>
+        {isFormOpen && (
+          <Suspense fallback={null}>
+            <ReservaExpressForm plan={planBooking} onClose={closeReservationForm} />
+          </Suspense>
+        )}
+      </>
     );
   }
 
@@ -189,9 +218,7 @@ export default function Home() {
 
       <Suspense fallback={<SectionFallback />}>
         <PlanesSection
-          onSelectPlan={(planName) => {
-            handleActivateChat(`Hola Martina, quiero reservar y añadir el plan: ${planName}`, 'seccion');
-          }}
+          onSelectPlan={handleSelectPlan}
         />
       </Suspense>
 
@@ -223,10 +250,8 @@ export default function Home() {
       {isFormOpen && (
         <Suspense fallback={null}>
           <ReservaExpressForm
-            onClose={() => {
-              setIsFormOpen(false);
-              dispatch({ type: 'RESET' });
-            }}
+            plan={planBooking}
+            onClose={closeReservationForm}
           />
         </Suspense>
       )}

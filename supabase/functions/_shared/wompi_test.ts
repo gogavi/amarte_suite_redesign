@@ -126,6 +126,7 @@ Deno.test('compra express solo si el pago aprobado coincide con la reserva', () 
     value: 80000,
     transactionId: reservation.id,
     wompiTransactionId: approved.id,
+    reservationTotal: 80000,
   });
   assertEquals(
     decideExpressPurchase(reservation, { ...approved, reference: '22222222-2222-4222-8222-222222222222' }).action,
@@ -140,7 +141,7 @@ Deno.test('compra express solo si el pago aprobado coincide con la reserva', () 
       { ...reservation, paymentStatus: 'approved', paidAmount: 80000 },
       null,
     ),
-    { action: 'return', value: 80000, transactionId: reservation.id },
+    { action: 'return', value: 80000, transactionId: reservation.id, reservationTotal: 80000 },
   );
   assertEquals(parseWompiTransactionPayload({ data: { id: 'x', status: 'APPROVED' } }), null);
 });

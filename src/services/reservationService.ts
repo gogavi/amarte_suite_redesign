@@ -2,9 +2,13 @@ import {
   isMissingClickIdColumn,
   type ReservationClickColumns,
 } from '../lib/googleClickIds';
+import {
+  paymentFieldsForTrigger,
+  type PaymentMethod,
+} from '../lib/reservationPricing';
 import { supabase } from '../lib/supabaseClient';
 
-export type PaymentMethod = 'wompi' | 'whatsapp';
+export type { PaymentMethod };
 
 export type CreateWebReservationInput = {
   name: string;
@@ -19,6 +23,13 @@ export type CreateWebReservationInput = {
   time: string;
   price: number;
   method: PaymentMethod;
+  /**
+   * Nombre del plan en `room_types` (`Plan …`).
+   * Guarda la fila CON DECORACIÓN y deja la suite física en `suite`.
+   */
+  planName?: string;
+  /** Suite elegida cuando `tipo` es el plan, no la habitación. */
+  suiteChoice?: string;
   /** gclid / gbraid / wbraid. Se omiten si la tabla aún no tiene esas columnas. */
   clickIds?: ReservationClickColumns;
 };
@@ -53,45 +64,6 @@ type ReservationInsertRow = {
   hotel_observations: string;
 };
 
-type TriggerPaymentFields = {
-  formaPago: string;
-  precio: string;
-  abono: string;
-};
-
-/**
- * Valores que acepta `enforce_reservation_web_price` para el rol `anon`.
- * WhatsApp = precio de catálogo, abono 0.
- * Wompi = Pago total (80 % del pack, abono = precio).
- */
-function paymentFieldsForTrigger(
-  method: PaymentMethod,
-  catalogPrice: number
-): TriggerPaymentFields {
-  const pack = Math.round(catalogPrice);
-
-  switch (method) {
-    case 'whatsapp':
-      return {
-        formaPago: 'Sin pago / Continuar por WhatsApp',
-        precio: String(pack),
-        abono: '0',
-      };
-    case 'wompi': {
-      const full = Math.round(pack * 0.8);
-      return {
-        formaPago: 'Pago total',
-        precio: String(full),
-        abono: String(full),
-      };
-    }
-    default: {
-      const exhaustive: never = method;
-      throw new Error(`Método de pago no soportado: ${exhaustive}`);
-    }
-  }
-}
-
 function createReservationId(): string {
   if (typeof crypto.randomUUID !== 'function') {
     throw new Error('No se pudo generar el id de la pre-reserva.');
@@ -105,6 +77,9 @@ function reservationErrorMessage(raw: string | undefined): string {
   }
   if (raw?.includes('SUITE_INACTIVA')) {
     return 'Esa suite no está disponible.';
+  }
+  if (raw?.includes('PRECIO_INVALIDO')) {
+    return 'No se pudo confirmar el precio. Si reservaste un plan, falta aplicar la migración que evita el cobro extra de decoración.';
   }
   return 'No se pudo guardar la pre-reserva. Intenta de nuevo.';
 }
@@ -121,6 +96,9 @@ export async function createWebReservation(
 
   const id = createReservationId();
   const payment = paymentFieldsForTrigger(input.method, input.price);
+  const planName = input.planName?.trim() ?? '';
+  const suiteChoice = input.suiteChoice?.trim() ?? '';
+  const withPlan = planName.startsWith('Plan ');
 
   const row: ReservationInsertRow = {
     id,
@@ -129,17 +107,17 @@ export async function createWebReservation(
     whatsapp: input.whatsapp.trim(),
     correo: (input.email ?? '').trim(),
     tipo,
-    suite: '—',
+    suite: withPlan && suiteChoice ? suiteChoice : '—',
     fecha_reserva: input.date,
     hora_reserva: input.time,
     pack_tiempo: packTiempo,
     precio: payment.precio,
     canal: 'Web Automático',
     forma_pago: payment.formaPago,
-    tipo_plan: 'Sin Decoración',
-    decoracion: 'SIN DECORACIÓN',
+    tipo_plan: withPlan ? planName : 'Sin Decoración',
+    decoracion: withPlan ? 'CON DECORACIÓN' : 'SIN DECORACIÓN',
     is_taken: false,
-    mensaje: '',
+    mensaje: withPlan && suiteChoice ? `Suite elegida: ${suiteChoice}` : '',
     asesora: '',
     modificado_por: 'web',
     abono: payment.abono,

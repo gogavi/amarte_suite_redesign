@@ -399,6 +399,33 @@ describe('medición homepage', { concurrency: false }, () => {
     assert.equal(verdict.transactionId, RESERVATION_ID);
   });
 
+  test('el abono 50 % se confirma contra lo cobrado y no contra el total', () => {
+    const approved = {
+      id: '1234-1610641025-49201',
+      status: 'APPROVED',
+      amountInCents: 16_200_000,
+      reference: RESERVATION_ID,
+      currency: 'COP',
+    };
+    const reservation = {
+      id: RESERVATION_ID,
+      precio: '324000',
+      abono: '162000',
+      formaPago: 'Abono 50%',
+      paymentStatus: null,
+      paidAmount: null,
+    };
+    const verdict = decideExpressPurchase(reservation, approved);
+    assert.equal(verdict.action, 'approve');
+    if (verdict.action !== 'approve') return;
+    assert.equal(verdict.value, 162000);
+    assert.equal(verdict.reservationTotal, 324000);
+    assert.equal(
+      decideExpressPurchase(reservation, { ...approved, amountInCents: 32_400_000 }).action,
+      'mark_mismatch',
+    );
+  });
+
   test('analyticsFromMartinaPayload reenvía generate_lead y martina_open y conserva el legacy', () => {
     assert.deepEqual(analyticsFromMartinaPayload({ event: 'purchase', transaction_id: RESERVATION_ID }), []);
     assert.deepEqual(

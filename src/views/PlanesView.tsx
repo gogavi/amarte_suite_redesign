@@ -12,7 +12,7 @@ type PlanCard = PlanContent & {
 
 interface PlanesViewProps {
   onBack: () => void;
-  onSelectPlan: (planName: string) => void;
+  onSelectPlan: (plan: PlanContent) => void;
 }
 
 export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
@@ -115,10 +115,10 @@ export default function PlanesView({ onBack, onSelectPlan }: PlanesViewProps) {
               </div>
 
               <button
-                onClick={() => onSelectPlan(plan.name)}
+                onClick={() => onSelectPlan(plan)}
                 className="w-full py-3 rounded-xl bg-[#E6007E] hover:bg-[#E6007E]/90 text-white font-heading text-xs uppercase tracking-widest transition-colors duration-200"
               >
-                Añadir con Martina
+                Reservar este plan
               </button>
             </motion.div>
           ))}

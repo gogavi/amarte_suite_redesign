@@ -11,7 +11,7 @@ type PlanCard = PlanContent & {
 };
 
 interface PlanesSectionProps {
-  onSelectPlan: (planName: string) => void;
+  onSelectPlan: (plan: PlanContent) => void;
 }
 
 export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
@@ -150,10 +150,10 @@ export default function PlanesSection({ onSelectPlan }: PlanesSectionProps) {
               </div>
 
               <button
-                onClick={() => onSelectPlan(plan.name)}
+                onClick={() => onSelectPlan(plan)}
                 className="w-full py-3 rounded-xl bg-white/5 hover:bg-[#E6007E] hover:text-white border border-white/10 hover:border-transparent text-white font-heading text-xs uppercase tracking-widest transition-[background-color,color,border-color] duration-200"
               >
-                Agregar con Martina
+                Reservar este plan
               </button>
             </motion.div>
           ))}

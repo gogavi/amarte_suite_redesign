@@ -27,14 +27,15 @@ export type TipoPago = 'sin_pago' | 'abono_50' | 'total_100';
 export type PaidTipoPago = 'abono_50' | 'total_100';
 export type MartinaOpenLocation = 'hero' | 'launcher' | 'seccion';
 export type MartinaInteraction = 'text' | 'voice';
-export type CheckoutLocation = 'reserva_express' | 'reservas' | 'header';
+export type CheckoutLocation = 'reserva_express' | 'reserva_plan' | 'reservas' | 'header';
 export type SuiteListLocation = 'www' | 'reservas';
-export type ReservationMethod = 'wompi' | 'whatsapp';
+export type ReservationMethod = 'wompi' | 'wompi_abono' | 'whatsapp';
 
 export type AnalyticsEventParams = {
   location?: string;
   suite_name?: string;
   plan_name?: string;
+  decoration_plan?: string;
   method?: ReservationMethod | LeadMethod;
   value?: number;
   currency?: string;
@@ -118,6 +119,8 @@ export function tipoPagoForReservationMethod(method: ReservationMethod): TipoPag
   switch (method) {
     case 'wompi':
       return 'total_100';
+    case 'wompi_abono':
+      return 'abono_50';
     case 'whatsapp':
       return 'sin_pago';
     default: {

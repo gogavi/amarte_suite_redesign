@@ -1,4 +1,6 @@
+import { isPlanStayPack } from '../lib/planSuites';
 import { supabase } from '../lib/supabaseClient';
+import type { SuitePack } from './suiteCatalogService';
 
 type RoomRateRow = {
   price: number | string;
@@ -11,6 +13,7 @@ type RoomRateRow = {
     id: string;
     name: string;
     hours: number;
+    order_index?: number;
     active: boolean | null;
   } | null;
   day_categories: {
@@ -83,4 +86,82 @@ export async function fetchPlanWeekday6hPrices(): Promise<Record<string, number>
   }
 
   return prices;
+}
+
+/**
+ * Packs de un plan (6 h, 12 h, Día Hotelero) con precio de entre semana y fin de semana.
+ * Omite tarifas en 0. El precio mostrado sale de aquí, no de una constante.
+ */
+export async function fetchPlanStayPacks(planName: string): Promise<SuitePack[]> {
+  const name = planName.trim();
+  if (!name.startsWith('Plan ')) {
+    throw new Error('El plan no existe en el catálogo.');
+  }
+
+  const { data, error } = await supabase
+    .from('room_rates')
+    .select(`
+      price,
+      room_types!inner (
+        id,
+        name,
+        active
+      ),
+      rate_types!inner (
+        id,
+        name,
+        hours,
+        order_index,
+        active
+      ),
+      day_categories!inner (
+        id,
+        name,
+        days
+      )
+    `)
+    .eq('room_types.name', name);
+
+  if (error) {
+    throw new Error(error.message || 'No se pudieron cargar las tarifas del plan.');
+  }
+
+  const rows = (data ?? []) as unknown as RoomRateRow[];
+  const packs = new Map<string, SuitePack>();
+
+  for (const row of rows) {
+    const room = row.room_types;
+    const rate = row.rate_types;
+    const day = row.day_categories;
+    if (!room || !rate || !day) continue;
+    if (room.active === false || rate.active === false) continue;
+    if (room.name !== name) continue;
+
+    const price = Math.round(Number(row.price));
+    if (!Number.isFinite(price) || price <= 0) continue;
+
+    const order = rate.order_index ?? rate.hours;
+    let pack = packs.get(rate.id);
+    if (!pack) {
+      pack = {
+        rateTypeId: rate.id,
+        name: rate.name,
+        hours: rate.hours,
+        order,
+        weekdayPrice: 0,
+        weekendPrice: 0,
+      };
+      packs.set(rate.id, pack);
+    }
+
+    if (isWeekendDayCategory(day.name, day.days)) {
+      pack.weekendPrice = price;
+    } else {
+      pack.weekdayPrice = price;
+    }
+  }
+
+  return Array.from(packs.values())
+    .filter((pack) => isPlanStayPack(pack))
+    .sort((left, right) => left.order - right.order || left.hours - right.hours);
 }

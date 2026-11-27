@@ -1,6 +1,7 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 import {
+  chargePesosSource,
   eventChecksum,
   isUuid,
   pesosToCents,
@@ -230,9 +231,15 @@ Deno.serve(async (req: Request) => {
 
   const { data: reservation, error: readError } = await supabase
     .from('reservations')
-    .select('id, precio, payment_status')
+    .select('id, precio, abono, forma_pago, payment_status')
     .eq('id', transaction.reference)
-    .maybeSingle<{ id: string; precio: string; payment_status: string | null }>();
+    .maybeSingle<{
+      id: string;
+      precio: string;
+      abono: string | null;
+      forma_pago: string | null;
+      payment_status: string | null;
+    }>();
 
   if (readError) {
     console.error('wompi-webhook: reservation read failed');
@@ -255,7 +262,11 @@ Deno.serve(async (req: Request) => {
   }
 
   if (status === 'APPROVED') {
-    const expectedCents = pesosToCents(reservation.precio);
+    const expectedCents = pesosToCents(chargePesosSource({
+      precio: reservation.precio,
+      abono: reservation.abono,
+      formaPago: reservation.forma_pago,
+    }));
     if (expectedCents === null || expectedCents !== transaction.amount_in_cents) {
       const { error: mismatchError } = await supabase
         .from('reservations')
