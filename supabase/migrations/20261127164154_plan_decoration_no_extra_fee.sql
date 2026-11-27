@@ -1,5 +1,7 @@
 -- Reserva directa de planes de decoración.
--- NO APLICAR desde este PR. Dejar el archivo para revisión.
+-- Aplicada en dftbelnombbtjryqphaa el 27 nov 2026, 11:41 a. m. (Bogotá),
+-- versión 20261127164154, con OK de Guillermo. Para que corriera se agregó
+-- el ';' después de '$function$' en las tres primeras funciones.
 -- Idempotente: CREATE OR REPLACE y GRANT repetibles.
 --
 -- Qué cambia
@@ -15,15 +17,14 @@
 --    anon no tiene SELECT de reservations. No devuelve datos del huésped.
 --
 -- Orden de despliegue
--- 1. Aplicar ESTE SQL en el proyecto dftbelnombbtjryqphaa.
+-- 1. HECHO. Este SQL ya está en dftbelnombbtjryqphaa (versión 20261127164154).
 -- 2. Desplegar las Edge Functions create-wompi-payment, express-purchase-status
 --    y wompi-webhook (el abono 50 % cobra la columna abono, no precio).
 -- 3. Recién entonces desplegar el frontend.
 --
--- Si el frontend sale antes: el cliente envía el precio del plan SIN los $120.000.
--- El trigger vigente espera ese precio MÁS $120.000 (diferencia 120000 > tolerancia
--- de 1000) y rechaza el INSERT con PRECIO_INVALIDO. No se cobra doble y no queda
--- fila. WhatsApp + CON DECORACIÓN también se rechaza hasta esta migración.
+-- Con el SQL ya aplicado, un plan con CON DECORACIÓN ya no suma $120.000 y
+-- WhatsApp sin pago deja de rechazarse. El checkout del abono 50 % sigue
+-- fallando hasta el paso 2: la función en producción solo admite 'Pago total'.
 -- Kill switch sin tocar la base: VITE_PLAN_DIRECT_BOOKING=false vuelve el botón
 -- "Reservar este plan" al chat de Martina.
 --
@@ -87,7 +88,7 @@ BEGIN
 
   RETURN v_pack + v_fee;
 END;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.enforce_reservation_web_price()
@@ -317,7 +318,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.web_reservation_expected_charge(p_receipt_token uuid)
@@ -488,7 +489,7 @@ BEGIN
     'created_at', r.created_at
   );
 END;
-$function$
+$function$;
 
 
 CREATE OR REPLACE FUNCTION public.suite_choice_has_conflict(
