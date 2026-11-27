@@ -48,6 +48,8 @@ export type WhatsappReservationPayload = {
   dateIso: string;
   timeLabel: string;
   price: number;
+  /** Plan de decoración. El valor estimado sigue siendo el de catálogo, sin pago. */
+  planName?: string;
 };
 
 function formatDateForWhatsapp(dateIso: string): string {
@@ -89,9 +91,13 @@ export function buildWhatsappReservationMessage(payload: WhatsappReservationPayl
     lines.push(`• Correo: ${email}`);
   }
 
+  lines.push('', '*Detalle de la reserva*');
+  const planName = payload.planName?.trim();
+  if (planName) {
+    lines.push(`• Plan de decoración: ${planName}`);
+    lines.push('• Decoración: CON DECORACIÓN');
+  }
   lines.push(
-    '',
-    '*Detalle de la reserva*',
     `• Suite: ${payload.suiteName}`,
     `• Pack / estadía: ${payload.packName}`,
     `• Fecha: ${formatDateForWhatsapp(payload.dateIso)}`,

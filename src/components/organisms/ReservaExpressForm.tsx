@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useReservation } from '../../context/ReservationContext';
+import type { PlanContent } from '../../data/planesContent';
 import { createWebReservation, type PaymentMethod } from '../../services/reservationService';
 import {
   buildWhatsappReservasUrl,
@@ -13,6 +14,13 @@ import {
   type CatalogSuite,
   type SuitePack,
 } from '../../services/suiteCatalogService';
+import { fetchPlanStayPacks, formatPlanPrice } from '../../services/plansCatalogService';
+import {
+  fetchSuiteChoiceAvailability,
+  type SuiteChoiceAvailability,
+} from '../../services/planAvailability';
+import { eligiblePlanSuites } from '../../lib/planSuites';
+import { quoteStay } from '../../lib/reservationPricing';
 import {
   trackAddPaymentInfo,
   trackBeginCheckout,
@@ -20,12 +28,15 @@ import {
   trackGenerateLeadReserva,
   trackGenerateLeadWhatsapp,
   tipoPagoForReservationMethod,
+  type CheckoutLocation,
 } from '../../lib/analytics';
 import { copFromWompiCheckoutUrl } from '../../lib/wompiAmount';
 import { clickIdsForReservation, rememberGoogleClickIdsFromBrowser } from '../../lib/googleClickIds';
 
 interface ReservaExpressFormProps {
   onClose: () => void;
+  /** Reserva directa de un plan de decoración. Sin este prop, el formulario sigue en modo suite. */
+  plan?: PlanContent | null;
 }
 
 type TimePeriod = 'AM' | 'PM';
@@ -89,15 +100,20 @@ function openCheckout(popup: Window | null, url: string): void {
   window.location.assign(url);
 }
 
-export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps) {
+export default function ReservaExpressForm({ onClose, plan = null }: ReservaExpressFormProps) {
   const { state, dispatch } = useReservation();
-  const lockedLocalSuiteName = state.selectedSuite?.name ?? null;
+  const planMode = plan !== null;
+  const lockedLocalSuiteName = planMode ? null : state.selectedSuite?.name ?? null;
   const lockedCatalogName = resolveCatalogSuiteName(lockedLocalSuiteName);
   const onCloseRef = useRef(onClose);
 
   const [catalog, setCatalog] = useState<CatalogSuite[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [planPacks, setPlanPacks] = useState<SuitePack[]>([]);
+  const [planPacksLoading, setPlanPacksLoading] = useState(planMode);
+  const [slotAvailability, setSlotAvailability] = useState<SuiteChoiceAvailability | null>(null);
+  const [slotChecking, setSlotChecking] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -130,12 +146,14 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   }, [onClose]);
 
   useEffect(() => {
+    const location: CheckoutLocation = plan ? 'reserva_plan' : 'reserva_express';
     trackEvent('reserva_form_open', {
-      location: 'reserva_express',
+      location,
       suite_name: lockedLocalSuiteName ?? undefined,
+      decoration_plan: plan?.dbName,
     });
-    trackBeginCheckout('reserva_express');
-  }, [lockedLocalSuiteName]);
+    trackBeginCheckout(location);
+  }, [lockedLocalSuiteName, plan]);
 
   const isSubmittingRef = useRef(isSubmitting);
   useEffect(() => {
@@ -190,12 +208,17 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     };
   }, []);
 
+  const suiteChoices = useMemo(() => {
+    if (!plan) return catalog.map((suite) => ({ suite, recommended: false }));
+    return eligiblePlanSuites(catalog, plan.suitePolicy);
+  }, [catalog, plan]);
+
   const selectedSuite = useMemo(
-    () => catalog.find((suite) => suite.id === formData.suiteId) ?? null,
-    [catalog, formData.suiteId]
+    () => suiteChoices.find((item) => item.suite.id === formData.suiteId)?.suite ?? null,
+    [suiteChoices, formData.suiteId]
   );
 
-  const availablePacks = selectedSuite?.packs ?? [];
+  const availablePacks = plan ? planPacks : (selectedSuite?.packs ?? []);
 
   const selectedPack = useMemo(
     () => availablePacks.find((pack) => pack.rateTypeId === formData.packId) ?? null,
@@ -204,8 +227,35 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
   const canShowPrice = Boolean(selectedSuite && selectedPack && formData.date);
   const price = canShowPrice && selectedPack ? getPackPrice(selectedPack, formData.date) : 0;
-  const suiteLocked = Boolean(lockedCatalogName);
+  const stayQuote = price > 0 ? quoteStay(price) : null;
+  const suiteLocked = plan ? plan.suitePolicy.mode === 'locked' : Boolean(lockedCatalogName);
+  const ratesLoading = catalogLoading || planPacksLoading;
   const formLocked = isSubmitting || hasSubmitted;
+
+  useEffect(() => {
+    if (!plan || !selectedSuite || !selectedPack || !formData.date) {
+      setSlotAvailability(null);
+      setSlotChecking(false);
+      return;
+    }
+
+    let cancelled = false;
+    setSlotChecking(true);
+    void fetchSuiteChoiceAvailability({
+      suite: selectedSuite.name,
+      date: formData.date,
+      time: timeLabel,
+      pack: selectedPack.name,
+    }).then((result) => {
+      if (!cancelled) setSlotAvailability(result);
+    }).finally(() => {
+      if (!cancelled) setSlotChecking(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [plan, selectedSuite, selectedPack, formData.date, timeLabel]);
 
   useEffect(() => {
     let cancelled = false;
@@ -224,14 +274,20 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
         setCatalog(suites);
 
-        const preferred =
-          suites.find((suite) => suite.name === lockedCatalogName) ?? suites[0];
-        const preferredPack = preferred.packs[0];
+        const preferred = plan
+          ? (eligiblePlanSuites(suites, plan.suitePolicy).find((item) => item.recommended)
+            ?? eligiblePlanSuites(suites, plan.suitePolicy)[0])?.suite
+          : suites.find((suite) => suite.name === lockedCatalogName) ?? suites[0];
+        if (!preferred) {
+          setCatalogError('No hay suites disponibles para esta reserva.');
+          return;
+        }
+        const preferredPack = plan ? undefined : preferred.packs[0];
 
         setFormData((prev) => ({
           ...prev,
           suiteId: preferred.id,
-          packId: preferredPack?.rateTypeId ?? '',
+          packId: plan ? prev.packId : (preferredPack?.rateTypeId ?? ''),
         }));
       } catch (error) {
         if (cancelled) return;
@@ -248,9 +304,53 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     return () => {
       cancelled = true;
     };
-  }, [lockedCatalogName]);
+  }, [lockedCatalogName, plan]);
 
   useEffect(() => {
+    if (!plan) {
+      setPlanPacks([]);
+      setPlanPacksLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setPlanPacksLoading(true);
+
+    void fetchPlanStayPacks(plan.dbName)
+      .then((packs) => {
+        if (cancelled) return;
+        if (!packs.length) {
+          setCatalogError('Este plan no tiene tarifas de 6 h, 12 h o día hotelero.');
+          setPlanPacks([]);
+          return;
+        }
+        setPlanPacks(packs);
+        setFormData((prev) => ({
+          ...prev,
+          packId: packs.some((pack) => pack.rateTypeId === prev.packId)
+            ? prev.packId
+            : packs[0].rateTypeId,
+        }));
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error
+          ? error.message
+          : 'No se pudieron cargar las tarifas del plan.';
+        setCatalogError(message);
+        setPlanPacks([]);
+      })
+      .finally(() => {
+        if (!cancelled) setPlanPacksLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [plan]);
+
+  useEffect(() => {
+    if (plan) return;
     if (!selectedSuite) return;
     const packStillValid = selectedSuite.packs.some((pack) => pack.rateTypeId === formData.packId);
     if (!packStillValid) {
@@ -259,7 +359,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         packId: selectedSuite.packs[0]?.rateTypeId ?? '',
       }));
     }
-  }, [selectedSuite, formData.packId]);
+  }, [plan, selectedSuite, formData.packId]);
 
   const clearError = () => {
     if (submitError) setSubmitError(null);
@@ -339,6 +439,10 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
       return 'No hay tarifa disponible para esa combinación de suite y fecha.';
     }
 
+    if (plan && slotAvailability?.conflict) {
+      return 'Esa suite ya tiene una reserva que se cruza con este horario. Elige otra suite u otra hora.';
+    }
+
     return null;
   };
 
@@ -370,18 +474,20 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
     try {
       const alreadyCreatedId = createdReservationIdRef.current;
       const reservation = alreadyCreatedId
-        ? { id: alreadyCreatedId, tipo: selectedSuite.name, packTiempo: selectedPack.name }
+        ? { id: alreadyCreatedId, tipo: plan?.dbName ?? selectedSuite.name, packTiempo: selectedPack.name }
         : await createWebReservation({
           name: formData.name.trim(),
           document: formData.document,
           whatsapp: formData.whatsapp,
           email,
-          tipo: selectedSuite.name,
+          tipo: plan ? plan.dbName : selectedSuite.name,
           packTiempo: selectedPack.name,
           date: formData.date,
           time,
           price,
           method,
+          planName: plan?.dbName,
+          suiteChoice: plan ? selectedSuite.name : undefined,
           clickIds: clickIdsForReservation(rememberGoogleClickIdsFromBrowser()),
         });
 
@@ -402,11 +508,13 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         dispatch({ type: 'CALCULATE_PRICE', payload: price });
 
         const tipoPago = tipoPagoForReservationMethod(method);
+        const checkoutLocation: CheckoutLocation = plan ? 'reserva_plan' : 'reserva_express';
         trackEvent('pre_reserva_submit', {
-          location: 'reserva_express',
+          location: checkoutLocation,
           transaction_id: reservation.id,
           suite_name: selectedSuite.name,
           plan_name: selectedPack.name,
+          decoration_plan: plan?.dbName,
           method,
           value: price,
           currency: 'COP',
@@ -420,35 +528,42 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
 
       let checkoutUrl: string;
       let successMessage: string;
+      const checkoutLocation: CheckoutLocation = plan ? 'reserva_plan' : 'reserva_express';
       switch (method) {
-        case 'wompi': {
+        case 'wompi':
+        case 'wompi_abono': {
           trackEvent('checkout_init', {
-            location: 'reserva_express',
+            location: checkoutLocation,
             transaction_id: reservation.id,
             suite_name: selectedSuite.name,
             plan_name: selectedPack.name,
+            decoration_plan: plan?.dbName,
             hours: selectedPack.name,
             value: price,
             currency: 'COP',
           });
           checkoutUrl = (await createWompiCheckout(reservation.id)).checkoutUrl;
           const amountToCharge = copFromWompiCheckoutUrl(checkoutUrl);
-          if (amountToCharge !== null) {
+          const paidTipo = tipoPagoForReservationMethod(method);
+          if (amountToCharge !== null && (paidTipo === 'abono_50' || paidTipo === 'total_100')) {
             trackAddPaymentInfo({
               transactionId: reservation.id,
               value: amountToCharge,
-              tipoPago: 'total_100',
+              tipoPago: paidTipo,
             });
           }
-          successMessage = 'Pre-reserva guardada. Completa el pago en Wompi; la confirmación llega sola, sin enviar comprobante por WhatsApp.';
+          successMessage = method === 'wompi_abono'
+            ? 'Pre-reserva guardada. Paga el abono del 50 % en Wompi. El saldo queda para el día de la visita.'
+            : 'Pre-reserva guardada. Completa el pago en Wompi; la confirmación llega sola, sin enviar comprobante por WhatsApp.';
           break;
         }
         case 'whatsapp':
           trackEvent('whatsapp_redirect', {
-            location: 'reserva_express',
+            location: checkoutLocation,
             transaction_id: reservation.id,
             suite_name: selectedSuite.name,
             plan_name: selectedPack.name,
+            decoration_plan: plan?.dbName,
             estimated_value: price,
             value: price,
             currency: 'COP',
@@ -463,12 +578,15 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             dateIso: formData.date,
             timeLabel: time,
             price,
+            planName: plan?.dbName,
           }));
           trackGenerateLeadWhatsapp({
-            location: 'reserva_express',
+            location: checkoutLocation,
             linkUrl: checkoutUrl,
           });
-          successMessage = 'Pre-reserva guardada. Continúa la conversación en WhatsApp.';
+          successMessage = plan
+            ? 'Pre-reserva guardada con decoración. Continúa por WhatsApp: el personal cobra el abono.'
+            : 'Pre-reserva guardada. Continúa la conversación en WhatsApp.';
           break;
         default: {
           const exhaustive: never = method;
@@ -501,6 +619,28 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
   const labelClass =
     'amarte-reserva-label text-xs uppercase tracking-widest block mb-1 font-medium text-[#E6007E]';
   const labelStyle = { color: '#E6007E' } as const;
+  const submitDisabled = formLocked
+    || ratesLoading
+    || !!catalogError
+    || !canShowPrice
+    || (planMode && (slotChecking || slotAvailability?.conflict === true));
+
+  const paymentLabel = (method: PaymentMethod): string => {
+    if (isSubmitting) return 'Guardando…';
+    if (hasSubmitted) return 'Reserva enviada';
+    switch (method) {
+      case 'wompi':
+        return stayQuote ? `Pagar total ${formatPlanPrice(stayQuote.totalCharge)}` : 'Pagar total (Wompi)';
+      case 'wompi_abono':
+        return stayQuote ? `Abono 50 % ${formatPlanPrice(stayQuote.depositCharge)}` : 'Abono 50 % (Wompi)';
+      case 'whatsapp':
+        return 'WhatsApp sin pago';
+      default: {
+        const exhaustive: never = method;
+        return exhaustive;
+      }
+    }
+  };
 
   return (
     <div
@@ -529,11 +669,23 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
         </button>
 
         <h2 className="font-heading text-2xl md:text-3xl text-white tracking-wide mb-2 text-center pr-14">
-          PREPARA TU VIAJE
+          {plan ? plan.name : 'PREPARA TU VIAJE'}
         </h2>
-        <p className="font-body text-rosa-cuarzo text-body text-center mb-6">
-          Pre-reserva en menos de 2 minutos. Cierre digital o asesoría directa.
+        <p className="font-body text-rosa-cuarzo text-body text-center mb-4">
+          {plan
+            ? plan.description
+            : 'Pre-reserva en menos de 2 minutos. Cierre digital o asesoría directa.'}
         </p>
+        {plan && (
+          <ul className="mb-6 space-y-1 border-t border-white/5 pt-4">
+            {plan.features.map((feature) => (
+              <li key={feature} className="font-body text-sm text-[#D1D1D6]">
+                <span className="text-[#19A6E0] mr-2">✦</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        )}
 
         <form className="space-y-4" noValidate>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -602,29 +754,40 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
           <hr className="border-white/5 my-4" />
 
           <div>
-            <label className={labelClass} style={labelStyle}>Selecciona Suite *</label>
+            <label className={labelClass} style={labelStyle}>
+              {plan ? 'Suite del plan *' : 'Selecciona Suite *'}
+            </label>
             <select
               name="suiteId"
               value={formData.suiteId}
               onChange={handleSuiteChange}
-              disabled={formLocked || catalogLoading || !!catalogError || suiteLocked}
+              disabled={formLocked || ratesLoading || !!catalogError || suiteLocked}
               className={selectClass}
             >
-              {catalogLoading && <option value="">Cargando suites…</option>}
-              {!catalogLoading && catalog.map((suite) => (
-                <option key={suite.id} value={suite.id}>{suite.name}</option>
+              {ratesLoading && <option value="">Cargando suites…</option>}
+              {!ratesLoading && suiteChoices.map(({ suite, recommended }) => (
+                <option key={suite.id} value={suite.id}>
+                  {recommended && plan?.suitePolicy.mode === 'same-price'
+                    ? `${suite.name} · Recomendada`
+                    : suite.name}
+                </option>
               ))}
             </select>
             {suiteLocked && selectedSuite && (
               <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
-                Suite fijada desde la ficha seleccionada
+                {plan ? 'Este plan se reserva solo en esta suite' : 'Suite fijada desde la ficha seleccionada'}
+              </p>
+            )}
+            {plan?.suitePolicy.mode === 'same-price' && (
+              <p className="mt-1 text-[10px] text-gris-medio uppercase tracking-widest">
+                Puedes elegir cualquier suite de este precio. Las recomendadas son las del plan.
               </p>
             )}
           </div>
 
           <div>
             <label className={labelClass} style={labelStyle} id="pack-tiempo-label">
-              Pack de tiempo *
+              {plan ? 'Duración *' : 'Pack de tiempo *'}
             </label>
             <div
               role="group"
@@ -633,7 +796,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             >
               {!availablePacks.length && (
                 <p className="text-sm text-gris-medio">
-                  {catalogLoading ? 'Cargando packs…' : 'Sin packs'}
+                  {ratesLoading ? 'Cargando duraciones…' : 'Sin duraciones'}
                 </p>
               )}
               {availablePacks.map((pack) => {
@@ -642,7 +805,7 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
                   <button
                     key={pack.rateTypeId}
                     type="button"
-                    disabled={formLocked || catalogLoading}
+                    disabled={formLocked || ratesLoading}
                     aria-pressed={isActive}
                     title={packLabel(pack)}
                     onClick={() =>
@@ -736,19 +899,43 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             {visitSummary}
           </p>
 
-          <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 flex justify-between items-center mt-6 gap-4">
-            <span className="text-sm font-medium uppercase tracking-widest text-[#E6007E]" style={{ color: '#E6007E' }}>Valor de la reserva:</span>
-            <span className="text-2xl font-heading text-cyan-orbital font-bold text-right">
-              {catalogLoading
-                ? '…'
-                : canShowPrice
-                  ? `$${price.toLocaleString('es-CO')} COP`
-                  : '—'}
-            </span>
+          <div className="bg-bg-dark/80 rounded-brand p-4 border border-white/5 mt-6 space-y-2">
+            <div className="flex justify-between items-center gap-4">
+              <span className="text-sm font-medium uppercase tracking-widest text-[#E6007E]" style={{ color: '#E6007E' }}>
+                {plan ? 'Precio del plan:' : 'Valor de la reserva:'}
+              </span>
+              <span className="text-2xl font-heading text-cyan-orbital font-bold text-right">
+                {ratesLoading
+                  ? '…'
+                  : canShowPrice
+                    ? `${formatPlanPrice(price)} COP`
+                    : '—'}
+              </span>
+            </div>
+            {stayQuote && (
+              <div className="space-y-1 text-[11px] uppercase tracking-widest text-gris-medio">
+                <p>Pago total en línea, 20 %: {formatPlanPrice(stayQuote.totalCharge)}</p>
+                <p>Abono 50 % en línea: {formatPlanPrice(stayQuote.depositCharge)} de {formatPlanPrice(stayQuote.depositTotal)}</p>
+                <p>WhatsApp sin pago: {formatPlanPrice(stayQuote.catalog)}. El personal cobra el abono.</p>
+              </div>
+            )}
           </div>
-          {!catalogLoading && !canShowPrice && (
+          {!ratesLoading && !canShowPrice && (
             <p className="font-body text-caption text-gris-medio -mt-2">
-              Elige suite, pack de tiempo y fecha para calcular el valor.
+              {plan
+                ? 'Elige duración y fecha. El precio sale de la tarifa del plan, entre semana o fin de semana.'
+                : 'Elige suite, pack de tiempo y fecha para calcular el valor.'}
+            </p>
+          )}
+          {plan && formData.date && selectedSuite && (
+            <p className="font-body text-caption text-gris-medio" role="status">
+              {slotChecking
+                ? 'Revisando si la suite está libre en ese horario…'
+                : slotAvailability?.conflict
+                  ? 'Esa suite se cruza con otra reserva. Elige otra suite u otra hora.'
+                  : slotAvailability?.checked
+                    ? 'La suite está libre en ese horario, con la hora de aseo.'
+                    : 'Todavía no podemos verificar el cruce de horarios desde aquí. El equipo confirma la suite.'}
             </p>
           )}
 
@@ -763,22 +950,30 @@ export default function ReservaExpressForm({ onClose }: ReservaExpressFormProps)
             </p>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+          <div className="grid grid-cols-1 gap-3 pt-4">
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'wompi')}
-              disabled={formLocked || catalogLoading || !!catalogError || !canShowPrice}
+              disabled={submitDisabled}
               className="w-full bg-magenta-digital hover:bg-magenta-digital/90 text-white font-heading py-3 rounded-brand transition-all glow-magenta flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              {isSubmitting ? 'Guardando…' : hasSubmitted ? 'Reserva enviada' : '💳 Pagar Online (Wompi)'}
+              {paymentLabel('wompi')}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => handleSubmit(e, 'wompi_abono')}
+              disabled={submitDisabled}
+              className="w-full border border-[#E6007E] bg-transparent hover:bg-[#E6007E] text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
+            >
+              {paymentLabel('wompi_abono')}
             </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'whatsapp')}
-              disabled={formLocked || catalogLoading || !!catalogError || !canShowPrice}
+              disabled={submitDisabled}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-heading py-3 rounded-brand transition-all flex items-center justify-center gap-2 hover:scale-102 disabled:opacity-60 disabled:hover:scale-100"
             >
-              {isSubmitting ? 'Guardando…' : hasSubmitted ? 'Reserva enviada' : '💬 Reservar por WhatsApp'}
+              {paymentLabel('whatsapp')}
             </button>
           </div>
         </form>

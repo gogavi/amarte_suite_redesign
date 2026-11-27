@@ -11,11 +11,18 @@ import {
   type WompiTxView,
 } from '../_shared/wompi.ts';
 
+type ExpressTipoPago = 'abono_50' | 'total_100';
+
+function tipoPagoForForma(formaPago: string | null): ExpressTipoPago {
+  return formaPago === 'Abono 50%' ? 'abono_50' : 'total_100';
+}
+
 type ReservationRow = {
   id: string;
   canal: string;
   forma_pago: string | null;
   precio: string;
+  abono: string | null;
   payment_status: string | null;
   paid_amount: number | string | null;
 };
@@ -24,6 +31,7 @@ function confirmedPurchaseBody(params: {
   value: number;
   transactionId: string;
   reservationTotal: number;
+  tipoPago: ExpressTipoPago;
 }) {
   return {
     ok: true,
@@ -31,7 +39,7 @@ function confirmedPurchaseBody(params: {
     value: params.value,
     currency: 'COP',
     transaction_id: params.transactionId,
-    tipo_pago: 'total_100',
+    tipo_pago: params.tipoPago,
     reservation_total: params.reservationTotal,
   };
 }
@@ -49,6 +57,8 @@ function toStored(row: ReservationRow): StoredReservationPayment {
   return {
     id: row.id,
     precio: row.precio,
+    abono: row.abono,
+    formaPago: row.forma_pago,
     paymentStatus: row.payment_status,
     paidAmount: asCop(row.paid_amount),
   };
@@ -119,7 +129,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: reservation, error: readError } = await supabase
     .from('reservations')
-    .select('id, canal, forma_pago, precio, payment_status, paid_amount')
+    .select('id, canal, forma_pago, precio, abono, payment_status, paid_amount')
     .eq('id', reservationId)
     .maybeSingle<ReservationRow>();
 
@@ -132,7 +142,8 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ ok: false, confirmed: false, error: 'Reserva no encontrada.' }, 404);
   }
 
-  if (reservation.canal !== 'Web Automático' || reservation.forma_pago !== 'Pago total') {
+  const onlinePayment = reservation.forma_pago === 'Pago total' || reservation.forma_pago === 'Abono 50%';
+  if (reservation.canal !== 'Web Automático' || !onlinePayment) {
     return jsonResponse({ ok: false, confirmed: false, error: 'Esta reserva no admite pago en línea.' }, 403);
   }
 
@@ -162,6 +173,7 @@ async function applyVerdict(
         value: verdict.value,
         transactionId: verdict.transactionId,
         reservationTotal: verdict.reservationTotal,
+        tipoPago: tipoPagoForForma(reservation.forma_pago),
       }));
     case 'wait':
       return jsonResponse({
@@ -214,8 +226,8 @@ async function writePayment(
     .update(patch)
     .eq('id', reservationId)
     .or('payment_status.is.null,payment_status.neq.approved')
-    .select('id, precio, payment_status, paid_amount')
-    .maybeSingle<Pick<ReservationRow, 'id' | 'precio' | 'payment_status' | 'paid_amount'>>();
+    .select('id, precio, abono, forma_pago, payment_status, paid_amount')
+    .maybeSingle<Pick<ReservationRow, 'id' | 'precio' | 'abono' | 'forma_pago' | 'payment_status' | 'paid_amount'>>();
 
   if (updateError) {
     console.error('express-purchase-status: update failed');
@@ -225,9 +237,9 @@ async function writePayment(
   if (!updated) {
     const { data: current, error: rereadError } = await supabase
       .from('reservations')
-      .select('id, precio, payment_status, paid_amount')
+      .select('id, precio, abono, forma_pago, payment_status, paid_amount')
       .eq('id', reservationId)
-      .maybeSingle<Pick<ReservationRow, 'id' | 'precio' | 'payment_status' | 'paid_amount'>>();
+      .maybeSingle<Pick<ReservationRow, 'id' | 'precio' | 'abono' | 'forma_pago' | 'payment_status' | 'paid_amount'>>();
 
     if (rereadError || !current) {
       console.error('express-purchase-status: reread failed');
@@ -237,7 +249,6 @@ async function writePayment(
     const again = decideExpressPurchase(toStored({
       ...current,
       canal: 'Web Automático',
-      forma_pago: 'Pago total',
     }), null);
 
     if (again.action === 'return') {
@@ -245,6 +256,7 @@ async function writePayment(
         value: again.value,
         transactionId: again.transactionId,
         reservationTotal: again.reservationTotal,
+        tipoPago: tipoPagoForForma(current.forma_pago),
       }));
     }
 
@@ -260,6 +272,7 @@ async function writePayment(
       value: outcome.confirmedValue,
       transactionId: outcome.transactionId,
       reservationTotal: outcome.reservationTotal ?? outcome.confirmedValue,
+      tipoPago: tipoPagoForForma(updated.forma_pago),
     }));
   }
 

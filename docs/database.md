@@ -57,6 +57,7 @@ Migración: [`supabase/migrations/20260922173845_wompi_payment.sql`](../supabase
 - Weekend comercial: viernes y sábado (y categorías de día que los incluyan).
 - No usar service role en el browser.
 - `precio` en `reservations` es texto numérico en pesos; Wompi espera centavos (`precio * 100`).
+- Decoración suelta suma $120.000 en `calculate_reservation_price`. Un `room_types.name` que empieza por `Plan ` ya trae la decoración en `room_rates`. La migración `20261127164154_plan_decoration_no_extra_fee.sql` deja ese fee en 0 y permite WhatsApp sin pago para esos tipos. Quedó aplicada en `dftbelnombbtjryqphaa` el 27 nov 2026, 11:41 a. m. (Bogotá), versión `20261127164154`.
 
 ## Pendiente de documentar
 

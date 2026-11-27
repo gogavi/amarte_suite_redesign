@@ -182,9 +182,22 @@ export function isWompiTransactionId(value: string): boolean {
 export type StoredReservationPayment = {
   id: string;
   precio: string;
+  /** Monto a cobrar ahora. En abono 50 % es la mitad del total con 10 %. */
+  abono?: string | null;
+  formaPago?: string | null;
   paymentStatus: string | null;
   paidAmount: number | null;
 };
+
+/** El checkout y la confirmación comparan contra lo cobrado, no contra el total de la estadía. */
+export function chargePesosSource(reservation: {
+  precio: string;
+  abono?: string | null;
+  formaPago?: string | null;
+}): string {
+  if (reservation.formaPago === 'Abono 50%') return String(reservation.abono ?? '');
+  return reservation.precio;
+}
 
 export type WompiTxView = {
   id: string;
@@ -225,7 +238,7 @@ export function decideExpressPurchase(
   wompi: WompiTxView | null,
 ): ExpressPurchaseVerdict {
   if (reservation.paymentStatus === 'approved') {
-    const value = positiveCop(reservation.paidAmount) ?? precioCop(reservation.precio);
+    const value = positiveCop(reservation.paidAmount) ?? precioCop(chargePesosSource(reservation));
     if (value === null) return { action: 'wait' };
     return {
       action: 'return',
@@ -243,7 +256,7 @@ export function decideExpressPurchase(
 
   const status = wompi.status.toUpperCase();
   if (status === 'APPROVED') {
-    const expectedCents = pesosToCents(reservation.precio);
+    const expectedCents = pesosToCents(chargePesosSource(reservation));
     if (expectedCents === null || expectedCents !== wompi.amountInCents) {
       return { action: 'mark_mismatch', wompiTransactionId: wompi.id };
     }

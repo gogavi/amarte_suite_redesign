@@ -24,16 +24,18 @@ Los secretos de Wompi viven en **Supabase Edge Functions** (Deno), no en Vite.
 **`reservationService.ts`**
 
 - `createWebReservation(input)` → `insert` en `reservations` (rol `anon`, RLS `anon_insert_prereserva_web`).
-- `PaymentMethod`: `'wompi' | 'whatsapp'`.
+- `PaymentMethod`: `'wompi' | 'wompi_abono' | 'whatsapp'`.
+- `fetchPlanStayPacks(planName)` → packs de 6 h, 12 h y Día Hotelero del plan, entre semana y fin de semana.
 
-Campos relevantes del input: `name`, `whatsapp`, `tipo`, `packTiempo`, `date`, `time`, `price`, `method`.
+Campos relevantes del input: `name`, `whatsapp`, `tipo`, `packTiempo`, `date`, `time`, `price`, `method`. En modo plan, `tipo` es el nombre del plan (`Plan …`), `planName` el mismo valor y `suiteChoice` la suite física. La fila queda `decoracion = CON DECORACIÓN`.
 
-`forma_pago` que acepta el trigger `enforce_reservation_web_price` para la web:
+`forma_pago` que acepta el trigger `enforce_reservation_web_price` para la web (fee de decoración 0):
 
-- Wompi → `'Pago total'` (80 % del pack; `precio` y `abono` los reescribe el trigger).
-- WhatsApp → `'Sin pago / Continuar por WhatsApp'`.
+- Wompi pago total → `'Pago total'`. `precio` y `abono` = round(catálogo × 0.80).
+- Wompi abono → `'Abono 50%'`. `precio` = round(catálogo × 0.90). `abono` = round(ese precio × 0.50). Es el mismo cálculo de reservas.amartesuite.com.
+- WhatsApp → `'Sin pago / Continuar por WhatsApp'`. `precio` = catálogo, `abono` = 0.
 
-El cliente **no** envía el monto a Wompi. El checkout se firma en servidor con el `precio` ya persistido.
+El cliente **no** envía el monto a Wompi. El checkout se firma en servidor. Pago total usa `precio`. Abono 50 % usa `abono`. Esa rama de `create-wompi-payment` está en el repo y no se despliega con este PR.
 
 ## Pagos / WhatsApp
 
@@ -67,7 +69,7 @@ Este checkout es el Web Checkout (`checkout.wompi.co/p/`), no el Payment Link `c
 
 - JWT: `verify_jwt = true` (anon key o sesión).
 - Body: `{ reservationId }` UUID. Ignora cualquier monto del cliente.
-- Lee la fila con `SUPABASE_SERVICE_ROLE_KEY`. Exige `canal = 'Web Automático'` y `forma_pago = 'Pago total'`.
+- Lee la fila con `SUPABASE_SERVICE_ROLE_KEY`. Exige `canal = 'Web Automático'` y `forma_pago` `Pago total` o `Abono 50%`. El monto firmado es `precio` en pago total y `abono` en el abono del 50 %.
 - Firma SHA-256: `reference + amount_in_cents + currency + WOMPI_INTEGRITY_SECRET` ([docs](https://docs.wompi.co/docs/colombia/widget-checkout-web/)).
 - `amount-in-cents` = `Number(precio) * 100` (Wompi cobra en centavos).
 - Rate limit: 5 intentos / 10 min por reserva y 30 / 10 min por hash de IP.
@@ -79,7 +81,7 @@ Este checkout es el Web Checkout (`checkout.wompi.co/p/`), no el Payment Link `c
 - JWT: `verify_jwt = true` (anon key).
 - Body: `{ reservationId, transactionId? }`. `transactionId` es el `id` que Wompi agrega al volver. No acepta montos del cliente.
 - No devuelve nombre, correo, teléfono, documento ni click ids.
-- Si `payment_status = approved`, responde `{ ok, confirmed: true, value, currency: 'COP', transaction_id, tipo_pago: 'total_100', reservation_total }`. `transaction_id` es el **id de la reserva** (estable para deduplicar en Google Ads). `value` es el monto cobrado en pesos (`paid_amount` o el monto Wompi). `reservation_total` es el `precio` guardado de la reserva. Esta función solo confirma `forma_pago = Pago total`.
+- Si `payment_status = approved`, responde `{ ok, confirmed: true, value, currency: 'COP', transaction_id, tipo_pago: 'total_100', reservation_total }`. `transaction_id` es el **id de la reserva** (estable para deduplicar en Google Ads). `value` es el monto cobrado en pesos (`paid_amount` o el monto Wompi). `reservation_total` es el `precio` guardado de la reserva. Confirma `Pago total` (`tipo_pago: total_100`) y `Abono 50%` (`tipo_pago: abono_50`). En el abono, `value` es el abono cobrado y `reservation_total` sigue siendo el total de la estadía.
 - Si aún no está aprobado y llega `transactionId`, hace `GET {WOMPI_API_BASE}/transactions/{id}` con `WOMPI_PUBLIC_KEY` (igual que el webhook). `APPROVED` + `reference` = reserva + monto exacto → escribe `payment_status = approved`.
 - Referencia de otra reserva, monto distinto o estado no final → `{ confirmed: false }` sin marcar pagada.
 

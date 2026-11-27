@@ -3,6 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders, jsonResponse } from '../_shared/cors.ts';
 import {
   buildWompiCheckoutUrl,
+  chargePesosSource,
   colombianLocalPhone,
   expressThanksUrl,
   integritySignature,
@@ -20,6 +21,7 @@ type ReservationRow = {
   canal: string;
   forma_pago: string | null;
   precio: string;
+  abono: string | null;
   payment_status: string | null;
   correo: string | null;
   nombre: string | null;
@@ -106,7 +108,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: reservation, error: readError } = await supabase
     .from('reservations')
-    .select('id, canal, forma_pago, precio, payment_status, correo, nombre, whatsapp, documento')
+    .select('id, canal, forma_pago, precio, abono, payment_status, correo, nombre, whatsapp, documento')
     .eq('id', reservationId)
     .maybeSingle<ReservationRow>();
 
@@ -119,7 +121,8 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Reserva no encontrada.' }, 404);
   }
 
-  if (reservation.canal !== 'Web Automático' || reservation.forma_pago !== 'Pago total') {
+  const onlinePayment = reservation.forma_pago === 'Pago total' || reservation.forma_pago === 'Abono 50%';
+  if (reservation.canal !== 'Web Automático' || !onlinePayment) {
     return jsonResponse({ error: 'Esta reserva no admite pago en línea.' }, 403);
   }
 
@@ -127,7 +130,11 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'Esta reserva ya está pagada.' }, 409);
   }
 
-  const amountInCents = pesosToCents(reservation.precio);
+  const amountInCents = pesosToCents(chargePesosSource({
+    precio: reservation.precio,
+    abono: reservation.abono,
+    formaPago: reservation.forma_pago,
+  }));
   if (amountInCents === null) {
     console.error('create-wompi-payment: invalid stored price');
     return jsonResponse({ error: 'El monto de la reserva no es válido.' }, 422);

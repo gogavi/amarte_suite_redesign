@@ -1,4 +1,8 @@
+import type { PlanSuitePolicy } from '../lib/planSuites';
+
 export type PlanCategory = 'Romance' | 'Celebración' | 'Fantasía' | 'Bienestar';
+
+export type { PlanSuitePolicy };
 
 export type PlanContent = {
   id: string;
@@ -10,6 +14,12 @@ export type PlanContent = {
   features: string[];
   imageEmoji: string;
   category: PlanCategory;
+  /**
+   * Suites donde se puede armar el plan.
+   * `same-price`: todas las del precio de las nombradas en el texto.
+   * `locked`: solo la suite que nombra el texto.
+   */
+  suitePolicy: PlanSuitePolicy;
 };
 
 /** Contenido editorial de planes. El precio se resuelve desde Supabase. */
@@ -31,6 +41,10 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Sauna y jacuzzi',
     ],
     imageEmoji: '🌹',
+    suitePolicy: {
+      mode: 'same-price',
+      recommendedSuites: ['Suite Gold', 'Suite Rubí', 'Suite Zafiro'],
+    },
   },
   {
     id: 'plan_cumpleanos',
@@ -49,6 +63,10 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Jacuzzi',
     ],
     imageEmoji: '🎂',
+    suitePolicy: {
+      mode: 'same-price',
+      recommendedSuites: ['Suite Queen', 'Suite Gótica', 'Suite Árabe'],
+    },
   },
   {
     id: 'plan_amarte',
@@ -65,6 +83,7 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Dos chocolates',
     ],
     imageEmoji: '💖',
+    suitePolicy: { mode: 'locked', suite: 'Suite Amarte' },
   },
   {
     id: 'plan_erotico',
@@ -83,6 +102,10 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Jacuzzi',
     ],
     imageEmoji: '🖤',
+    suitePolicy: {
+      mode: 'same-price',
+      recommendedSuites: ['Suite Queen', 'Suite Diamante', 'Suite Árabe'],
+    },
   },
   {
     id: 'plan_humedo',
@@ -100,6 +123,7 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Jacuzzi',
     ],
     imageEmoji: '🛀',
+    suitePolicy: { mode: 'locked', suite: 'Suite Jacuzzi' },
   },
   {
     id: 'plan_cabana',
@@ -116,6 +140,7 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Dos chocolates',
     ],
     imageEmoji: '🏡',
+    suitePolicy: { mode: 'locked', suite: 'Suite Cabaña' },
   },
   {
     id: 'plan_movimiento',
@@ -132,5 +157,6 @@ export const PLANES_CONTENT: PlanContent[] = [
       'Dos chocolates',
     ],
     imageEmoji: '🎬',
+    suitePolicy: { mode: 'locked', suite: 'Suite Movimiento' },
   },
 ];
